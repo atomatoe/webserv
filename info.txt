@@ -19,6 +19,9 @@ http://www.stolyarov.info/books/pdf/progintro_vol3.pdf
 8) Реализация сокетов. Пояснение структуры сокетов.
 http://netcode.ru/cpp/?lang=&katID=19&skatID=176&artID=5155
 
+9) про select
+https://www.opennet.ru/man.shtml?topic=select&category=2&russian=0
+
 Новые функции:
 
 1) stat, fstat, lstat - считывает статус файла  
