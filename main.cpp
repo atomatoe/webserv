@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 13:26:03 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/03 16:56:19 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/03 21:08:14 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
         std::cerr << "fcntl FAILED" << std::endl;
         exit(1);
     }
-    if(listen(server.get_server_fd(), 0))
+    if(listen(server.get_server_fd(), 5))
     {
         std::cerr << "listen FAILED" << std::endl;
         exit(1);

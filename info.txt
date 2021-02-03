@@ -23,6 +23,12 @@ http://netcode.ru/cpp/?lang=&katID=19&skatID=176&artID=5155
 9) про select
 https://www.opennet.ru/man.shtml?topic=select&category=2&russian=0
 
+10) http запросы/ответы
+https://developer.mozilla.org/ru/docs/Web/HTTP/Messages
+
+11) методы http 
+https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
+
 Новые функции:
 
 1) stat, fstat, lstat - считывает статус файла  
