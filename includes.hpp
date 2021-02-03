@@ -6,14 +6,14 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 13:23:58 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/03 13:25:04 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/03 16:57:48 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INCLUDES_HPP
 # define INCLUDES_HPP
 
-#include <iostream>
+#include <iostream> // std::
 #include <sys/socket.h> // для socket
 #include <netinet/in.h> // для sockaddr_in
 #include <arpa/inet.h> // для inet_addr
@@ -22,6 +22,7 @@
 #include <sys/select.h> // для макросов с работой select FD_CLR, FD_ISSET, FD_SET
 #include <map> // угадай для чего
 #include <stdlib.h> // для маллок
+#include <sys/time.h> // для gettimeofday
 
 char *str_join(char *buf, char *add)
 {
