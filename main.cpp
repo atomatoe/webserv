@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 13:26:03 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/02 18:07:54 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/03 13:30:42 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct client
 char *str_join(char *buf, char *add)
 {
 	char	*newbuf;
-	int		len;
+	int		len; 
 	if (buf == 0)
 		len = 0;
 	else
@@ -81,8 +81,8 @@ int main(int argc, char **argv)
     sockaddr_in test;
     socklen_t address_len = (sizeof(test));
     test.sin_family = AF_INET;
-    test.sin_addr.s_addr = inet_addr("0.0.0.0"); // содержит адрес (номер) узла сети.
-    test.sin_port = htons(8086); // 80 - port с конфига  что делает htons (80 >> 8 | 80 << 8)
+    test.sin_addr.s_addr = inet_addr("127.0.0.1"); // содержит адрес (номер) узла сети.
+    test.sin_port = htons(8080); // 80 - port с конфига  что делает htons (80 >> 8 | 80 << 8)
     int yes = 1; // не знаю что это но это работает
     int status = setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)); // дает возможность повторно использовать сокет (повторять bind)
     if(status != 0)
@@ -90,7 +90,6 @@ int main(int argc, char **argv)
     status = bind (server_fd, (const struct sockaddr *) &test, address_len); // Аргумент address_len задает размер (в байтах) структуры данных, указываемой аргументом addr.
     if(status != 0)
         std::cerr << "bind FAILED" << std::endl;
-    std::cout << "status: " << status << std::endl;
     // status = fcntl(server_fd, F_SETFL, O_NONBLOCK); // делаем сокет неблокирующемся
     if(status != 0)
         std::cerr << "fcntl FAILED" << std::endl;
@@ -112,7 +111,9 @@ int main(int argc, char **argv)
         fd_read_tmp = fd_read;
         fd_write_tmp = fd_write;
         select(max_fd + 1, &fd_read_tmp, &fd_write_tmp, NULL, NULL);
-        // 1 блок = проверка на пришел кто то или нет 2 блок = на получение данных (отправил или нет) 3 блок = готов ли кто-то получить от тебя данные или нет
+        // 1 блок = проверка на пришел кто то или нет 
+        // 2 блок = на получение данных (отправил или нет) 
+        // 3 блок = готов ли кто-то получить от тебя данные или нет
         if(FD_ISSET(server_fd, &fd_read_tmp)) // fd_read_tmp - засорится из за проверки, поэтому нужна tmp // 1 блок
         {
             int fd = accept(server_fd, (struct sockaddr *) &out, &address_len); // out - заполнит значениями клиента - пример принятия запроса
@@ -124,7 +125,6 @@ int main(int argc, char **argv)
                     max_fd = fd;
                 list[fd].buff_read = 0;
                 list[fd].buff_write = 0;
-                std::cout << list.size() << std::endl; // сколько клиентов записалось в мапу
             }
             // send(fd, "hello world!\n", 20, 0); // отвечаем клиенту
 
@@ -142,6 +142,8 @@ int main(int argc, char **argv)
                         free(it->second.buff_read);
                     if(it->second.buff_write)
                         free(it->second.buff_write);
+                    FD_CLR(it->first, &fd_read);
+                    FD_CLR(it->first, &fd_write);
                     list.erase(it);
                     free(newbuf);
                     break ; // делаем break чтобы не наебнулась it++ 
@@ -152,18 +154,24 @@ int main(int argc, char **argv)
                     it->second.buff_read = str_join(it->second.buff_read, newbuf);
                     // после str_join нужно сделать проверку на сообщение на наличие \r\n (это означает конец передаваемого сообщение). 
                     // например: 123\r\n 456\r\n 789\r\n  - берем 123, отправляем на обработку, оставляем только 456\r\n789\r\n.
-                    // std::cout << it->second.buff_read << std::endl;
-                    it->second.buff_write = str_join(it->second.buff_write, "Ваше сообщение получено.\nОтвет: ты хуйло.\n");
+                    std::cout << it->second.buff_read << std::endl;
+                    it->second.buff_write = str_join(it->second.buff_write, "Ваше сообщение получено.\nОтвет: ты хуйло.\n"); 
                 }
                 free(newbuf);
             }
         }
-        for(std::map<int, t_client>::iterator it = list.begin(); it != list.end(); it++) // 3 блок на получение данных
+        for(std::map<int, t_client>::iterator it = list.begin(); it != list.end(); it++) // 3 блок готов ли кто-то получить от тебя данные или нет
         {
             if(FD_ISSET(it->first, &fd_write_tmp))
             {
                 if(it->second.buff_write)
                 {
+                    int fd = open("index.html", O_RDONLY);
+                    char buff[5000];
+                    char* hello = (char *)malloc(sizeof(char) * 4097);
+                    int i = read(fd, hello, 5555);
+                    // char *hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
+                    write(it->first , hello , strlen(hello));
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
                     if(ret != strlen(it->second.buff_write))
                     {

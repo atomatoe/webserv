@@ -8,7 +8,7 @@ http://www.stolyarov.info/books/pdf/progintro_vol3.pdf
 
 3) https://code-live.ru/post/cpp-http-server-over-sockets/#http   - о http
 
-4) https://habr.com/ru/post/501498/ - еще не разбирал
+4) Коды состояния - https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 
 5) https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa
 
