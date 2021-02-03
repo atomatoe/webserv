@@ -15,6 +15,7 @@ http://www.stolyarov.info/books/pdf/progintro_vol3.pdf
 6) https://medium.com/better-programming/writing-your-own-http-server-introduction-b2f94581268b
 
 7) Что такое сокет? https://habr.com/ru/post/280668/
+https://man7.org/linux/man-pages/man2/socket.2.html
 
 8) Реализация сокетов. Пояснение структуры сокетов.
 http://netcode.ru/cpp/?lang=&katID=19&skatID=176&artID=5155
