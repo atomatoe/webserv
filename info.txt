@@ -46,6 +46,9 @@ https://www.opennet.ru/man.shtml?topic=strptime&category=3&russian=0
 4) Функция strftime () преобразует локальное (местное) время, представленное в виде структуры типа struct tm, на которую указывает аргумент m_time, в текстовую строку.
 http://all-ht.ru/inf/prog/c/func/strftime.html
 
+x) opendir, readdir итд...
+http://www.c-cpp.ru/content/closedir-opendir-readdir-rewinddir
+
 webserv funс:
 
 5) Функции select ждет изменения статуса нескольких файловых описателей.

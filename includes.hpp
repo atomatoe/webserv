@@ -23,6 +23,7 @@
 #include <map> // угадай для чего
 #include <stdlib.h> // для маллок
 #include <sys/time.h> // для gettimeofday
+#include <dirent.h> // для readdir opendir
 
 char *str_join(char *buf, char *add)
 {

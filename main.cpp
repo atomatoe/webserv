@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     Server server;
     Socket socket("127.0.0.1", 8080);
     Error_handler error404("884", "You not found.");
-    // Autoindex index("/Users/atomatoe");
+    Autoindex index("/Users/atomatoe");
     
     int yes = 1; // не знаю что это но это работает
     if(setsockopt(server.get_server_fd(), SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))) // дает возможность повторно использовать сокет (повторять bind)
@@ -116,7 +116,8 @@ int main(int argc, char **argv)
                     read(fd, hello, 5555);
                     // char *hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
                     // вот здесь прикручиваем в первой части ответа html страницу, если она нужна
-                    // char *ht = error404.create_error(); // создание ошибки // Утечка! Нужно чистить ht ответ после того как отправили ошибку клиенту!!!!!!
+                    char *ht = error404.create_error(); // создание ошибки // Утечка! Нужно чистить ht ответ после того как отправили ошибку клиенту!!!!!!
+                    char *ind = index.create_page(); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
                     it->second.buff_write = str_join(it->second.buff_write, hello);
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
                     if(ret != strlen(it->second.buff_write))
