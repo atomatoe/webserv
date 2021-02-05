@@ -32,7 +32,7 @@ https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
 Новые функции:
 
 1) stat, fstat, lstat - считывает статус файла  
-- https://www.opennet.ru/cgi-bin/opennet/man.cgi?topic=lstat
+- https://www.opennet.ru/man.shtml?topic=fstat&category=2&russian=0
 - stat возвращает информацию о файле file_name и заполняет буфер buf. lstat идентична stat, но в случае символьных сылок она возвращает информацию
     о самой ссылке, а не о файле, на который она указывает. 
 - fstat идентична stat, только возвращается информация об открытом файле, на который указывает filedes (возвращаемый open(2)), а не о file_name.

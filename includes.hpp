@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 13:23:58 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/05 15:01:45 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/05 19:18:32 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,11 @@ void get_time() // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую
     gettimeofday(&tv, &tz);
 
     time_t tmp = tv.tv_sec;
-    int flag = 4;
+    int flag = 1;
     int year = 0;
-    // tmp = tmp - 31536000 - 31536000;
     while(tmp > 31536000)
     {
-        if(flag == 4)
+        if(flag == 3)
         {
             tmp -= 31622400; 
             flag = 0;
@@ -72,7 +71,6 @@ void get_time() // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую
         }
         year++;
     }
-    tmp -= 75600; // погрешность
     tm.tm_mon = 0;
     while(tmp > 2419200) // месяца
     {
@@ -96,7 +94,7 @@ void get_time() // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую
         else if(tm.tm_mon == 10) { tmp -= 2592000; tm.tm_mon++; } // ноябрь
         else if(tm.tm_mon == 11) { tmp -= 2678400; tm.tm_mon++; } // декабрь
     }
-    tm.tm_mday = 0;
+    tm.tm_mday = 1;
     while(tmp > 86400) // дни
     {
         tmp -= 86400;
