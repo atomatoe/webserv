@@ -24,6 +24,7 @@
 #include <stdlib.h> // для маллок
 #include <sys/time.h> // для gettimeofday
 #include <dirent.h> // для readdir opendir
+#include <sys/stat.h> // для lstat stat
 
 char *str_join(char *buf, char *add)
 {
@@ -125,6 +126,22 @@ void get_time() // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую
     strftime (buf, 200, "Date: %a, %d %b %Y %X %Z", &tm);
     std::cout << buf << std::endl;
 }
+
+void	*ft_memset(void *src, int g, size_t l)
+{
+	size_t			i;
+	unsigned char	*str;
+
+	str = (unsigned char *)src;
+	i = 0;
+	while (i < l)
+	{
+		str[i] = g;
+		i++;
+	}
+	return (str);
+}
+
 
 #endif
   
