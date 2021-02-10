@@ -12,7 +12,6 @@
 
 #include "server.hpp"
 #include "includes.hpp"
-#include "socket.hpp"
 #include "error_handler.hpp"
 #include "autoindex.hpp"
 
@@ -26,7 +25,7 @@ int main(int argc, char **argv)
     //     return (-1);
 
     Server server;
-    Socket socket("127.0.0.1", 8080);
+    server.set_socket("127.0.0.1", 8080);
     Error_handler error404;
     Autoindex index;
     
@@ -36,7 +35,7 @@ int main(int argc, char **argv)
         std::cerr << "setsockopt FAILED" << std::endl;
         exit(1);
     }
-    if(bind (server.get_server_fd(), (const struct sockaddr *) socket.get_socket_addr(), *(socket.get_address_len()))) // Аргумент address_len задает размер (в байтах) структуры данных, указываемой аргументом addr.
+    if(bind (server.get_server_fd(), (const struct sockaddr *) server.get_socket_addr(), *(server.get_address_len()))) // Аргумент address_len задает размер (в байтах) структуры данных, указываемой аргументом addr.
     {
         std::cerr << "bind FAILED" << std::endl;
         exit(1);
@@ -61,7 +60,7 @@ int main(int argc, char **argv)
         select(server.get_max_fd() + 1, server.get_fd_read_tmp(), server.get_fd_write_tmp(), NULL, NULL);
         if(FD_ISSET(server.get_server_fd(), server.get_fd_read_tmp())) // 1 блок = проверка на пришел кто то или нет
         {
-            int fd = accept(server.get_server_fd(), (struct sockaddr *) socket.get_out(), socket.get_address_len()); // fd - новый клиент
+            int fd = accept(server.get_server_fd(), (struct sockaddr *) server.get_out(), server.get_address_len()); // fd - новый клиент
             // out - заполнит значениями клиента - пример принятия запроса
             if(fd > 0)
             {
