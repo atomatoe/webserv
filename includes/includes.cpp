@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   includes.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/02/10 16:56:06 by atomatoe          #+#    #+#             */
+/*   Updated: 2021/02/10 18:22:15 by atomatoe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes.hpp"
 
 char *str_join(char *buf, char *add)
@@ -20,16 +32,17 @@ char *str_join(char *buf, char *add)
 }
 
 // О структуре tm: https://www.opennet.ru/docs/RUS/glibc/glibc-17.html
-void get_time() // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую строку для ответа за запрос клиента
-{
+char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую строку для ответа за запрос клиента
+{ // Функция принимает количество прошедших секунд с 1 янв. 1970г.
     struct timeval tv;
     struct timezone tz;
     struct tm tm; // здесь будет наша дата лежать
     int sec_per_day = 86400;
     int sec_per_hour = 3600;
     int sec_per_min = 60;
-    gettimeofday(&tv, &tz);
-
+    gettimeofday(NULL, &tz);
+    tv.tv_sec = time;
+    
     time_t tmp = tv.tv_sec;
     int flag = 1;
     int year = 0;
@@ -37,7 +50,7 @@ void get_time() // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую
     {
         if(flag == 3)
         {
-            tmp -= 31622400; 
+            tmp -= 31622400;
             flag = 0;
         }
         else
@@ -86,19 +99,20 @@ void get_time() // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую
     tm.tm_hour = hms / sec_per_hour; // получение часа
     tm.tm_min = (hms % sec_per_hour) / sec_per_min; // получение минут
     tm.tm_sec = (hms % sec_per_hour) % sec_per_min; // получение секунд
-    char zon[4] = "GMT";
-    tm.tm_zone = zon;
-    long test = tv.tv_sec / 86400 ;
-    test = test % 7; // какой день недели
-    tm.tm_wday = test + 4;
+    tm.tm_zone = (char *)"GMT";
 
+    // std::cout << tv.tv_sec << std::endl;
+    long test = (tv.tv_sec / 86400) % 7;
+    tm.tm_wday = test - 3; // январь 1970г - четверг. (WTF !!!!! Посмотреть работает ли в другие дни!!)
+    // std::cout << tm.tm_wday << std::endl;
 
-    char buf[200];
+    char *buf = new char[100];
     tm.tm_isdst = -1; // не используем(переход летнее время)
     tm.tm_gmtoff = 0; // не используем
     tm.tm_yday = 0; // не используем
-    strftime (buf, 200, "Date: %a, %d %b %Y %X %Z", &tm);
-    std::cout << buf << std::endl;
+    strftime (buf, 100, "Date: %a, %d %b %Y %X %Z", &tm);
+    // std::cout << buf << std::endl;
+    return(buf);
 }
 
 void	*ft_memset(void *src, int g, size_t l)

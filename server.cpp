@@ -6,10 +6,11 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:09:20 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 15:42:45 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/10 19:49:59 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "./includes/page_html.hpp"
 #include "server.hpp"
 
 Server::Server()
@@ -50,6 +51,7 @@ int Server::create_server()
 }
 int Server::start_server()
 {
+    Page_html test;
     while(1)
     {
         set_fd_read_tmp(*(get_fd_read()));
@@ -94,7 +96,7 @@ int Server::start_server()
                     newbuf[ret] = '\0';
                     it->second.buff_read = str_join(it->second.buff_read, newbuf);
                     std::cout << "запрос: " << it->second.buff_read << std::endl;
-                    it->second.buff_write = str_join(it->second.buff_write, "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
+                    it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
                     // вот здесь нужно сформировать ответ клиенту в it->second.buff_write
                 }
                 free(newbuf);
@@ -106,15 +108,15 @@ int Server::start_server()
             {
                 if(it->second.buff_write)
                 {
-                    int fd = open("index.html", O_RDONLY);
+                    int fd = open((char *)"index.html", O_RDONLY);
                     char buff[5000];
                     char* hello = (char *)malloc(sizeof(char) * 4097);
                     read(fd, hello, 5555);
                     // char *hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
                     // вот здесь прикручиваем в первой части ответа html страницу, если она нужна
                     // char *ht = error404.create_error("404", "Page not found."); // создание ошибки // Утечка! Нужно чистить ht ответ после того как отправили ошибку клиенту!!!!!!
-                    // char *ind = index.create_page("/Users/atomatoe/Desktop/test"); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
-                    it->second.buff_write = str_join(it->second.buff_write, hello);
+                    char *ind = test.create_autoindex((char *)"/Users/atomatoe/Desktop/test"); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
+                    it->second.buff_write = str_join(it->second.buff_write, ind);
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
                     if(ret != strlen(it->second.buff_write))
                     {

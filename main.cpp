@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 13:26:03 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 15:52:09 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/10 18:02:44 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,17 @@ int main(int argc, char **argv)
     // -------------------------------------
     std::vector<Server> servers;
     Server server;
-    server.set_socket("127.0.0.1", 8080);
+    server.set_socket((char *)"127.0.0.1", 8080);
     servers.push_back(server);
     // -------------------------------------
     size_t it = 0;
     size_t count_server = 1;
+
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
+    get_time(tv.tv_sec);
+
     for(size_t it = 0; it != count_server; it++)
     {
         if(servers[it].create_server() == 5)

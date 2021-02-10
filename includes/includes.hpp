@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 13:23:58 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 15:47:28 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/10 17:03:39 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 #include <sys/stat.h> // для lstat stat
 
 char    *str_join(char *buf, char *add);
-void    get_time();
+char*   get_time(time_t time);
 void    *ft_memset(void *src, int g, size_t l);
 
 
