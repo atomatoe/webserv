@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:09:20 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 19:49:59 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/10 22:08:47 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,11 +112,10 @@ int Server::start_server()
                     char buff[5000];
                     char* hello = (char *)malloc(sizeof(char) * 4097);
                     read(fd, hello, 5555);
-                    // char *hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
                     // вот здесь прикручиваем в первой части ответа html страницу, если она нужна
-                    // char *ht = error404.create_error("404", "Page not found."); // создание ошибки // Утечка! Нужно чистить ht ответ после того как отправили ошибку клиенту!!!!!!
                     char *ind = test.create_autoindex((char *)"/Users/atomatoe/Desktop/test"); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
-                    it->second.buff_write = str_join(it->second.buff_write, ind);
+                    char *err = test.create_error((char *)"404", (char *)"Page not found");
+                    it->second.buff_write = str_join(it->second.buff_write, hello);
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
                     if(ret != strlen(it->second.buff_write))
                     {
@@ -127,6 +126,7 @@ int Server::start_server()
                     }
                     else
                     {
+                        close(it->first); // как отправили все данные клиенту, отсоединяемся
                         free(it->second.buff_write);
                         it->second.buff_write = NULL;
                     }
