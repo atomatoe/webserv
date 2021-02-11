@@ -11,8 +11,8 @@ int getEnv(char **env, Request request){
 	env[4] = ft_strdup("SERVER_PORT=80"); //todo in config file
 	env[5] = ft_strjoin("REQUEST_METOD=", request.getMetod());
 	env[6] = ft_strjoin("PATH_INFO=", "/testing_cgi"); //todo path to file
-	env[7] = ft_strjoin("PATH_TRANSLATED=", "/projects/webserv/testing_cgi/"); //todo absol path
-	env[8] = ft_strjoin("SCRIPT_NAME=/cgi-bin/", "html.py");
+	env[7] = ft_strjoin("PATH_TRANSLATED=", "~/Desktop/webserv_merged/testing_cgi/"); //todo absol path
+	env[8] = ft_strjoin("SCRIPT_NAME=/cgi-bin/", "hello.cpp");
 	env[9] = ft_strjoin("QUERY_STRING=", "/"); //todo from config
 	env[10] = ft_strjoin("REMOTE_HOST=", request.getURI());
 	env[11] = ft_strdup("REMOTE_ADDR=");
@@ -38,7 +38,7 @@ int toCGI(Request request, char** buffWriteFd){
 	pipe(trumpet_fd); //todo error
 	if (getEnv(env, request) == -1)
 		return -1;
-	argv[0] = ft_strdup("testing_cgi/cgi-bin/html.py");
+	argv[0] = ft_strdup("testing_cgi/cgi-bin/hello.cpp");
 	argv[1] = ft_strdup("~/Desktop/webserv_merged/testing_cgi/cgi-bin/");
 	argv[2] = NULL;
 

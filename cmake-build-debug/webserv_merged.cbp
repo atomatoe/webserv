@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="webserv_merged"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/welease/Desktop/webserv_merged/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/welease/Desktop/webserv_merged/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/welease/Desktop/webserv_merged/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="webserv_merged">
+				<Option output="/Users/welease/Desktop/webserv_merged/cmake-build-debug/webserv_merged" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/welease/Desktop/webserv_merged/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/welease/Desktop/webserv_merged/."/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/cgi_proccesing"/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/includes"/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/libft"/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/request"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 webserv_merged"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="webserv_merged/fast">
+				<Option output="/Users/welease/Desktop/webserv_merged/cmake-build-debug/webserv_merged" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/welease/Desktop/webserv_merged/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/welease/Desktop/webserv_merged/."/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/cgi_proccesing"/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/includes"/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/libft"/>
+					<Add directory="/Users/welease/Desktop/webserv_merged/request"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 webserv_merged/fast"/>
+					<CompileFile command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j6 -f &quot;/Users/welease/Desktop/webserv_merged/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/cgi_proccesing/cgi.h">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/cgi_proccesing/cgi_proccesing.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/includes/includes.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/includes/includes.hpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/includes/page_html.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/includes/page_html.hpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_atoi.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_bzero.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_calloc.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_isalnum.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_isalpha.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_isascii.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_isdigit.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_isprint.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_itoa.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_memchr.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_memcmp.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_memcpy.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_putchar_fd.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_putendl_fd.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_putnbr_fd.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_putstr_fd.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_split.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strchr.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strdup.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strjoin.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strlcat.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strlcpy.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strlen.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strmapi.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strncmp.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strnstr.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_strrchr.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_substr.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_tolower.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/ft_toupper.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/libft/libft.h">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/main.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/request/Request.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/request/Request.hpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/server.cpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/server.hpp">
+			<Option target="webserv_merged"/>
+		</Unit>
+		<Unit filename="/Users/welease/Desktop/webserv_merged/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

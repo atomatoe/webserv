@@ -5,7 +5,7 @@
 #ifndef WEBSERV_CGI_H
 #define WEBSERV_CGI_H
 #include <fcntl.h>
-#include "Request.hpp"
+#include "../request/Request.hpp"
 
 int toCGI(Request request, char** buffWriteFd);
 int getEnv(char **env, Request request);

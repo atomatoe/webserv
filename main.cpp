@@ -34,6 +34,7 @@ int main(int argc, char **argv)
     gettimeofday(&tv, &tz);
     get_time(tv.tv_sec);
 
+
     for(size_t it = 0; it != count_server; it++)
     {
         if(servers[it].create_server() == 5)

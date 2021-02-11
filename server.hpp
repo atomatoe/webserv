@@ -14,8 +14,8 @@
 # define SERVER_HPP
 
 #include "./includes/includes.hpp"
-#include "Request.hpp"
-#include "cgi.h"
+#include "request/Request.hpp"
+#include "cgi_proccesing/cgi.h"
 
 typedef struct client 
 { 
