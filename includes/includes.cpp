@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 16:56:06 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/11 13:03:25 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/11 13:21:44 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делае�
     tm.tm_gmtoff = 0; // не используем
     tm.tm_yday = 0; // не используем
     strftime (buf, 100, "Date: %a, %d %b %Y %X %Z", &tm);
-    std::cout << buf << std::endl;
+    // std::cout << buf << std::endl;
     return(buf);
 }
 
