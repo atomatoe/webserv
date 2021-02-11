@@ -48,9 +48,9 @@ int Request::parsHeaders(char **strings){
 			}
 		}
 	}
-	//for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
-	//	std::cout << iter->first << ": " << iter->second << std::endl;
-	//}
+	// for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
+	// 	std::cout << iter->first << ": " << iter->second << std::endl;
+	// }
 	for (int i = 0; strings[i]; ++i){
 		free(strings[i]);
 	}
