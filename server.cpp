@@ -95,8 +95,13 @@ int Server::start_server()
                 {
                     newbuf[ret] = '\0';
                     it->second.buff_read = str_join(it->second.buff_read, newbuf);
-                    std::cout << "запрос: " << it->second.buff_read << std::endl;
-                    it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
+					Request request(it->second.buff_read);
+					it->second.buff_write = ft_strdup("HTTP/1.1 200 OK\nConnection: Closed");
+					//it->second.buff_write = str_join(it->second.buff_write, "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nConnection: Closed");
+
+					toCGI(request, &(it->second.buff_write)); //todo error handler
+                   // std::cout << "запрос: " << it->second.buff_read << std::endl;
+                  //  it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
                     // вот здесь нужно сформировать ответ клиенту в it->second.buff_write
                 }
                 free(newbuf);
@@ -108,14 +113,14 @@ int Server::start_server()
             {
                 if(it->second.buff_write)
                 {
-                    int fd = open((char *)"index.html", O_RDONLY);
-                    char buff[5000];
-                    char* hello = (char *)malloc(sizeof(char) * 4097);
-                    read(fd, hello, 5555);
+                    //int fd = open((char *)"index.html", O_RDONLY);
+                    //char buff[5000];
+                    //char* hello = (char *)malloc(sizeof(char) * 4097);
+                    //read(fd, hello, 5555);
                     // вот здесь прикручиваем в первой части ответа html страницу, если она нужна
-                    char *ind = test.create_autoindex((char *)"/Users/atomatoe/Desktop/webserv"); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
+                   // char *ind = test.create_autoindex((char *)"/Users/atomatoe/Desktop/webserv"); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
                     // char *err = test.create_error((char *)"404", (char *)"Page not found");
-                    it->second.buff_write = str_join(it->second.buff_write, ind);
+                   // it->second.buff_write = str_join(it->second.buff_write, ind);
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
                     if(ret != strlen(it->second.buff_write))
                     {

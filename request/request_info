@@ -1,0 +1,133 @@
+1.Accept-Charsets
+Поле заголовка запроса Accept-Charset указывает на кодировку,
+которая должна быть в ответе сервера. Другими словами: данное
+поле указывает на то, какие наборы символов приемлемы для ответов сервера
+Accept-Charset: iso-8859-5, unicode-1-1;q=0.8
+
+2.Accept-Language
+
+Accept-Language
+Поле заголовка запроса Accept-Language указывает серверу приемлемые
+языки (естественные языки: русский, китайский, английский и пр.)
+Accept-Language: da, en-gb;q=0.8, en;q=0.7
+
+3.Allow
+
+Allow
+Поле заголовка ответа Allow
+передает клиенту методы,
+которые тот может использовать
+Allow: GET, HEAD, PUT
+
+4.Authorization
+
+Authorization
+
+Поле заголовка запроса Authorization
+используется для отправки данных авторизации на сервер
+Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+
+5.Content-Language
+
+Content-Language
+Поле заголовка Content-Language
+указывает клиенту на каком языке  информация,
+находящаяся в теле объекта.
+Content-Language: mi, en	Запрос и ответ
+
+6.Content-Length
+
+Content-Length
+Поле заголовка Content-Length
+указывает необходимую длину тела сообщения в байтах
+Content-Length: 3495	Запрос и ответ
+
+7.Content-Location
+
+Content-Location
+Поле заголовка Content-Location
+используется для идентификации исходного
+местоположения объекта на сервере.
+«Content-Location» «:»absoluteURI | relativeURI )	Запрос и ответ
+
+8.Content-Type
+
+Content-Type
+Поле заголовка Content-Type
+используется для указания медиа типа данных в теле сообщения.
+Content-Type: text/html;charset=utf-8	Запрос и ответ
+
+9.Date - ОБЩИЙ
+
+Date
+Общее поле HTTP заголовка хранит дату и время создания HTTP сообщения
+Date: Tue, 15 Nov 1994 08:12:31 GMT
+
+10.Host
+
+Host
+Поле заголовка запроса Hostиспользуется для указания доменного
+имени и порта запрашиваемого ресурса.
+Host: zametkinapolyah.ru
+
+11.Last-Modified
+
+Last-Modified
+Поле заголовка запроса Last-Modified содержит дату
+последней модификации HTTP объекта
+Last-Modified: Tue, 15 Nov 1994 12:45:26 GMT
+
+12.Location
+
+Location
+Поле заголовка ответа Location
+указывает URI, на котором хранится запрошенный ресурс
+Location :absoluteURI
+
+13.Referer
+
+Referer
+Поле заголовка запроса Referer
+содержит в себе URI ресурса (читай про URI в HTTP),
+с которого клиент перешел на данный ресурс
+Referer: //zametkinapolyah.ru
+
+14.Retry-After
+
+Retry-After
+Поле заголовка ответа Retry-After
+обычно используется сервером вместе с кодом состояния 503 (код ошибки сервера)
+и указывает на то, как долго ресурс будет недоступен
+Retry-After: Fri, 31 Dec 1999 23:59:59 GMT
+Retry-After: 120
+
+15.Server
+
+Server
+Поле заголовка ответа Server
+содержит в себе необходимую информацию о сервере для установления HTTP соединения
+Server: Apache/2.2.17 (Win32) PHP/5.3.5
+
+16.Transfer-Encoding
+
+Transfer-Encoding
+Общее поле HTTP заголовка Transfer-Encoding служит для передачи списка
+методов кодирования передачи
+Transfer-Encoding: chunked
+
+17.User-Agent
+
+User-Agent
+Поле заголовка запроса User-Agent
+содержит в себе полную информацию о клиенте пользователя,
+например, о браузере.
+User-Agent: CERN-LineMode/2.15 libwww/2.17b3
+
+18.WWW-Authenticate
+
+WWW-Authenticate
+Поле заголовка ответа WWW-Authenticate
+используется сервером вместе с кодом состояния 401 (код ошибки клиента).
+В данному поле указываются схемы аутентификации и требуемые параметры
+для доступа к ресурсу
+WWW-Authenticate  = «WWW-Authenticate» «:» 1#challenge
