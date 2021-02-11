@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:09:20 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/11 12:34:13 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/11 13:02:02 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ int Server::start_server()
                     read(fd, hello, 5555);
                     // вот здесь прикручиваем в первой части ответа html страницу, если она нужна
                     char *ind = test.create_autoindex((char *)"/Users/atomatoe/Desktop/webserv"); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
-                    char *err = test.create_error((char *)"404", (char *)"Page not found");
-                    it->second.buff_write = str_join(it->second.buff_write, err);
+                    // char *err = test.create_error((char *)"404", (char *)"Page not found");
+                    it->second.buff_write = str_join(it->second.buff_write, ind);
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
                     if(ret != strlen(it->second.buff_write))
                     {

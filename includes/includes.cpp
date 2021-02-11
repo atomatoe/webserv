@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 16:56:06 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 18:22:15 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/11 13:03:25 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,14 @@ char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делае�
         else if(tm.tm_mon == 11) { tmp -= 2678400; tm.tm_mon++; } // декабрь
     }
     tm.tm_mday = 1;
+    tm.tm_wday = 1;
     while(tmp > 86400) // дни
     {
+        if(tm.tm_wday > 6)
+            tm.tm_wday = 0;
         tmp -= 86400;
         tm.tm_mday++;
+        tm.tm_wday++;
     }
     tm.tm_year = 70 + year; // получаем год
 
@@ -101,17 +105,12 @@ char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делае�
     tm.tm_sec = (hms % sec_per_hour) % sec_per_min; // получение секунд
     tm.tm_zone = (char *)"GMT";
 
-    // std::cout << tv.tv_sec << std::endl;
-    long test = (tv.tv_sec / 86400) % 7;
-    tm.tm_wday = test - 3; // январь 1970г - четверг. (WTF !!!!! Посмотреть работает ли в другие дни!!)
-    // std::cout << tm.tm_wday << std::endl;
-
     char *buf = new char[100];
     tm.tm_isdst = -1; // не используем(переход летнее время)
     tm.tm_gmtoff = 0; // не используем
     tm.tm_yday = 0; // не используем
     strftime (buf, 100, "Date: %a, %d %b %Y %X %Z", &tm);
-    // std::cout << buf << std::endl;
+    std::cout << buf << std::endl;
     return(buf);
 }
 

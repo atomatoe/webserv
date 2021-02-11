@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 13:26:03 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/11 12:35:22 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/11 12:58:34 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ int main(int argc, char **argv)
     size_t it = 0;
     size_t count_server = 1;
 
-    // struct timeval tv;
-    // struct timezone tz;
-    // gettimeofday(&tv, &tz);
-    // get_time(tv.tv_sec);
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
+    get_time(tv.tv_sec);
 
     for(size_t it = 0; it != count_server; it++)
     {
