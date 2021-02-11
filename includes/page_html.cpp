@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:48:01 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 22:07:26 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/11 12:35:10 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,28 +70,6 @@ char* Page_html::create_autoindex(char * _directory)
     _html = str_join(_html, (char *)"</tbody>\n</table>");
     closedir(_dir);
     return(_html);
-    // char *tmp;
-    // _dir = opendir(_directory);
-    // _file = readdir(_dir);
-    // _html = str_join(_html, (char *)"<div>\n<table border=\"2\" align=\"center\" rules=\"rows\">\n<tbody>\n<tr>\n<td>\n<table border=\"60\" bgcolor=\"#c9ce29\" cellpadding=\"60\">\n<tbody>\n<tr>\n<th>\n<h2>WEBSERV</h2>\n<h4>project</h4>\n</th>\n</tr>\n<tr>\n<td rowspan=\"2\">\n<h3>Index of ");
-    // _html = str_join(_html, _directory);
-    // _html = str_join(_html, (char *)"</h3>\n");
-    // while((_file = readdir(_dir)))
-    // {
-    //     _html = str_join(_html, (char *)"<a href=\"");
-    //     _html = str_join(_html, _file->d_name);
-    //     _html = str_join(_html, (char *)"\">");
-    //     _html = str_join(_html, _file->d_name);
-    //     if (_file->d_type == 4)
-	// 		_html = str_join(_html, (char *)"/");
-    //     stat(get_way(_directory, _file->d_name), &buff); // нужен полный путь до файла
-    //     _html = str_join(_html, get_time(buff.st_mtimespec.tv_sec));
-    //     _html = str_join(_html, (char *)"</a><br>");
-    //     std::cout << _html << std::endl;
-    // }
-    // _html = str_join(_html, (char *)"</td>\n<td bgcolor=\"#a5eda5\">\n<h4>Creators:</h4>\n<p><a><span>atomatoe</span></a></p>\n<p><a> <span>welease</span></a></p>\n<p><a><span>qtamaril </span></a></p>\n</td>\n</div>\n");
-    // closedir(_dir);
-    // return(_html);
 }
 
 char* Page_html::create_error(char* code, char* text) // создаст ошибку с № и описанием. Сформирует ее в виде html, вернет html код в char*.
