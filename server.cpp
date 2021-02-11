@@ -98,9 +98,9 @@ int Server::start_server()
 					Request request(it->second.buff_read);
 					it->second.buff_write = ft_strdup("HTTP/1.1 200 OK\nConnection: Closed");
 					//it->second.buff_write = str_join(it->second.buff_write, "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nConnection: Closed");
-					std::cout << "|" << it->second.buff_write << "|" << std::endl << std::endl << std::endl;
+					//std::cout << "|" << it->second.buff_write << "|" << std::endl << std::endl << std::endl;
 					toCGI(request, &(it->second.buff_write)); //todo error handler
-                   	std::cout << it->second.buff_read << std::endl;
+                  // 	std::cout << it->second.buff_read << std::endl;
                   //  it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
                     // вот здесь нужно сформировать ответ клиенту в it->second.buff_write
                 }

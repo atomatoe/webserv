@@ -11,8 +11,8 @@ int getEnv(char **env, Request request){
 	env[4] = ft_strdup("SERVER_PORT=80"); //todo in config file
 	env[5] = ft_strjoin("REQUEST_METOD=", request.getMetod());
 	env[6] = ft_strjoin("PATH_INFO=", "/testing_cgi"); //todo path to file
-	env[7] = ft_strjoin("PATH_TRANSLATED=", "~/Desktop/webserv_merged/testing_cgi/"); //todo absol path
-	env[8] = ft_strjoin("SCRIPT_NAME=/cgi-bin/", "hello.cpp");
+	env[7] = ft_strjoin("PATH_TRANSLATED=", "~/Desktop/webserv/testing_cgi/"); //todo absol path
+	env[8] = ft_strjoin("SCRIPT_NAME=/cgi-bin/", "hello");
 	env[9] = ft_strjoin("QUERY_STRING=", "/"); //todo from config
 	env[10] = ft_strjoin("REMOTE_HOST=", request.getURI());
 	env[11] = ft_strdup("REMOTE_ADDR=");
@@ -38,10 +38,9 @@ int toCGI(Request request, char** buffWriteFd){
 	pipe(trumpet_fd); //todo error
 	if (getEnv(env, request) == -1)
 		return -1;
-	argv[0] = ft_strdup("testing_cgi/cgi-bin/hello.cpp");
-	argv[1] = ft_strdup("~/Desktop/webserv_merged/testing_cgi/cgi-bin/");
+	argv[0] = ft_strdup("testing_cgi/cgi-bin/hello");
+	argv[1] = ft_strdup("~/Desktop/webserv/testing_cgi/cgi-bin/");
 	argv[2] = NULL;
-
 	pid_t pid;
 	if ((pid = fork()) == 0){
 		close(trumpet_fd[1]);
@@ -59,13 +58,14 @@ int toCGI(Request request, char** buffWriteFd){
 		close(trumpet_fd[1]);
 		wait(&status);
 		lseek(fd_final, 0 , 0);
-		//std::cout << "HERE\n";
-		while (read(fd_final, &buf, 1))
+
+		while (read(fd_final, &buf, 1) > 0)
 		{ //todo buf with big size
 			buf_big[i] = buf;
 			i++;
 		}
 		buf_big[i] = '\0';
+		//std::cout <<  "!!!\n" << buf_big << "\n!!!" << std::endl;
 		char *tmp = *buffWriteFd;
 		*buffWriteFd = ft_strjoin(*buffWriteFd, buf_big); //todo leak
 		//std::cout << *buffWriteFd << std::endl;
