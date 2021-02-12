@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:09:20 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/12 16:43:45 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/12 20:43:18 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ Server::Server()
 {
     max_fd = 0;
     yes = 1;
+    status = strdup("HTTP/1.1 200 OK\n");
     FD_ZERO(&fd_write); // зануление fd
     FD_ZERO(&fd_read); // зануление fd
     FD_ZERO(&fd_write_tmp); // зануление fd
@@ -99,7 +100,8 @@ int Server::start_server()
 					Request request(it->second.buff_read);
                     // std::cout << "This test: " << request.getReqString() << std::endl;
                     http_metods_put_post(request);
-					it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
+                    it->second.buff_write = str_join(it->second.buff_write, give_me_headers());
+					// it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
 					//toCGI(request, &(it->second.buff_write)); //todo error handler
                 }
                 free(newbuf);
@@ -121,8 +123,10 @@ int Server::start_server()
                     // it->second.buff_write = http_metods_get_head(request);
                     Request request(it->second.buff_read);
                     it->second.buff_write = str_join(it->second.buff_write, http_metods_get_head(request));
-                    std::cout << "TEST: " << it->second.buff_write << std::endl;
+                    // std::cout << "TEST: " << it->second.buff_write << std::endl;
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
+                    free(status); status = NULL;
+                    status = strdup("HTTP/1.1 200 OK\n");
                     if(ret != strlen(it->second.buff_write))
                     {
                         char *newbuf = NULL;
@@ -206,27 +210,73 @@ void Server::http_metods_put_post(Request request)
         filename << buff;
         filename.close();
     }
+    else if((strcmp(request.getMetod(), "GET") != 0) && (strcmp(request.getMetod(), "PUT") != 0) && (strcmp(request.getMetod(), "POST") != 0) && (strcmp(request.getMetod(), "GET") != 0) && (strcmp(request.getMetod(), "HEAD") != 0))
+    {
+        std::cout << "Bad Request" << std::endl;
+        free(status); status = NULL;
+        status = strdup("HTTP/1.1 400 Bad Request\n");
+    }
+    if(request.getMetod()[0] == 'G' && request.getMetod()[1] == 'E' && request.getMetod()[2] == 'T')
+    {
+        int fds = open(request.getURI(), O_RDONLY);
+        char* hello = (char *)malloc(sizeof(char) * 4097); // сделать выделение памяти!
+        if(fds == -1)
+        {
+            free(status); status = NULL;
+            status = strdup("HTTP/1.1 404 Not Found\n");
+        }
+        close(fds);
+    }
+    if((request.getMetod()[0] == 'G' && request.getMetod()[1] == 'E' && request.getMetod()[2] == 'T') && (strcmp(request.getURI(), "") == 0)) // стартовая страница
+    {
+        free(status); status = NULL;
+        status = strdup("HTTP/1.1 200 OK\n");
+    }
 }
 
 char* Server::http_metods_get_head(Request request)
 {
     if(request.getMetod()[0] == 'G' && request.getMetod()[1] == 'E' && request.getMetod()[2] == 'T')
     {
-        std::cout << "URI = " << request.getURI() << std::endl;
+        // std::cout << "URI = " << request.getURI() << std::endl;
         int fd = open(request.getURI(), O_RDONLY);
+        if(strcmp(request.getURI(), "") == 0)
+            fd = open("index.html", O_RDONLY);
         if(fd == -1)
-            std::cout << "open error http method" << std::endl;
+        {
+            std::cout << "(error 44) open error http method = " << request.getURI() << std::endl;
+        }
         char* hello = (char *)malloc(sizeof(char) * 4097); // сделать выделение памяти!
         if((read(fd, hello, 5555)) == -1) // Исправить 5555, может быть gnl?
-            std::cout << "read error http method" << std::endl;
+        {
+            std::cout << "(error 52) read error http method = " << request.getURI() << std::endl;
+        }
         close(fd);
         return(hello);
     }
-    else if(request.getMetod()[0] == 'H' && request.getMetod()[1] == 'E' && request.getMetod()[2] == 'A' && request.getMetod()[3] == 'D')
-    {
-        return(NULL); // так как у нас уже сформированы хедеры, то нам ничего объединять не нужно
-    }
+    // так как у нас уже сформированы хедеры, то нам ничего объединять не нужно (не надо описывать метод HEAD)
     return (NULL);
+}
+
+char* Server::give_me_headers()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    char *h_2 = get_time(tv.tv_sec);
+    char h_3[30] = "Server: Webserv/1.0 (MacOS)\n\n";
+    char *tmp = (char *)malloc(300);
+    size_t i = 0;
+    size_t t = 0;
+    while(this->status[i] != '\0')
+    { tmp[i] = this->status[i]; i++; }
+    while(h_2[t] != '\0')
+    { tmp[i] = h_2[t++]; i++; }
+    t = 0;
+    while(h_3[t] != '\0')
+    { tmp[i] = h_3[t++]; i++; }
+    tmp[i] = '\0';
+    // std::cout << tmp << std::endl;
+    return(tmp);
 }
 
 int Server::get_server_fd() { return(server_fd); }

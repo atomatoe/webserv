@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 13:23:07 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/12 15:06:13 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/12 19:53:16 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Server
         int                     server_fd; // основной fd где открыт сервер
         int                     yes; // не знаю что это но это работает
         int                     max_fd;
+        char*                   status; // статус, первый хедер. При создание класса по умолчанию будет: "HTTP/1.1 200 OK\n";
     public:
         // construct:
         Server();
@@ -47,6 +48,7 @@ class Server
         void set_socket(char *ip, int port);
         void http_metods_put_post(Request request);
         char* http_metods_get_head(Request request);
+        char* give_me_headers();
         // get
         int get_server_fd();
         int get_max_fd();
