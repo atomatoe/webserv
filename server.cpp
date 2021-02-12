@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:09:20 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/11 19:17:46 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/12 16:43:45 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,15 +95,12 @@ int Server::start_server()
                 {
                     newbuf[ret] = '\0';
                     it->second.buff_read = str_join(it->second.buff_read, newbuf);
+                    // std::cout << "запрос: " << it->second.buff_read << std::endl;
 					Request request(it->second.buff_read);
-					it->second.buff_write = ft_strdup("HTTP/1.1 200 OK\nConnection: Closed\n\n");
-                    std::cout << request.getReqString() << std::endl;
-					// it->second.buff_write = str_join(it->second.buff_write, "HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nConnection: Closed");
-					//std::cout << "|" << it->second.buff_write << "|" << std::endl << std::endl << std::endl;
+                    // std::cout << "This test: " << request.getReqString() << std::endl;
+                    http_metods_put_post(request);
+					it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
 					//toCGI(request, &(it->second.buff_write)); //todo error handler
-                  // 	std::cout << it->second.buff_read << std::endl;
-                //    it->second.buff_write = str_join(it->second.buff_write, (char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n");
-                    // вот здесь нужно сформировать ответ клиенту в it->second.buff_write
                 }
                 free(newbuf);
             }
@@ -114,15 +111,17 @@ int Server::start_server()
             {
                 if(it->second.buff_write)
                 {
-                    int fd = open((char *)"index.html", O_RDONLY);
-                    char buff[5000];
-                    char* hello = (char *)malloc(sizeof(char) * 4097);
-                    read(fd, hello, 5555);
+                    // int fd = open((char *)"index.html", O_RDONLY);
+                    // char* hello = (char *)malloc(sizeof(char) * 4097);
+                    // read(fd, hello, 5555);
                     // std::cout << hello << std::endl;
                     // вот здесь прикручиваем в первой части ответа html страницу, если она нужна
                     // char *ind = test.create_autoindex((char *)"/Users/atomatoe/Desktop/webserv"); // создание ошибки // Утечка! Нужно чистить ind ответ после того как отправили ошибку клиенту!!!!!!
                     // char *err = test.create_error((char *)"404", (char *)"Page not found");
-                    it->second.buff_write = str_join(it->second.buff_write, hello);
+                    // it->second.buff_write = http_metods_get_head(request);
+                    Request request(it->second.buff_read);
+                    it->second.buff_write = str_join(it->second.buff_write, http_metods_get_head(request));
+                    std::cout << "TEST: " << it->second.buff_write << std::endl;
                     int ret = send(it->first, it->second.buff_write, strlen(it->second.buff_write), 0);
                     if(ret != strlen(it->second.buff_write))
                     {
@@ -149,7 +148,86 @@ void Server::set_socket(char *ip, int port)
     socket_addr.sin_addr.s_addr = inet_addr(ip); // содержит адрес (номер) узла сети.
     socket_addr.sin_port = htons(port); // 80 - port с конфига  что делает htons (80 >> 8 | 80 << 8)
 }
+void Server::http_metods_put_post(Request request)
+{
+    // std::cout << "Test:" << request.getReqString() << std::endl;
+    // std::cout << "Method: " << request.getMetod() << std::endl;
 
+    // PUT  ----------------------------
+    if(request.getMetod()[0] == 'P' && request.getMetod()[1] == 'U' && request.getMetod()[2] == 'T')
+    {
+        // int t = atoi(request.getContentLength());
+        int t = 60;
+        std::string tmp = request.getReqString();
+        size_t it = tmp.find("\r\n\r\n");
+        it += 4; // пропускаем /r/n/r/n, чтобы быть на первой букве body
+        std::string buff;
+        int fd;
+        for(size_t i = 0; i != t; i++)
+        {
+            buff += tmp[it++];
+        }
+        std::ifstream in(request.getURI());
+        if(!in.is_open())
+            std::cout << "файл не существует!!" << std::endl;
+        else
+        {
+            std::ofstream filename(request.getURI(), std::ios::app); // std::ios::app - для записи в конец файла
+            if(!filename)
+            {
+                std::cout << "open file error!" << std::endl;
+                exit(1);
+            }
+            filename << buff;
+            filename.close();
+        }
+        in.close();
+    }
+    // POST  ----------------------------
+    else if(request.getMetod()[0] == 'P' && request.getMetod()[1] == 'O' && request.getMetod()[2] == 'S' && request.getMetod()[3] == 'T')
+    {
+        // int t = atoi(request.getContentLength());
+        int t = 60;
+        std::string tmp = request.getReqString();
+        size_t it = tmp.find("\r\n\r\n");
+        it += 4; // пропускаем /r/n/r/n, чтобы быть на первой букве body
+        std::string buff;
+        int fd;
+        for(size_t i = 0; i != t; i++)
+        {
+            buff += tmp[it++];
+        }
+        std::ofstream filename(request.getURI(), std::ios::app); // std::ios::app - для записи в конец файла
+        if(!filename)
+        {
+            std::cout << "open file error!" << std::endl;
+            exit(1);
+        }
+        filename << buff;
+        filename.close();
+    }
+}
+
+char* Server::http_metods_get_head(Request request)
+{
+    if(request.getMetod()[0] == 'G' && request.getMetod()[1] == 'E' && request.getMetod()[2] == 'T')
+    {
+        std::cout << "URI = " << request.getURI() << std::endl;
+        int fd = open(request.getURI(), O_RDONLY);
+        if(fd == -1)
+            std::cout << "open error http method" << std::endl;
+        char* hello = (char *)malloc(sizeof(char) * 4097); // сделать выделение памяти!
+        if((read(fd, hello, 5555)) == -1) // Исправить 5555, может быть gnl?
+            std::cout << "read error http method" << std::endl;
+        close(fd);
+        return(hello);
+    }
+    else if(request.getMetod()[0] == 'H' && request.getMetod()[1] == 'E' && request.getMetod()[2] == 'A' && request.getMetod()[3] == 'D')
+    {
+        return(NULL); // так как у нас уже сформированы хедеры, то нам ничего объединять не нужно
+    }
+    return (NULL);
+}
 
 int Server::get_server_fd() { return(server_fd); }
 int Server::get_max_fd() { return(max_fd); }

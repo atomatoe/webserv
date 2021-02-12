@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 13:23:58 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 17:03:39 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/12 12:51:37 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <sys/time.h> // для gettimeofday
 #include <dirent.h> // для readdir opendir
 #include <sys/stat.h> // для lstat stat
+#include <fstream> // для работы с файлами ofstream
 
 char    *str_join(char *buf, char *add);
 char*   get_time(time_t time);

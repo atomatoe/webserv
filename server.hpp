@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 13:23:07 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/10 15:44:51 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/12 15:06:13 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ class Server
         int create_server();
         int start_server();
         void set_socket(char *ip, int port);
+        void http_metods_put_post(Request request);
+        char* http_metods_get_head(Request request);
         // get
         int get_server_fd();
         int get_max_fd();

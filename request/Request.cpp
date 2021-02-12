@@ -84,7 +84,7 @@ int Request::parsFirstLine(char **copy){
 	}
 	if ((tmp = strchr(*copy, ' ')) != NULL){
 		i = tmp - *copy;
-		tmp = ft_substr(*copy, 0, i);
+		tmp = ft_substr(*copy, 1, i - 1); // сделал start с 1 символа (пропуская /)
 		iter = _info.insert(iter, std::pair<std::string, char *>(std::string("uri"), tmp));
 		//free(tmp); //todo leak
 		*copy = *copy + i + 1;

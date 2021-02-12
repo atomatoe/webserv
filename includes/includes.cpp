@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 16:56:06 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/11 13:21:44 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/12 16:42:28 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ char *str_join(char *buf, char *add)
 {
 	char	*newbuf;
 	int		len;
+    if(add == NULL) // добавил эту проверку, для http метода гет (функция может вернуть в stdjoin NULL)
+        return(buf);
 	if (buf == 0)
 		len = 0;
 	else
