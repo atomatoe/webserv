@@ -1,0 +1,180 @@
+Информация:
+
+1) А.В.Столяров. Программирование: введение в профессию III. Системы и сети.
+6 глава, страница 148.
+http://www.stolyarov.info/books/pdf/progintro_vol3.pdf
+
+2) https://github.com/splunk/pion/tree/develop/src   не смотрел пока
+
+3) https://code-live.ru/post/cpp-http-server-over-sockets/#http   - о http
+
+4) Коды состояния - https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+5) https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa
+
+6) https://medium.com/better-programming/writing-your-own-http-server-introduction-b2f94581268b
+
+7) Что такое сокет? https://habr.com/ru/post/280668/
+https://man7.org/linux/man-pages/man2/socket.2.html
+
+8) Реализация сокетов. Пояснение структуры сокетов.
+http://netcode.ru/cpp/?lang=&katID=19&skatID=176&artID=5155
+
+9) про select
+https://www.opennet.ru/man.shtml?topic=select&category=2&russian=0
+
+10) http запросы/ответы
+https://developer.mozilla.org/ru/docs/Web/HTTP/Messages
+
+11) методы http 
+https://developer.mozilla.org/ru/docs/Web/HTTP/Methods
+
+Новые функции:
+
+1) stat, fstat, lstat - считывает статус файла  
+- https://www.opennet.ru/man.shtml?topic=fstat&category=2&russian=0
+- stat возвращает информацию о файле file_name и заполняет буфер buf. lstat идентична stat, но в случае символьных сылок она возвращает информацию
+    о самой ссылке, а не о файле, на который она указывает. 
+- fstat идентична stat, только возвращается информация об открытом файле, на который указывает filedes (возвращаемый open(2)), а не о file_name.
+
+2) lseek - Изменяет текущую позицию чтения/записи в файле, заданном дескриптором fd.
+http://www.codenet.ru/progr/cpp/sprd/lseek.php
+
+3) strptime - конвертирует строчное представление времени в представление времени структуры tm  
+https://www.opennet.ru/man.shtml?topic=strptime&category=3&russian=0
+
+4) Функция strftime () преобразует локальное (местное) время, представленное в виде структуры типа struct tm, на которую указывает аргумент m_time, в текстовую строку.
+http://all-ht.ru/inf/prog/c/func/strftime.html
+
+x) opendir, readdir итд...
+http://www.c-cpp.ru/content/closedir-opendir-readdir-rewinddir
+
+webserv funс:
+
+5) Функции select ждет изменения статуса нескольких файловых описателей.
+https://www.opennet.ru/man.shtml?topic=select&category=2&russian=0
+
+6) socket - используется для создания сокета.
+https://www.opennet.ru/docs/RUS/linux_base/node245.html
+
+7) accept - используется сервером для принятия связи на сокет.
+https://www.opennet.ru/docs/RUS/linux_base/node248.html
+
+8) listen - Функция listen используется сервером, чтобы информировать ОС, что он ожидает ("слушает") запросы связи на данном сокете. 
+https://www.opennet.ru/docs/RUS/linux_base/node247.html
+
+9) send - служит для записи данных в сокет.
+https://www.opennet.ru/docs/RUS/linux_base/node250.html
+
+10) recv - служит для чтения данных из сокета.
+https://www.opennet.ru/docs/RUS/linux_base/node251.html
+
+11) bind - Эта функция используется сервером для присваивания сокету имени.
+https://www.opennet.ru/docs/RUS/linux_base/node246.html
+
+12) connect - используется процессом-клиентом для установления связи с сервером.
+https://www.opennet.ru/docs/RUS/linux_base/node249.html
+
+13) inet_addr - преобразует обычный вид IP-адреса cp (из номеров и точек) в двоичный код в сетевом порядке расположения байтов.
+https://www.opennet.ru/man.shtml?topic=inet_addr&category=3&russian=0
+
+14) setsockopt - получить или установить флаги на сокете 
+https://www.opennet.ru/man.shtml?topic=setsockopt&category=2&russian=0
+
+15)  getsockname - возвращает либо локальный (функция getsockname), либо удаленный (функция getpeername) адрес протокола, связанный с сокетом.
+https://it.wikireading.ru/7021
+
+16) Функция fcntl() позволяет программе поставить на файл блокировку чтения иди записи.
+https://it.wikireading.ru/34319
+
+Какие заголовки можно реализовать (из сабжекта):
+все заголовки тут: https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8
+
+Что такое заголовок? https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8
+https://code.tutsplus.com/ru/tutorials/http-headers-for-dummies--net-8039
+
+1) Accept-Charset
+Заголовок Accept-Charset запроса HTTP сообщает какую кодировку клиент может понять.
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Accept-Charset
+
+2) Accept-Language
+Запрос Accept-Language сообщает серверу, какие языки клиент понимает и какая локаль предпочтительнее
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Accept-Language
+
+3) Allow  заголовок ответа?! ??
+
+4) Заголовок HTTP запроса Authorization включает в себя данные пользователя для проверки подлинности пользовательского агента с сервером
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Authorization
+
+5) Content-Language - отвечает на Accept-Launge: сервер выбирает один из предложенных вариантов, использует его и информирует клиента о своем выборе при помощи заголовка ответа Content-Language.
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Accept-Language
+
+6) Content-Length указывает размер отправленного получателю тела объекта в байтах.
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Content-Length
+
+7) Content-Location - Заголовок указывает альтернативное расположение для возвращаемых данных
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Location
+
+8) Content-Type - В ответах сервера заголовок Content-Type сообщает клиенту, какой будет тип передаваемого контента. 
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Content-Type
+
+9) Date - Заголовок HTTP вообще содержит дату и время , в которое было инициировано сообщение.
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date
+
+10) Заголовок Host содержит имя домена, для которого предназначен запрос и, опционально, номер порта.
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Host
+
+11) Last-Modified в ответе HTTP содержит дату и время, в которую, по мнению удаленного сервера, запрашиваемый ресурс был изменен.
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Last-Modified
+
+12) Location -  URI по которому клиенту следует перейти или URI созданного ресурса.
+https://ru.wikipedia.org/wiki/HTTP_location
+
+13) Заголовок запроса Referer содержит URL исходной страницы, с которой был осуществлен переход на текущую страницу.
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Referer
+
+14) Retry-After - заголовок HTTP ответа показывает, как долго клиент должен подождать перед последующим запросом
+https://developer.mozilla.org/ru/docs/Web/HTTP/%D0%97%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%B8/Retry-After
+
+15) Server - Заголовка описывает программное обеспечение , используемое сервером происхождения , который обрабатывается запрос - то есть, сервер генерируется ответ.
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Server
+
+16) Transfer-Encoding - Заголовок определяет форму кодирования используется для передачи безопасно тела полезной нагрузки для пользователя.
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
+
+17) User-Agent - Указывает программное обеспечение клиента и его характеристики. Аналогичным ему является Server для серверов и Via для прокси.
+https://ru.wikipedia.org/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%B7%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BA%D0%BE%D0%B2_HTTP#User-Agent
+
+18) WWW-Authenticate - Заголовок ответа HTTP определяет метод аутентификации, который следует использовать для получения доступа к ресурсу.
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
+
+Требование к проекту (гугл переводчик, sorry):
+
+1) совместим с HTTP 1.1 и может использоваться для сравнения заголовки и поведение ответов
+2) Он должен быть неблокирующим и использовать только 1 выбор для всех операций ввода-вывода между клиентом и
+сервер (слушает включает).
+3) Select должен проверять чтение и запись одновременно.
+4) Ваш сервер никогда не должен блокироваться, а клиент должен при необходимости отказываться
+5) Вы никогда не должны выполнять операции чтения или записи, не пройдя select
+6) Проверка значения errno строго запрещена после операции чтения или записи.
+7) Запрос к вашему серверу никогда не должен зависать вечно
+8) На вашем сервере должны быть страницы ошибок по умолчанию, если они не указаны
+9) Ваша программа не должна протекать и никогда не должна падать
+10) Вы не можете использовать fork для чего-то еще, кроме CGI (например, php, perl или ruby ​​и т. Д.)
+11) Ваша программа должна иметь в качестве аргумента файл конфигурации или использовать путь по умолчанию
+12) Мы разрешили вам использовать fcntl, потому что mac os X не поддерживает запись так же, как и другие ОС Unix.
+Вы должны использовать неблокирующий FD, чтобы результат был аналогичен другим ОС.
+13) Поскольку вы используете неблокирующий FD, вы можете использовать read / recv или писать / отправлять функции без выбора, и ваш сервер не будет
+блокировка.
+14) Вы можете использовать только fcntl следующим образом: fcntl (fd, F_SETFL, O_NONBLOCK); Любые другие флаги запрещены
+
+Требования к конфигурационному файлу:
+
+1) выбор порта и хост каждого «сервера»
+2) настроить server_names или нет
+3) Первый сервер для host: port будет по умолчанию для этого host: port (то есть он будет отвечать на все запросы, которые не принадлежат другому серверу)
+4) настроить страницы ошибок по умолчанию
+5) ограничить размер тела клиента
+6) настроить маршруты с одним или несколькими из следующих правил / конфигураций (маршруты не будут использовать регулярное выражение): (см сабж, много текста)
+7) нужно сделать несколько конфигурационных файлов, чтобы показать их на проверке
+8) Если у вас есть вопрос об одном поведении, вам следует сравнить поведение вашей программы с nginx.
