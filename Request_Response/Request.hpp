@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 18:11:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/16 18:28:12 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/18 16:15:24 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,5 @@ private:
    int parsHeaders(char **strings);
    char *putChunkedReqBody();
 };
+
 #endif

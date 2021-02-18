@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/18 15:02:49 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/18 17:19:50 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ char* Response::give_me_response(Request request, WebServer server)
         if(search_uri(server, request.getURI()) == -1 && check_uri(server, request.getURI()) == -1)
         {
             this->_h1 = "HTTP/1.1 404 Not Found\n"; // std::cout << "такого location не существует" << std::endl;
-            if(server.get_error_page().find((char *)"404")->first == "") // std::cout << "error page отсутствует" << std::endl;
+            std::cout << server.get_error_page().find((char *)"404")->first << std::endl;
+            if(server.get_error_page().find((char *)"404")->first == server.get_error_page().end()->first) // std::cout << "error page отсутствует" << std::endl;
                 this->_body = errors.create_error((char *)"404", (char *)"Not Found");
             else // std::cout << "error page присутствует" << std::endl;
             {
@@ -109,19 +110,19 @@ char* Response::give_me_response(Request request, WebServer server)
             if ((server.get_location()[this->_location_id].get_method()).find("GET")->second == false)
             {
                 this->_h1 = "HTTP/1.1 405 Method Not Allowed\n"; // std::cout << "такой метод запрещен!" << std::endl;
-                if(server.get_error_page().find((char *)"405")->first == "") // std::cout << "error page отсутствует" << std::endl;
+                if(server.get_error_page().find((char *)"405")->first == server.get_error_page().end()->first) // std::cout << "error page отсутствует" << std::endl;
                     this->_body = errors.create_error((char *)"405", (char *)"Method Not Allowed");
                 else // std::cout << "error page присутствует" << std::endl;
                 {
                     int fd_tmp = open(server.get_error_page().find((char *)"405")->second.c_str(), O_RDONLY);
                     if(fd_tmp < 0)
-                        this->_body = errors.create_error((char *)"01", (char *)"The file cannot be open, bitch");
+                        this->_body = errors.create_error((char *)"03", (char *)"The file cannot be open, bitch");
                     else
                     {
                         char* temp = (char *)malloc(sizeof(char) * 4097);
                         int i = read(fd_tmp, temp, 5555);
                         if(i < 0)
-                            this->_body = errors.create_error((char *)"02", (char *)"The file cannot be read, bitch");
+                            this->_body = errors.create_error((char *)"04", (char *)"The file cannot be read, bitch");
                         else
                             this->_body = temp;
                         close(fd_tmp);
@@ -149,13 +150,13 @@ char* Response::give_me_response(Request request, WebServer server)
                             std::cout << "dir/file = " << directory << std::endl;
                             int fd = open(directory.c_str(), O_RDONLY);
                             if(fd < 0)
-                                this->_body = errors.create_error((char *)"01", (char *)"The file cannot be open, bitch");
+                                this->_body = errors.create_error((char *)"05", (char *)"The file cannot be open, bitch");
                             else
                             {
                                 char* hello = (char *)malloc(sizeof(char) * 4097);
                                 int i = read(fd, hello, 5555);
                                 if(i < 0)
-                                    this->_body = errors.create_error((char *)"02", (char *)"The file cannot be read, bitch");
+                                    this->_body = errors.create_error((char *)"06", (char *)"The file cannot be read, bitch");
                                 else
                                     this->_body = hello;
                                 close(fd);
@@ -175,13 +176,13 @@ char* Response::give_me_response(Request request, WebServer server)
                             std::cout << directory << std::endl;
                             int fd = open(directory.c_str(), O_RDONLY);
                             if(fd < 0)
-                                this->_body = errors.create_error((char *)"01", (char *)"The file cannot be open, bitch");
+                                this->_body = errors.create_error((char *)"07", (char *)"The file cannot be open, bitch");
                             else
                             {
                                 char* hello = (char *)malloc(sizeof(char) * 4097);
                                 int i = read(fd, hello, 5555);
                                 if(i < 0)
-                                    this->_body = errors.create_error((char *)"02", (char *)"The file cannot be read, bitch");
+                                    this->_body = errors.create_error((char *)"08", (char *)"The file cannot be read, bitch");
                                 else
                                     this->_body = hello;
                                 close(fd);
@@ -192,6 +193,87 @@ char* Response::give_me_response(Request request, WebServer server)
             }
         }
     }
+    else if(request.getMetod()[0] == 'P' && request.getMetod()[1] == 'U' && request.getMetod()[2] == 'T')
+    {
+        if(search_uri(server, request.getURI()) == -1 && check_uri(server, request.getURI()) == -1)
+        {
+            this->_h1 = "HTTP/1.1 404 Not Found\n"; // std::cout << "такого location не существует" << std::endl;
+            if(server.get_error_page().find((char *)"404")->first == server.get_error_page().end()->first) // std::cout << "error page отсутствует" << std::endl;
+                this->_body = errors.create_error((char *)"404", (char *)"Not Found");
+            else // std::cout << "error page присутствует" << std::endl;
+            {
+                int fd_tmp = open(server.get_error_page().find((char *)"404")->second.c_str(), O_RDONLY);
+                if(fd_tmp < 0)
+                    this->_body = errors.create_error((char *)"09", (char *)"The file cannot be open, bitch");
+                else
+                {
+                    char* temp = (char *)malloc(sizeof(char) * 4097);
+                    int i = read(fd_tmp, temp, 5555);
+                    if(i < 0)
+                        this->_body = errors.create_error((char *)"10", (char *)"The file cannot be read, bitch");
+                    else
+                        this->_body = temp;
+                    close(fd_tmp);
+                }
+            }
+        }
+        else
+        {
+            if ((server.get_location()[this->_location_id].get_method()).find("PUT")->second == false)
+            {
+                this->_h1 = "HTTP/1.1 405 Method Not Allowed\n"; // std::cout << "такой метод запрещен!" << std::endl;
+                if(server.get_error_page().find((char *)"405")->first == server.get_error_page().end()->first) // std::cout << "error page отсутствует" << std::endl;
+                    this->_body = errors.create_error((char *)"405", (char *)"Method Not Allowed");
+                else // std::cout << "error page присутствует" << std::endl;
+                {
+                    int fd_tmp = open(server.get_error_page().find((char *)"405")->second.c_str(), O_RDONLY);
+                    if(fd_tmp < 0)
+                        this->_body = errors.create_error((char *)"11", (char *)"The file cannot be open, bitch");
+                    else
+                    {
+                        char* temp = (char *)malloc(sizeof(char) * 4097);
+                        int i = read(fd_tmp, temp, 5555);
+                        if(i < 0)
+                            this->_body = errors.create_error((char *)"12", (char *)"The file cannot be read, bitch");
+                        else
+                            this->_body = temp;
+                        close(fd_tmp);
+                    }
+                }
+            }
+            else
+            {
+                // std::cout << "content lenght = " << request.getContentLength() << std::endl;
+                // int t = atoi(request.getContentLength());
+                int t = 60;
+                std::string tmp = request.getReqString();
+                size_t it = tmp.find("\r\n\r\n");
+                it += 4; // пропускаем /r/n/r/n, чтобы быть на первой букве body
+                std::string buff;
+                for(size_t i = 0; i != t; i++)
+                {
+                    buff += tmp[it++];
+                }
+                std::string str = server.get_location()[this->_location_id].get_root() + request.getURI();
+                std::ofstream filename(str, std::ios::app); // std::ios::app - для записи в конец файла
+                if(!filename)
+                {
+                    std::cout << "open file error!" << std::endl;
+                }
+                filename << buff;
+                filename.close();
+            }
+        }
+    }
+    else if(request.getMetod()[0] == 'H' && request.getMetod()[1] == 'E' && request.getMetod()[2] == 'A' && request.getMetod()[3] == 'D')
+    {
+        if(search_uri(server, request.getURI()) == -1 && check_uri(server, request.getURI()) == -1)
+            this->_h1 = "HTTP/1.1 404 Not Found\n";
+        if ((server.get_location()[this->_location_id].get_method()).find("PUT")->second == false)
+            this->_h1 = "HTTP/1.1 405 Method Not Allowed\n";
+    }
+    else if((strcmp(request.getMetod(), "GET") != 0) && (strcmp(request.getMetod(), "PUT") != 0) && (strcmp(request.getMetod(), "POST") != 0) && (strcmp(request.getMetod(), "GET") != 0) && (strcmp(request.getMetod(), "HEAD") != 0))
+        this->_h1 = "HTTP/1.1 400 Bad Request\n";
     return(edit_response());
 }
 
