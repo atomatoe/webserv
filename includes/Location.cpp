@@ -1,31 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Location.hpp                                       :+:      :+:    :+:   */
+/*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/16 14:02:35 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/16 14:29:47 by atomatoe         ###   ########.fr       */
+/*   Created: 2021/02/16 14:02:37 by atomatoe          #+#    #+#             */
+/*   Updated: 2021/02/18 12:19:55 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOCATION_HPP
-#define LOCATION_HPP
+#include "Location.hpp"
 
-#include "includes.hpp"
+Location::Location(std::string uri, std::string root, bool autoIndex, std::string cgiPath, std::map<std::string, bool> allowMethods, std::string index)
+{
+    this->_URI = uri;
+    this->_root = root;
+    this->_autoIndex = autoIndex;
+    this->_cgiPath = cgiPath;
+    this->_allowMethods = allowMethods;
+    this->_index = index;
+}
 
-class Location {
-private:
-	std::string _root;
-	bool 		_autoIndex;
-	std::string _cgiPath;
-	size_t 		_limitBody;
-	std::map<std::string, bool> _allowMethods;
-	std::string _index;
-public:
-	Location(std::string root, bool autoIndex, std::string cgiPath, std::map<std::string, bool> allowMethods, std::string index);
-	~Location();
-};
-
-#endif
+Location::~Location() { }

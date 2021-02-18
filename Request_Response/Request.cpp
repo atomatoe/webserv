@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 18:11:47 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/16 18:31:38 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/18 13:22:04 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ int Request::parsFirstLine(char **copy){
    }
    if ((tmp = strchr(*copy, ' ')) != NULL){
       i = tmp - *copy;
-      tmp = ft_substr(*copy, 1, i - 1); // сделал start с 1 символа (пропуская /)
+      tmp = ft_substr(*copy, 0, i); // сделал start с 1 символа (пропуская /)  ИСПРАВИЛ ОБРАТНО! 18 февраля
       iter = _info.insert(iter, std::pair<std::string, char *>(std::string("uri"), tmp));
       //free(tmp); //todo leak
       *copy = *copy + i + 1;

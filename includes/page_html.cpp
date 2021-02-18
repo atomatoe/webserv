@@ -6,16 +6,16 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:48:01 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/11 12:35:10 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/18 13:49:24 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "page_html.hpp"
 
-char* Page_html::get_way(char *s1, char *s2)
+char* Page_html::get_way(std::string s1, char *s2)
 {
     char *str = NULL;
-    unsigned int i = strlen(s1);
+    unsigned int i = s1.size();
     unsigned int t = strlen(s2);
     str = (char *)malloc(sizeof(char) * (i + t + 2));
     i = 0; t = 0;
@@ -24,8 +24,8 @@ char* Page_html::get_way(char *s1, char *s2)
         str[i] = s1[i];
         i++;
     }
-    str[i] = '/';
-    i++;
+    // str[i] = '/';
+    // i++;
     while(s2[t] != '\0')
     {
         str[i] = s2[t++];
@@ -46,13 +46,13 @@ Page_html::Page_html()
 
 Page_html::~Page_html() { };
 
-char* Page_html::create_autoindex(char * _directory)
+char* Page_html::create_autoindex(std::string _directory)
 {
     char *tmp;
-    _dir = opendir(_directory);
+    _dir = opendir(_directory.c_str());
     _file = readdir(_dir);
     _html = str_join(_html, (char *)"<table style=\"width: 50%; border-collapse: collapse; margin-left: auto; margin-right: auto; height: 162px;\" border=\"1\" bgcolor=\"#9442ad\">\n<tbody>\n<tr style=\"height: 108px;\">\n<td bgcolor=\"#59bd59\" style=\"width: 50.25%; height: 108px; text-align: center;\">\n<p><strong>&#128149;<a href=\"https://github.com/atomatoe/webserv\">Welcome to Webserv!</a>&#128149;</strong></p>\n<p>Index of ");
-    _html = str_join(_html, (char *)"/TEST! this is block for ROOT folder");
+    _html = str_join(_html, get_way(_directory, (char *)""));
     _html = str_join(_html, (char *)"</p>\n</td>\n<td style=\"width: 49.75%; height: 150px; text-align: center;\">\n<p><strong>Creators:</strong></p>\n<p>&#128125; <a href=\"https://github.com/atomatoe\"> atomatoe </a>&#128125;</p>\n<p><a><span>&#128123; <a href=\"https://github.com/Welease\"> welease </a>&#128123;</span></a></p>\n<p><a><span>&#129302; <a href=\"https://github.com/timurmug\">qtamaril</a> &#129302;</span></a></p>\n</td>\n</tr>\n");
     while((_file = readdir(_dir)))
     {

@@ -6,13 +6,13 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 14:02:33 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/16 16:56:57 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/17 18:58:57 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-WebServer::WebServer(std::string ip, int port, std::string serverName, std::string rootPath, std::vector<Location> locations)
+WebServer::WebServer(std::string ip, int port, std::string serverName, std::string rootPath, std::vector<Location> locations, std::map<std::string, std::string> error_page)
 {
     this->_ip = ip;
     this->_port = port;
@@ -22,6 +22,7 @@ WebServer::WebServer(std::string ip, int port, std::string serverName, std::stri
     //
     this->_yes = 1;
     this->_server_fd = 0;
+    this->_error_page = error_page;
 }
 
 WebServer::~WebServer()

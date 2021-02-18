@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 13:23:07 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/16 15:42:02 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/17 19:03:30 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ private:
 	std::string _serverName;
 	std::string _rootPath;
 	std::vector<Location> _locations;
+	std::map<std::string, std::string> _error_page;
 	//
 	std::map<int, t_client> _list; // здесь будут храниться наши клиенты
     sockaddr_in             _socket_addr; // стандартная структура (см в конце)
@@ -38,7 +39,7 @@ private:
     int                     _server_fd; // основной fd где открыт сервер
     int                     _yes; // не знаю что это но это работает
 public:
-	WebServer(std::string ip, int port, std::string serverName, std::string rootPath, std::vector<Location> locations);
+	WebServer(std::string ip, int port, std::string serverName, std::string rootPath, std::vector<Location> locations, std::map<std::string, std::string> error_page);
 	~WebServer();
 	void create_socket();
 	int build_server();
@@ -48,6 +49,9 @@ public:
     socklen_t *get_address_len();
     sockaddr_in *get_out();
 	std::map<int, t_client> &get_list();
+	// Timur4ik 4ast
+	std::vector<Location> get_location() { return(_locations); };
+	std::map<std::string, std::string> get_error_page() { return(_error_page); }
 };
 
 #endif
