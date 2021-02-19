@@ -13,6 +13,8 @@
 #include "WebServ.hpp"
 #include "./Request_Response/Request.hpp"
 #include "./Request_Response/Response.hpp"
+#include "includes/includes.hpp"
+#include "parse/ParseConfig.hpp"
 
 void start_servers(std::vector<WebServer> servers)
 {
@@ -117,41 +119,45 @@ std::vector<WebServer> init_servers(std::vector<WebServer> servers, size_t count
     return(servers);
 }
 
-int main()
+int main(int ac, char **av)
 {
+    ParseConfig parseConfig((ac == 2) ? av[1] : "default.conf");
+    std::vector<WebServer> servers =  parseConfig.parse();
     std::map<std::string, std::string> error_page;
+    size_t count_server = servers.size();
+
     // error_page.insert(std::make_pair("405", "/Users/atomatoe/Desktop/webServ21/tmp/autoindex.html"));
     // error_page.insert(std::make_pair("404", "/Users/atomatoe/Desktop/webServ21/tmp/autoindex.html"));
 
 
-    std::map<std::string, bool> allowMethods;
-    allowMethods.insert(std::make_pair("GET", true));
-    allowMethods.insert(std::make_pair("PUT", true));
-    allowMethods.insert(std::make_pair("POST", true));
-    allowMethods.insert(std::make_pair("HEAD", true));
-    Location part1("/", "/Users/atomatoe/Desktop/webServ21", true, "cgiPath", allowMethods, "index.html");
-    Location par1("/tmp/", "/Users/atomatoe/Desktop/webServ21", true, "cgiPath", allowMethods, "errors.html");
-    Location par2("/libft/", "/Users/atomatoe/Desktop/webServ21", false, "cgiPath", allowMethods, "autoindex.html");
-    std::vector<Location> locations;
-    locations.push_back(part1);
-    locations.push_back(par1);
-    WebServer server("127.0.0.1", 8080, "serverName", "rootPath", locations, error_page);
+//    std::map<std::string, bool> allowMethods;
+//    allowMethods.insert(std::make_pair("GET", true));
+//    allowMethods.insert(std::make_pair("PUT", true));
+//    allowMethods.insert(std::make_pair("POST", true));
+//    allowMethods.insert(std::make_pair("HEAD", true));
+//    Location part1("/", "/Users/atomatoe/Desktop/webServ21", true, "cgiPath", allowMethods, "index.html");
+//    Location par1("/tmp/", "/Users/atomatoe/Desktop/webServ21", true, "cgiPath", allowMethods, "errors.html");
+//    Location par2("/libft/", "/Users/atomatoe/Desktop/webServ21", false, "cgiPath", allowMethods, "autoindex.html");
+//    std::vector<Location> locations;
+//    locations.push_back(part1);
+//    locations.push_back(par1);
+//    WebServer server("127.0.0.1", 8080, "serverName", "rootPath", locations, error_page);
+//
+//    std::map<std::string, bool> allowMethods2;
+//    allowMethods2.insert(std::make_pair("GET", false));
+//    allowMethods2.insert(std::make_pair("PUT", true));
+//    allowMethods2.insert(std::make_pair("POST", true));
+//    allowMethods2.insert(std::make_pair("HEAD", true));
+//    Location part2("/Users/atomatoe/Desktop/webServ21/", "this root", false, "cgiPath", allowMethods2, "index.html");
+//    std::vector<Location> locations2;
+//    locations2.push_back(part2);
+//    WebServer server2("127.0.0.1", 8081, "serverName", "rootPath", locations2, error_page);
 
-    std::map<std::string, bool> allowMethods2;
-    allowMethods2.insert(std::make_pair("GET", false));
-    allowMethods2.insert(std::make_pair("PUT", true));
-    allowMethods2.insert(std::make_pair("POST", true));
-    allowMethods2.insert(std::make_pair("HEAD", true));
-    Location part2("/Users/atomatoe/Desktop/webServ21/", "this root", false, "cgiPath", allowMethods2, "index.html");
-    std::vector<Location> locations2;
-    locations2.push_back(part2);
-    WebServer server2("127.0.0.1", 8081, "serverName", "rootPath", locations2, error_page);
 
-    size_t count_server = 2;
 
-    std::vector<WebServer> servers; 
-    servers.push_back(server);
-    servers.push_back(server2);
+//    std::vector<WebServer> servers;
+//    servers.push_back(server);
+//    servers.push_back(server2);
 
     servers = init_servers(servers, count_server);
     start_servers(servers);

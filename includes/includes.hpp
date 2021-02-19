@@ -27,12 +27,18 @@
 #include <dirent.h> // для readdir opendir
 #include <sys/stat.h> // для lstat stat
 #include <fstream> // для работы с файлами ofstream
+//#include "../parse/Location.hpp"
+//#include "../parse/ParseConfig.hpp"
+//#include "../WebServ.hpp"
 
 char    *str_join(char *buf, char *add);
 char*   get_time(time_t time);
 void    *ft_memset(void *src, int g, size_t l);
 
-
+void    exitError(std::string);
+bool    isDirectory(std::string path);
+bool    isFileRead(std::string path);
+bool    isFileExec(std::string path);
 
 #endif
   

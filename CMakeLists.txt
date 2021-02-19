@@ -1,0 +1,66 @@
+cmake_minimum_required(VERSION 3.17)
+project(webserv)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(.)
+include_directories(includes)
+include_directories(libft)
+include_directories(parse)
+include_directories(Request_Response)
+
+add_executable(webserv
+        includes/includes.cpp
+        includes/includes.hpp
+        includes/page_html.cpp
+        includes/page_html.hpp
+        libft/ft_atoi.cpp
+        libft/ft_bzero.cpp
+        libft/ft_calloc.cpp
+        libft/ft_free_strstr.cpp
+        libft/ft_isalnum.cpp
+        libft/ft_isalpha.cpp
+        libft/ft_isascii.cpp
+        libft/ft_isdigit.cpp
+        libft/ft_isprint.cpp
+        libft/ft_isspace.cpp
+        libft/ft_itoa.cpp
+        libft/ft_memchr.cpp
+        libft/ft_memcmp.cpp
+        libft/ft_memcpy.cpp
+        libft/ft_putchar_fd.cpp
+        libft/ft_putendl_fd.cpp
+        libft/ft_putnbr_fd.cpp
+        libft/ft_putstr_fd.cpp
+        libft/ft_split.cpp
+        libft/ft_splitTim.cpp
+        libft/ft_strstrlen.cpp
+        libft/ft_strchr.cpp
+        libft/ft_strdup.cpp
+        libft/ft_strjoin.cpp
+        libft/ft_strlcat.cpp
+        libft/ft_str_is_num.cpp
+        libft/ft_free_strstr.cpp
+        libft/ft_strlcpy.cpp
+        libft/ft_strlen.cpp
+        libft/ft_strmapi.cpp
+        libft/ft_strncmp.cpp
+        libft/ft_strnstr.cpp
+        libft/ft_strrchr.cpp
+        libft/ft_strtrim.cpp
+        libft/ft_substr.cpp
+        libft/libft.h
+        parse/Location.cpp
+        parse/Location.hpp
+        parse/ParseConfig.cpp
+        parse/ParseConfig.hpp
+        Request_Response/Request.cpp
+        Request_Response/Request.hpp
+        Request_Response/Response.cpp
+        Request_Response/Response.hpp
+        gnl/get_next_line.cpp
+        gnl/get_next_line_utils.cpp
+        gnl/get_next_line.hpp
+        main.cpp
+        WebServ.cpp
+        WebServ.hpp)

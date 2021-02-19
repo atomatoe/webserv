@@ -12,18 +12,7 @@
 
 #include "WebServ.hpp"
 
-WebServer::WebServer(std::string ip, int port, std::string serverName, std::string rootPath, std::vector<Location> locations, std::map<std::string, std::string> error_page)
-{
-    this->_ip = ip;
-    this->_port = port;
-    this->_serverName = serverName;
-    this->_rootPath = rootPath;
-    this->_locations = locations;
-    //
-    this->_yes = 1;
-    this->_server_fd = 0;
-    this->_error_page = error_page;
-}
+WebServer::WebServer() : _port(-1) { }
 
 WebServer::~WebServer()
 {
@@ -69,3 +58,52 @@ sockaddr_in *WebServer::get_socket_addr() { return(&this->_socket_addr); }
 socklen_t *WebServer::get_address_len() { return(&this->_address_len); }
 sockaddr_in *WebServer::get_out() { return(&this->_out); }
 std::map<int, t_client> &WebServer::get_list() { return(this->_list); }
+
+
+////////////////* from Timur */
+/* get */
+std::string                         WebServer::getIp() const { return _ip; }
+int                                 WebServer::getPort() const { return _port; }
+std::string                         WebServer::getServerName() const { return _serverName; }
+std::string                         WebServer::getRootPath() const { return _rootPath; }
+std::map<std::string, std::string>  WebServer::getErrorPage() const { return _errorPage; };
+std::vector<Location>               WebServer::getLocations() const {
+    return _locations;
+}
+
+/* set */
+void            WebServer::setIp(std::string ip) {
+    if (ip[0] == '.' || ip[ip.size() - 1] == '.')
+        exitError("Incorrect value of ip: \"" + ip + "\"");
+    char **splitted = ft_split(ip.c_str(), '.');
+    if (ft_strstrlen(splitted) != 4)
+        exitError("Incorrect value of ip: \"" + ip + "\"");
+    for (int i = 0; i < 4 ; i ++)
+        if (!ft_str_is_num(splitted[i]))
+            exitError("Incorrect symbols in ip value: \"" + ip + "\"");
+    ft_free_strstr(splitted);
+    this->_ip = ip;
+}
+void            WebServer::setPort(int port) {
+    this->_port = port;
+}
+void            WebServer::setServerName(std::string serverName) {
+    this->_serverName = serverName;
+}
+void            WebServer::setRootPath(std::string rootPath) {
+    if (!isDirectory(rootPath))
+        exitError("Smth wrong with root value: \"" + rootPath + "\"");
+    this->_rootPath = rootPath;
+}
+
+/* add */
+void            WebServer::addErrorPage(std::string error, std::string path) {
+    if (!ft_str_is_num(error.c_str()))
+        exitError("Incorrect value in error_page \"" + error + "\"");
+    if (!isFileRead(path))
+        exitError("Incorrect value in error_page \"" + path + "\"");
+    _errorPage.insert(std::pair<std::string, std::string>(error, path));
+}
+void            WebServer::addLocation(Location location) {
+    this->_locations.push_back(location);
+}

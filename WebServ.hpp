@@ -13,10 +13,11 @@
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-#include "./includes/includes.hpp"
-#include "./includes/Location.hpp"
+//#include "includes/includes.hpp"
+#include "parse/Location.hpp"
+#include "libft/libft.h"
 
-typedef struct client 
+typedef struct client
 { 
     char *buff_read; // то что запросит клиент
     char *buff_write; // то что отдадим клиенту
@@ -30,7 +31,7 @@ private:
 	std::string _serverName;
 	std::string _rootPath;
 	std::vector<Location> _locations;
-	std::map<std::string, std::string> _error_page;
+	std::map<std::string, std::string> _errorPage;
 	//
 	std::map<int, t_client> _list; // здесь будут храниться наши клиенты
     sockaddr_in             _socket_addr; // стандартная структура (см в конце)
@@ -39,7 +40,7 @@ private:
     int                     _server_fd; // основной fd где открыт сервер
     int                     _yes; // не знаю что это но это работает
 public:
-	WebServer(std::string ip, int port, std::string serverName, std::string rootPath, std::vector<Location> locations, std::map<std::string, std::string> error_page);
+	WebServer();
 	~WebServer();
 	void create_socket();
 	int build_server();
@@ -49,9 +50,28 @@ public:
     socklen_t *get_address_len();
     sockaddr_in *get_out();
 	std::map<int, t_client> &get_list();
+
 	// Timur4ik 4ast
-	std::vector<Location> get_location() { return(_locations); };
-	std::map<std::string, std::string> get_error_page() { return(_error_page); }
+//	std::vector<Location> get_location() { return(_locations); };
+//	std::map<std::string, std::string> get_error_page() { return(_error_page); }
+
+    /* get */
+    std::string                         getIp() const;
+    int                                 getPort() const;
+    std::string                         getServerName() const;
+    std::string                         getRootPath() const;
+    std::map<std::string, std::string>  getErrorPage() const;
+    std::vector<Location>               getLocations() const;
+
+    /* set */
+    void    setIp(std::string);
+    void    setPort(int port);
+    void    setServerName(std::string);
+    void    setRootPath(std::string);
+
+    /* add */
+    void    addErrorPage(std::string, std::string);
+    void    addLocation(Location location);
 };
 
 #endif
