@@ -1,7 +1,7 @@
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
-#include "includes.hpp"
+#include "../includes/includes.hpp"
 
 class Location {
 private:

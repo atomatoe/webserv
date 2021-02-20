@@ -2,7 +2,7 @@
 #define PARSECONFIG_HPP
 
 //#include "Location.hpp"
-#include "gnl/get_next_line.hpp"
+#include "../gnl/get_next_line.hpp"
 #include "../WebServ.hpp"
 #include "../includes/includes.hpp"
 #include "../libft/libft.h"
