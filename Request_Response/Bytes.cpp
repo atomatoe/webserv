@@ -10,12 +10,8 @@ Bytes::Bytes() : _dataSize(0), _cutFlag(false), _data(new std::list< std::pair<s
 Bytes::~Bytes() {}
 
 void Bytes::addData(char *data, size_t size){
-//	std::cout << "\n-----------------------------\n";
+	//std::cout << "+++" << data << "+++";
 	_data->push_back(std::pair<size_t,char *>(size, ft_memdup(data, size)));
-//	for (std::list< std::pair<size_t,  char *> >::iterator it = _data->begin(); it != _data->end(); ++it){
-//		std::cout << ":::" << it->second << ":::\n";
-//	}
-//	std::cout << "\n-----------------------------\n";
 	_dataSize += size;
 }
 

@@ -73,9 +73,9 @@ int Response::check_uri(WebServer server, char *uri)
     struct stat sb;
     size_t i = strlen(uri);
     size_t t = 0;
+    int ret;
 
-    if(stat(uri, &sb) == 0 && S_ISDIR(sb.st_mode))
-    {
+    if(stat(uri, &sb) == 0 && S_ISDIR(sb.st_mode)) {
         std::cout << "testers" << std::endl;
         return (-1);
     }
@@ -93,7 +93,9 @@ int Response::check_uri(WebServer server, char *uri)
         t++;
         tmp[t] = '\0';
         // std::cout << "uri 2= " << tmp << std::endl;
-        return(search_uri(server, tmp));
+        ret = search_uri(server, tmp);
+        free(tmp);
+        return ret;
     }
     return(0);
 
@@ -116,19 +118,19 @@ char* Response::give_me_response(Request request, WebServer server) {
     std::cout << std::endl;
     std::cout << "Server: " << server.get_server_fd() << std::endl;
     std::cout << "Port: " << server.getPort() << std::endl;
-    std::cout << "Server root: " << server.getRootPath() << std::endl;
-    for(size_t i = 0; i != server.getLocations().size(); i++)
-    {
-        std::cout << std::endl << "Locations №" << i << std::endl;
-        std::cout << "URL: " << server.getLocations()[i].getUrl() << std::endl;
-        std::cout << "ROOT: " << server.getLocations()[i].getRoot() << std::endl;
-        std::cout << "Index: " << server.getLocations()[i].getIndex() << std::endl;
-        std::cout << "Limit body: " << server.getLocations()[i].getLimitBody() << std::endl;
-        std::cout << "Allow method: " << server.getLocations()[i].getAllowMethods().find("GET")->second << std::endl;
-    }
-    std::cout << std::endl;
-    std::cout << "URI: " << request.getURI() << std::endl;
-    std::cout << "Method: " << request.getMetod() << std::endl;
+    //std::cout << "Server root: " << server.getRootPath() << std::endl;
+   // for(size_t i = 0; i != server.getLocations().size(); i++)
+   // {
+   //     std::cout << std::endl << "Locations №" << i << std::endl;
+   //     std::cout << "URL: " << server.getLocations()[i].getUrl() << std::endl;
+   //     std::cout << "ROOT: " << server.getLocations()[i].getRoot() << std::endl;
+   //     std::cout << "Index: " << server.getLocations()[i].getIndex() << std::endl;
+   //     std::cout << "Limit body: " << server.getLocations()[i].getLimitBody() << std::endl;
+   //     std::cout << "Allow method: " << server.getLocations()[i].getAllowMethods().find("GET")->second << std::endl;
+   // }
+   // std::cout << std::endl;
+   // std::cout << "URI: " << request.getURI() << std::endl;
+   // std::cout << "Method: " << request.getMetod() << std::endl;
 
     if(strcmp(request.getMetod(), "GET") == 0)
     {
@@ -154,6 +156,7 @@ char* Response::give_me_response(Request request, WebServer server) {
                         putErrorToBody((char *)"000", (char *)"The file cannot be read, bitch");
                     else
                     	_bodyOfResponse.addData(temp, ft_strlen(temp));
+                    free(temp);
                     close(fd_tmp);
                 }
             }
@@ -180,6 +183,7 @@ char* Response::give_me_response(Request request, WebServer server) {
                         else
                             _bodyOfResponse.addData(temp, ft_strlen(temp));
                         close(fd_tmp);
+						free(temp);
                     }
                 }
             }
@@ -217,6 +221,7 @@ char* Response::give_me_response(Request request, WebServer server) {
 								else
 									_bodyOfResponse.addData(temp, ft_strlen(temp));
 								close(fd_tmp);
+								free(temp);
                             }
                         }
                     }
@@ -243,6 +248,7 @@ char* Response::give_me_response(Request request, WebServer server) {
 								else
 									_bodyOfResponse.addData(temp, ft_strlen(temp));
 								close(fd_tmp);
+								free(temp);
                             }
                         }
                     }
@@ -274,6 +280,7 @@ char* Response::give_me_response(Request request, WebServer server) {
 					else
 						_bodyOfResponse.addData(temp, ft_strlen(temp));
 					close(fd_tmp);
+					free(temp);
                 }
             }
         }
@@ -304,6 +311,7 @@ char* Response::give_me_response(Request request, WebServer server) {
 						else
 							_bodyOfResponse.addData(temp, ft_strlen(temp));
                         close(fd_tmp);
+						free(temp);
                     }
                 }
             }

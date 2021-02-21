@@ -13,11 +13,10 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
-class Request;
-#include "../includes/includes.hpp"
+//#include "../includes/includes.hpp"
 #include "Bytes.h"
-
-//#include "Request.hpp"
+class Request;
+#include "Request.hpp"
 
 class Response
 {

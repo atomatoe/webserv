@@ -19,6 +19,7 @@
 #include <sstream>
 #include <iomanip>
 #include "../includes/includes.hpp"
+#include "Response.hpp"
 
 class Request{
 public:

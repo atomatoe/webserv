@@ -2,6 +2,7 @@
 #define PARSECONFIG_HPP
 
 #include "../includes/includes.hpp"
+#include "../WebServ.hpp"
 
 void    exitError(std::string);
 bool    isDirectory(std::string path);

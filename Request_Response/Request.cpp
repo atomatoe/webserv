@@ -78,9 +78,11 @@ int Request::parsHeaders(char **strings){
 			}
 		}
 	}
-//   for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
-//    std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
-//   }
+//	std::cout << "IN REQUEST\n";
+// for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
+//  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
+// }
+// std::cout << "AFTER\n";
 	for (int i = 0; strings[i]; ++i){
 		free(strings[i]);
 	}
@@ -108,7 +110,7 @@ void Request::ChunkedBodyProcessing(){
 	}
 	_chunkedReqBody.addData("", 1);
 	std::cout << _chunkedReqBody.getDataSize() << std::endl;
-	std::cout << "||" << _chunkedReqBody.toPointer() << "||" << std::endl;
+	//std::cout << "||" << _chunkedReqBody.toPointer() << "||" << std::endl;
 }
 
 int Request::parsRequest(char *reqString){

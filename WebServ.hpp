@@ -16,16 +16,16 @@
 //#include "includes/includes.hpp"
 #include "Bytes.h"
 #include <vector>
-#include "Request_Response/Request.hpp"
 #include "Request_Response/Response.hpp"
+#include "Request_Response/Request.hpp"
+class Response;
 
-typedef struct client
-{
+typedef struct client {
+	Request *request;
+	Response *response;
 	Bytes *receivedData;// то что запросит клиент
 	Bytes *toSendData; // то что отдадим клиенту
 	int isHeadersEnded;
-	//Request *request;
-	//Response response;
 } t_client;
 
 class WebServer

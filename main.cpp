@@ -1,7 +1,7 @@
 #include "WebServ.hpp"
 #include "./Request_Response/Request.hpp"
 #include "./Request_Response/Response.hpp"
-#include "includes/includes.hpp"
+//#include "includes/includes.hpp"
 #include "parse/ParseConfig.hpp"
 
 void fd_init(std::vector<WebServer> &servers, fd_set &fd_write_tmp, fd_set &fd_read_tmp, fd_set &fd_write, fd_set &fd_read, int &max_fd)
@@ -45,8 +45,6 @@ void endOfReadingRequest(std::map<int, t_client>::iterator it2, fd_set fd_write,
 }
 
 void start_servers(std::vector<WebServer> servers) {
-	Response response;
-	Request *request;
 	int 					max_fd;
 	fd_set                  fd_write;
 	fd_set                  fd_read;
@@ -55,8 +53,10 @@ void start_servers(std::vector<WebServer> servers) {
 	fd_init(servers, fd_write_tmp, fd_read_tmp, fd_write, fd_read, max_fd);
 	size_t i = 1;
 	char* newbuf = (char *)malloc(sizeof(char) * 2000001);
+	int i1 = 0;
 	while(1)
 	{
+		i1++;
 		if (i++ == 0)
 			break;
 		fd_write_tmp = fd_write;
@@ -74,31 +74,35 @@ void start_servers(std::vector<WebServer> servers) {
 					size_t len;
 					int ret = recv(it2->first, newbuf, 2000000, 0);
 					if (!it2->second.isHeadersEnded && ret > 0){
+						//std::cout << "|||" << newbuf << "|||" << std::endl;
 						it2->second.receivedData->addData(newbuf, ret);
+						//std::cout << "---" << it2->second.receivedData->toPointer() << "---" << std::endl;
 						if ((len = it2->second.receivedData->findMemoryFragment(doubleCRLF, 4)) != (size_t)-1){
 							tmp = it2->second.receivedData->cutData(len + 4);
-							request = new Request(it2->second.receivedData->toPointer());
-							request->getReqBody().addData(tmp.toPointer(), tmp.getDataSize());
+							it2->second.request = new Request(it2->second.receivedData->toPointer());
+							std::cout << "after req: " << i1 << std::endl;
+							it2->second.request->getReqBody().addData(tmp.toPointer(), tmp.getDataSize());
 							it2->second.isHeadersEnded = 1;
 							ret = recv(it2->first, newbuf , 0, 0);
 							if (ret == 0){
 								it2->second.isHeadersEnded = 2;
 								//it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
-								break ;
+								//break;
+								goto tmp;
 							}
 						}
 					}
 					else if (ret > 0 && it2->second.isHeadersEnded == 1){
-						request->setReqBody(newbuf, ret);
-						if (strncmp(request->getTransferEncoding(), "chunked", 7) == 0 && (len = request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t)-1)){
-							request->getReqBody().cutData(len + 5);
-							request->ChunkedBodyProcessing();
+						it2->second.request->setReqBody(newbuf, ret);
+						if (strncmp(it2->second.request->getTransferEncoding(), "chunked", 7) == 0 && (len = it2->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t)-1)){
+							it2->second.request->getReqBody().cutData(len + 5);
+							it2->second.request->ChunkedBodyProcessing();
 							it2->second.isHeadersEnded = 2;
 							//it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
 						}
-						else if (ret < 2000000 || request->getReqBody().findMemoryFragment(doubleCRLF, 4) != (size_t)-1){
+						else if (ret < 2000000 || it2->second.request->getReqBody().findMemoryFragment(doubleCRLF, 4) != (size_t)-1){
 							//it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
-							request->getReqBody().addData((char *)"", 1);
+							it2->second.request->getReqBody().addData((char *)"", 1);
 							it2->second.isHeadersEnded = 2;
 						}
 					}
@@ -107,8 +111,11 @@ void start_servers(std::vector<WebServer> servers) {
 						break ;
 					}
 				}
+				tmp:
 				if(it2->second.isHeadersEnded == 2) {
-					it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
+					it2->second.response = new Response();
+					std::cout << "before res: " << i1 << std::endl;
+					it2->second.toSendData->addData(it2->second.response->give_me_response(*(it2->second.request), servers[it]), it2->second.response->getLenOfResponse());
 					int ret = send(it2->first, it2->second.toSendData->toPointer(), it2->second.toSendData->getDataSize(), 0);
 					if(ret != it2->second.toSendData->getDataSize()) {
 						char *buf = NULL;
@@ -122,6 +129,10 @@ void start_servers(std::vector<WebServer> servers) {
 						//it2->second.toSendData = NULL;
 					}
 					it2->second.isHeadersEnded = 0;
+					delete it2->second.response;
+					delete it2->second.request;
+					it2->second.receivedData->clear();
+					it2->second.toSendData->clear();
 				}
 			}
 		}
