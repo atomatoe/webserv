@@ -22,7 +22,7 @@ public:
 	void addData(char *data, size_t size);
 	size_t findMemoryFragment(char const *toFind, size_t len);
 	size_t getDataSize() const {return _dataSize;}
-	Bytes cutData(size_t len); //return ostatok ot cut
+	Bytes cutData(size_t len); //return remainder of cut
 	bool isEmpty();
 	char *toPointer();
 	void clear();

@@ -28,7 +28,7 @@ void accepting(std::vector<WebServer> &servers, size_t it, fd_set &fd_write, fd_
 			max_fd = fd;
 		(servers[it].get_list())[fd].receivedData = new Bytes();
 		(servers[it].get_list())[fd].toSendData = new Bytes();
-		(servers[it].get_list())[fd].isHeadersEnded = false;
+		(servers[it].get_list())[fd].isHeadersEnded = 0;
 	}
 }
 
@@ -45,6 +45,8 @@ void endOfReadingRequest(std::map<int, t_client>::iterator it2, fd_set fd_write,
 }
 
 void start_servers(std::vector<WebServer> servers) {
+	Response response;
+	Request *request;
 	int 					max_fd;
 	fd_set                  fd_write;
 	fd_set                  fd_read;
@@ -66,37 +68,38 @@ void start_servers(std::vector<WebServer> servers) {
 				accepting(servers, it, fd_write, fd_read, max_fd);
 			for(std::map<int, t_client>::iterator it2 = (servers[it].get_list()).begin(); it2 != (servers[it].get_list()).end(); it2++) // 2 блок = на получение данных (отправил или нет)
 			{
-				Request *request;
 				Bytes tmp;
 				if(FD_ISSET(it2->first, &fd_read_tmp))
 				{
 					size_t len;
-					int ret = recv(it2->first, newbuf, 123, 0);
+					int ret = recv(it2->first, newbuf, 2000000, 0);
 					if (!it2->second.isHeadersEnded && ret > 0){
 						it2->second.receivedData->addData(newbuf, ret);
 						if ((len = it2->second.receivedData->findMemoryFragment(doubleCRLF, 4)) != (size_t)-1){
 							tmp = it2->second.receivedData->cutData(len + 4);
 							request = new Request(it2->second.receivedData->toPointer());
 							request->getReqBody().addData(tmp.toPointer(), tmp.getDataSize());
-							it2->second.isHeadersEnded = true;
+							it2->second.isHeadersEnded = 1;
 							ret = recv(it2->first, newbuf , 0, 0);
 							if (ret == 0){
-								it2->second.toSendData->addData((char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n", 180);
-								//std::cout << "!!" << request->getReqBody().toPointer()<< "!!" << std::endl;
+								it2->second.isHeadersEnded = 2;
+								//it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
 								break ;
 							}
 						}
 					}
-					else if (ret > 0 && it2->second.isHeadersEnded){
+					else if (ret > 0 && it2->second.isHeadersEnded == 1){
 						request->setReqBody(newbuf, ret);
 						if (strncmp(request->getTransferEncoding(), "chunked", 7) == 0 && (len = request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t)-1)){
 							request->getReqBody().cutData(len + 5);
 							request->ChunkedBodyProcessing();
-							it2->second.toSendData->addData((char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n", 180);
+							it2->second.isHeadersEnded = 2;
+							//it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
 						}
-						else if (ret < 123 || request->getReqBody().findMemoryFragment(doubleCRLF, 4) != (size_t)-1){
-							it2->second.toSendData->addData((char *)"HTTP/1.1 200 OK\nDate: Mon, 27 Jul 2009 12:28:53 GMT\nServer: Apache/2.2.14 (Win32)\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\nContent-Type: text/html\nConnection: Closed\n\n", 180);
+						else if (ret < 2000000 || request->getReqBody().findMemoryFragment(doubleCRLF, 4) != (size_t)-1){
+							//it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
 							request->getReqBody().addData((char *)"", 1);
+							it2->second.isHeadersEnded = 2;
 						}
 					}
 					if (ret == 0){
@@ -104,15 +107,9 @@ void start_servers(std::vector<WebServer> servers) {
 						break ;
 					}
 				}
-				if(it2->second.toSendData->getDataSize() == 180) {
-					int fd = open((char *)"/Users/welease/Downloads/webServ21/index.html", O_RDONLY);
-					if (fd < 0)
-						std::cout << "ERROR " << errno << std::endl;
-					char* hello = (char *)malloc(sizeof(char) * 4097);
-					read(fd, hello, 5555);
-					it2->second.toSendData->addData(hello, 1807);
-					it2->second.toSendData->toPointer();
-					int ret = send(it2->first, it2->second.toSendData->toPointer(), 1960, 0);
+				if(it2->second.isHeadersEnded == 2) {
+					it2->second.toSendData->addData(response.give_me_response(*request, servers[it]), response.getLenOfResponse());
+					int ret = send(it2->first, it2->second.toSendData->toPointer(), it2->second.toSendData->getDataSize(), 0);
 					if(ret != it2->second.toSendData->getDataSize()) {
 						char *buf = NULL;
 						buf = ft_memjoin(newbuf, it2->second.toSendData->toPointer(), 0,it2->second.toSendData->getDataSize() + ret); //todo maybe important thing
@@ -124,6 +121,7 @@ void start_servers(std::vector<WebServer> servers) {
 						it2->second.toSendData->clear();
 						//it2->second.toSendData = NULL;
 					}
+					it2->second.isHeadersEnded = 0;
 				}
 			}
 		}

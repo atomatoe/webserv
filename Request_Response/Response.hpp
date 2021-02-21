@@ -13,17 +13,20 @@
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
+class Request;
 #include "../includes/includes.hpp"
-#include "Request.hpp"
+#include "Bytes.h"
+
+//#include "Request.hpp"
 
 class Response
 {
 private:
-    std::string _h1;
-    std::string _h2;
-    std::string _h3;
-    std::string _body;
-    char *      _response;
+    std::string _httpVersion;
+    std::string _timeOfResponse;
+    std::string _versionOfWebServer;
+    Bytes		_bodyOfResponse;
+    size_t 		_lenOfResponse;
 
     int         _location_id;
 public:
@@ -33,6 +36,9 @@ public:
     char* edit_response();
     int search_uri(WebServer server, char *uri);
     int check_uri(WebServer server, char *uri);
+	void putErrorToBody(char *error, char *type);
+
+	size_t getLenOfResponse() const;
 
 };
 #endif
