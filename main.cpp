@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 18:15:55 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/18 16:16:11 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/21 14:39:01 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 void start_servers(std::vector<WebServer> servers)
 {
+    Response response;
     fd_set                  fd_write;
     fd_set                  fd_read;
     fd_set                  fd_write_tmp; // fd_write_tmp - нужен для работы select. При вызове макроса FD_ISSET портится fdшник, поэтому мы будем делать копию в fd_read_tmp, чтобы портилась она
@@ -80,7 +81,6 @@ void start_servers(std::vector<WebServer> servers)
                         std::cout << "запрос:\n" << it2->second.buff_read << std::endl;
                         // it2->second.buff_write = str_join(it2->second.buff_write, (char *)"HTTP/1.1 200 OK\n\n");
                         Request request(it2->second.buff_read, it2->first);
-                        Response response;
                         it2->second.buff_write = str_join(it2->second.buff_write, response.give_me_response(request, servers[it]));
                     }
                     free(newbuf);
