@@ -53,6 +53,7 @@ add_executable(webserv
         parse/Location.cpp
         parse/Location.hpp
         parse/ParseConfig.cpp
+        parse/parse_utils.cpp
         parse/ParseConfig.hpp
         Request_Response/Request.cpp
         Request_Response/Request.hpp

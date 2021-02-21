@@ -1,11 +1,12 @@
 #ifndef PARSECONFIG_HPP
 #define PARSECONFIG_HPP
 
-//#include "Location.hpp"
-#include "../gnl/get_next_line.hpp"
-#include "../WebServ.hpp"
 #include "../includes/includes.hpp"
-#include "../libft/libft.h"
+
+void    exitError(std::string);
+bool    isDirectory(std::string path);
+bool    isFileRead(std::string path);
+bool    isFileExec(std::string path);
 
 class ParseConfig {
 private:

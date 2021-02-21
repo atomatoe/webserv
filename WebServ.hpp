@@ -13,9 +13,7 @@
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-//#include "includes/includes.hpp"
-#include "parse/Location.hpp"
-#include "libft/libft.h"
+#include "includes/includes.hpp"
 
 typedef struct client
 { 
@@ -26,12 +24,12 @@ typedef struct client
 class WebServer
 {
 private:
-	std::string _ip;
-	int			_port;
-	std::string _serverName;
-	std::string _rootPath;
-	std::vector<Location> _locations;
-	std::map<std::string, std::string> _errorPage;
+	std::string                         _ip;
+	int		                            _port;
+	std::string                         _serverName;
+	std::string                         _rootPath;
+	std::vector<Location>               _locations;
+	std::map<std::string, std::string>  _errorPage;
 	//
 	std::map<int, t_client> _list; // здесь будут храниться наши клиенты
     sockaddr_in             _socket_addr; // стандартная структура (см в конце)
@@ -50,10 +48,6 @@ public:
     socklen_t *get_address_len();
     sockaddr_in *get_out();
 	std::map<int, t_client> &get_list();
-
-	// Timur4ik 4ast
-//	std::vector<Location> get_location() { return(_locations); };
-//	std::map<std::string, std::string> get_error_page() { return(_error_page); }
 
     /* get */
     std::string                         getIp() const;

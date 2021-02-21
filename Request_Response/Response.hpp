@@ -15,8 +15,6 @@
 
 #include "../includes/includes.hpp"
 #include "Request.hpp"
-#include "../WebServ.hpp"
-#include "../includes/page_html.hpp"
 
 class Response
 {

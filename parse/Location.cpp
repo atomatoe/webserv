@@ -1,5 +1,3 @@
-
-#include <string>
 #include "Location.hpp"
 
 Location::Location() {

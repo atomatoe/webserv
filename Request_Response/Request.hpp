@@ -12,9 +12,7 @@
 
 #ifndef WEBSERV_REQUEST_H
 #define WEBSERV_REQUEST_H
-#include <map>
-#include <iostream>
-#include "../libft/libft.h"
+#include "../includes/includes.hpp"
 #include <cmath>
 
 class Request{
