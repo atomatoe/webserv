@@ -27,16 +27,19 @@
 #include <dirent.h> // для readdir opendir
 #include <sys/stat.h> // для lstat stat
 #include <fstream> // для работы с файлами ofstream
+#define doubleCRLF "\r\n\r\n"
 
 class Location;
 class ParseConfig;
 class WebServer;
 class Page_html;
+class Bytes;
 #include "../parse/Location.hpp"
 #include "../parse/ParseConfig.hpp"
 #include "../gnl/get_next_line.hpp"
 #include "../libft/libft.h"
 #include "../WebServ.hpp"
+#include "../Request_Response/Bytes.h"
 #include "page_html.hpp"
 
 char    *str_join(char *buf, char *add);

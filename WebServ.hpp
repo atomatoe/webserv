@@ -16,9 +16,10 @@
 #include "includes/includes.hpp"
 
 typedef struct client
-{ 
-    char *buff_read; // то что запросит клиент
-    char *buff_write; // то что отдадим клиенту
+{
+	Bytes *receivedData;// то что запросит клиент
+	Bytes *toSendData; // то что отдадим клиенту
+	bool isHeadersEnded;
 } t_client;
 
 class WebServer

@@ -13,7 +13,9 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 # include <stdlib.h>
+# include <vector>
 # include <unistd.h>
+# define memBody std::vector < std::pair <size_t, char *> >
 
 typedef struct		s_list
 {
@@ -71,5 +73,9 @@ char			    **ft_splitTim(char const *s, char c);
 size_t	            ft_strstrlen(char **splitted);
 void	            ft_free_strstr(char **splitted);
 bool	            ft_isspace(int c);
+char				*ft_memdup(char const *src, size_t size);
+char 				*ft_memjoin(char *s1, char *s2, size_t len1, size_t len2);
+memBody				 *ft_memsplit(char *s, char *c, size_t size, size_t len);
+char				*ft_memmem(char *haystack, size_t hlen, char const *needle, size_t nlen);
 
 #endif
