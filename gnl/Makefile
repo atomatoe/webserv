@@ -23,15 +23,16 @@ OBJS = $(SRCS:%.cpp=%.o)
 all: $(NAME)
 
 $(NAME): $(OBJS) $(HEADER)
-	ar rc $(NAME) $(OBJS)
+	@ar rc $(NAME) $(OBJS)
+	@echo "gnl is created"
 
 %.o: %.cpp
-	clang++ $(FLAGS_W) -D BUFFER_SIZE=32 -o $@ -c $<
+	@clang++ $(FLAGS_W) -o $@ -c $<
 
 clean:
-	$(RM) $(OBJS)
+	@$(RM) $(OBJS)
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 
 re: fclean all
