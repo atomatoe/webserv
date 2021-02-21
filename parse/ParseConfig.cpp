@@ -103,7 +103,7 @@ bool    ParseConfig::checkRoot(char *line, WebServer &webServer) {
 bool    ParseConfig::checkErrorPage(char *line, WebServer &webServer) {
     if (compareLines(line, "error_page")) {
         char *trimmed = ft_strtrim(line, " \t");
-        char **splitted = ft_split(trimmed, ' ');
+        char **splitted = ft_splitTim(trimmed, ' ');
         if (ft_strstrlen(splitted) != 3)
             exitError("Incorrect value of error_page");
         char *trimmedKey = ft_strtrim(splitted[1], " \t");
@@ -161,7 +161,7 @@ bool    ParseConfig::checkCgiPass(char *line, Location &location) {
         if (!checkTabs(line, 8))
             exitError("Invalid number of spaces or tabs");
         char *trimmed = ft_strtrim(line, " \t");
-        char **splitted = ft_split(trimmed, ' ');
+        char **splitted = ft_splitTim(trimmed, ' ');
         if (ft_strstrlen(splitted) != 3)
             exitError("Incorrect value of cgi_pass");
         char *trimmedKey = ft_strtrim(splitted[1], " \t");
