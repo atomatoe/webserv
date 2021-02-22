@@ -8,3 +8,4 @@ cmake-build-debug
 webserv
 gnl/gnl.a
 libft/libft.a
+*.o
