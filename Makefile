@@ -16,6 +16,7 @@ SRCS =	WebServ.cpp \
 		Request_Response/Bytes.cpp \
 		Request_Response/Request.cpp \
 		Request_Response/Response.cpp \
+		Request_Response/HeaderValidation.cpp \
 		parse/Location.cpp \
 		parse/ParseConfig.cpp \
 		parse/parse_utils.cpp

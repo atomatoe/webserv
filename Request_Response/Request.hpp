@@ -20,6 +20,7 @@
 #include <iomanip>
 #include "../includes/includes.hpp"
 #include "Response.hpp"
+#include "HeaderValidation.hpp"
 
 class Request{
 public:
@@ -36,15 +37,16 @@ public:
 	void ChunkedBodyProcessing();
 	char *getTransferEncoding() {return _info["Transfer-Encoding"];}
 private:
-	char *_reqString;
-	Bytes _reqBody;
-	Bytes _chunkedReqBody;
+	char                        *_reqString;
+	Bytes                       _reqBody;
+	Bytes                       _chunkedReqBody;
 	std::map<std::string,char*> _info;
+    HeaderValidation            _headValid;
 
+    int parsRequest(char *reqString);
+    int parsFirstLine(char **copy);
+    void fillMap();
 
-	int parsRequest(char *reqString);
-	int parsFirstLine(char **copy);
-	void fillMap();
 	int parsHeaders(char **strings);
 };
 #endif

@@ -22,7 +22,7 @@ void fd_init(std::vector<WebServer> &servers, fd_set &fd_write_tmp, fd_set &fd_r
 void accepting(std::vector<WebServer> &servers, size_t it, fd_set &fd_write, fd_set &fd_read, int &max_fd) {
 	int fd = accept(servers[it].get_server_fd(), (struct sockaddr *) servers[it].get_out(), servers[it].get_address_len()); // fd - новый клиент
 	if(fd > 0) {
-		FD_SET(fd, &fd_read); // заносим клиента в fd для чтения
+        FD_SET(fd, &fd_read); // заносим клиента в fd для чтения
 		FD_SET(fd, &fd_write); // заносим клиента в fd для записи
 		if (fd > max_fd)
 			max_fd = fd;
@@ -79,6 +79,7 @@ void start_servers(std::vector<WebServer> servers) {
 						//std::cout << "---" << it2->second.receivedData->toPointer() << "---" << std::endl;
 						if ((len = it2->second.receivedData->findMemoryFragment(doubleCRLF, 4)) != (size_t)-1){
 							tmp = it2->second.receivedData->cutData(len + 4);
+//							it2->second.receivedData->addData((char *)"", 1);
 							it2->second.request = new Request(it2->second.receivedData->toPointer());
 							std::cout << "after req: " << i1 << std::endl;
 							it2->second.request->getReqBody().addData(tmp.toPointer(), tmp.getDataSize());
@@ -159,5 +160,27 @@ int main(int ac, char **av)
 
 	init_servers(servers, count_server);
 	start_servers(servers);
+
+//    HeaderValidation valid;
+//    std::string s = "GET / HTTP/1.1\r\n"
+//                "Host: localhost:8080\r\n"
+//                "Connection: keep-alive\r\n"
+//                "Cache-Control: max-age=0\r\n"
+//                "Upgrade-Insecure-Requests: 1\r\n"
+//                "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36\r\n"
+//                "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\n"
+//                "Sec-Fetch-Site: none\r\n"
+//                "Sec-Fetch-Mode: navigate\r\n"
+//                "Sec-Fetch-User: ?1\r\n"
+//                "Sec-Fetch-Dest: document\r\n"
+//                "Accept-Encoding: gzip, deflate, br\r\n"
+//                "Accept-Language: en-US,en;q=0.9\r\n"
+//                "\r\n";
+//    try {
+//        valid.valid((char *) s.c_str());
+//    }
+//    catch (std::exception &e) {
+//        std::cerr << e.what() << std::endl;
+//    }
 	return(0);
 }

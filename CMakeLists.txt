@@ -62,6 +62,8 @@ add_executable(webserv
         Request_Response/Request.hpp
         Request_Response/Response.cpp
         Request_Response/Response.hpp
+        Request_Response/HeaderValidation.cpp
+        Request_Response/HeaderValidation.hpp
         Request_Response/Bytes.cpp
         Request_Response/Bytes.h
         gnl/get_next_line.cpp
