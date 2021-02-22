@@ -254,7 +254,7 @@ std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
         location.setUrl(trimmedValue);
         free(trimmedLine);
         free(trimmedValue);
-        while (get_next_line(_fd, &line)) {
+        while (get_next_line(_fd, &line) >= 0) {
             _lineStr = line;
             char *trimmed = ft_strtrim(line, " \t");
             if (!trimmed) {

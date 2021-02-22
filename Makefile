@@ -43,7 +43,6 @@ $(NAME): $(LABEL) $(OBJS)
 	@$(CC) $(OBJS) $(INCLUDES_OBJS) $(RR_OBJS) $(PARSE_OBJS) $(GNL_A) $(LIBFT_A) -o $(NAME)
 	@echo "${GREEN}webserv is ready to work!${RESET}"
 
-
 %.o:%.cpp
 	@$(CC) -o $@ -c $<
 
