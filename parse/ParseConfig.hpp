@@ -26,13 +26,6 @@ private:
     bool            checkPort(char *line, WebServer &webServer);
     bool            checkRoot(char *line, WebServer &webServer);
     bool            checkErrorPage(char *line, WebServer &webServer);
-    bool (ParseConfig::*_checkFuncs[5])(char *line, WebServer &webServer) = {
-            &ParseConfig::checkServerName,
-            &ParseConfig::checkIp,
-            &ParseConfig::checkPort,
-            &ParseConfig::checkRoot,
-            &ParseConfig::checkErrorPage
-    };
 
     /* check location params */
     bool            checkRootLoc(char *line, Location &location);
@@ -41,15 +34,6 @@ private:
     bool            checkAutoindex(char *line, Location &location);
     bool            checkLimitBody(char *line, Location &location);
     bool            checkAllowMethods(char *line, Location &location);
-
-    bool (ParseConfig::*_checkFuncsLocation[6])(char *line, Location &location) = {
-            &ParseConfig::checkRootLoc,
-            &ParseConfig::checkIndex,
-            &ParseConfig::checkCgiPass,
-            &ParseConfig::checkAutoindex,
-            &ParseConfig::checkLimitBody,
-            &ParseConfig::checkAllowMethods
-    };
 
     /* parse algorithm */
     void            parseServer(char *line);

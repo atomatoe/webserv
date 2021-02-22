@@ -108,7 +108,7 @@ void Request::ChunkedBodyProcessing(){
 		}
 		ind++;
 	}
-	_chunkedReqBody.addData("", 1);
+	_chunkedReqBody.addData((char *)"", 1);
 	std::cout << _chunkedReqBody.getDataSize() << std::endl;
 	//std::cout << "||" << _chunkedReqBody.toPointer() << "||" << std::endl;
 }

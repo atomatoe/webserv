@@ -239,6 +239,14 @@ bool    ParseConfig::checkAllowMethods(char *line, Location &location) {
 
 /* parse algorithm */
 std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
+    bool (ParseConfig::*_checkFuncsLocation[6])(char *line, Location &location) = {
+            &ParseConfig::checkRootLoc,
+            &ParseConfig::checkIndex,
+            &ParseConfig::checkCgiPass,
+            &ParseConfig::checkAutoindex,
+            &ParseConfig::checkLimitBody,
+            &ParseConfig::checkAllowMethods
+    };
     Location location;
     if (compareLines(line, "location")) {
         char *trimmedLine = ft_strtrim(line, " \t");
@@ -287,6 +295,13 @@ std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
 }
 
 void            ParseConfig::parseServer(char *line) {
+    bool (ParseConfig::*_checkFuncs[5])(char *line, WebServer &webServer) = {
+            &ParseConfig::checkServerName,
+            &ParseConfig::checkIp,
+            &ParseConfig::checkPort,
+            &ParseConfig::checkRoot,
+            &ParseConfig::checkErrorPage
+    };
     WebServer webServer;
     while (get_next_line(_fd, &line)) {
         _lineStr = line;
