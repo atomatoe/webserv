@@ -32,7 +32,6 @@ add_executable(webserv
         libft/ft_putendl_fd.cpp
         libft/ft_putnbr_fd.cpp
         libft/ft_putstr_fd.cpp
-        libft/ft_split.cpp
         libft/ft_splitTim.cpp
         libft/ft_strstrlen.cpp
         libft/ft_strchr.cpp

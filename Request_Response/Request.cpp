@@ -119,7 +119,7 @@ int Request::parsRequest(char *reqString){
 	copy = reqString;
 	parsFirstLine(&copy); //todo valid
 	std::map<std::string, char*>::iterator iter = _info.begin();
-	if ((strings = ft_split(copy, '\r')) == NULL)
+	if ((strings = ft_splitTim(copy, '\r')) == NULL)
 		return -1;
 	parsHeaders(strings); //todo valid
 	return -1;
