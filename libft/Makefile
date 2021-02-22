@@ -12,13 +12,24 @@ BONUS_OBJ=$(BONUS_SRC:.c=.o)
 RM = rm -f
 OBJ = $(SRC:%.cpp=%.o)
 
+ifneq (,$(findstring xterm,${TERM}))
+	GREEN	:=	$(shell tput -Txterm setaf 2)
+	YELLOW	:=	$(shell tput -Txterm setaf 3)
+	BLUE   	:=	$(shell tput -Txterm setaf 6)
+	RESET	:=	$(shell tput -Txterm sgr0)
+else
+	GREEN	:=	""
+	RESET	:=	""
+	YELLOW	:=	""
+endif
+
 .PHONY: all clean fclean bonus re
 
 all: $(NAME)
 
 $(NAME): $(OBJ) $(HEADERS)
 	@ar rc $(NAME) $(OBJ)
-	@echo "libft is created"
+	@echo "${BLUE}libft is done${RESET}"
 
 %.o:%.cpp
 	@$(CC) $(CFLAGS) -o $@ -c $<

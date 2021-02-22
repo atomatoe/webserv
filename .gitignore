@@ -4,4 +4,7 @@ tester
 cmake-build-debug
 .idea
 .DS_Store
-*.o
+*/*.o
+webserv
+gnl/gnl.a
+libft/libft.a
