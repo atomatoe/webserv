@@ -45,7 +45,7 @@ int WebServer::build_server()
         std::cerr << "fcntl FAILED" << std::endl;
         return(-1);
     }
-    if(listen(this->_server_fd, 5))
+    if(listen(this->_server_fd, SOMAXCONN))
     {
         std::cerr << "listen FAILED" << std::endl;
         return(-1);
