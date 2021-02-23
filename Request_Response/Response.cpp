@@ -14,11 +14,11 @@
 
 Response::Response()
 {
-    this->_httpVersion = "HTTP/1.1 200 OK\n";
+    this->_httpVersion = "HTTP/1.1 200 OK\r\n";
     struct timeval tv;
     gettimeofday(&tv, NULL);
     this->_timeOfResponse = get_time(tv.tv_sec);
-    this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)\n\n";
+    this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)\r\n\r\n";
     this->_location_id = 0;
     _lenOfResponse = 0;
 }
@@ -214,8 +214,8 @@ char* Response::give_me_response(Request request, WebServer server) {
                                 putErrorToBody((char *)"404", (char *)"Not Found");
                             }
                             else {
-								char* temp = (char *)malloc(sizeof(char) * 4097);
-								int i = read(fd_tmp, temp, 5555);
+								char* temp = (char *)malloc(sizeof(char) * 2000000000);
+								int i = read(fd_tmp, temp, 2000000000);
 								if(i < 0)
 									putErrorToBody((char *)"000", (char *)"The file cannot be read, bitch");
 								else
@@ -241,12 +241,16 @@ char* Response::give_me_response(Request request, WebServer server) {
                                 putErrorToBody((char *)"404", (char *)"Not Found");
                             }
                             else {
-								char* temp = (char *)malloc(sizeof(char) * 4097);
-								int i = read(fd_tmp, temp, 5555);
+                            	std::cout << "PICTURE\n";
+								char* temp = (char *)malloc(sizeof(char) * 20000000);
+								int i = read(fd_tmp, temp, 20000000);
+								std::cout << "size: " << i << std::endl;
 								if(i < 0)
 									putErrorToBody((char *)"000", (char *)"The file cannot be read, bitch");
-								else
-									_bodyOfResponse.addData(temp, ft_strlen(temp));
+								else {
+									std::cout << "HERER\n";
+									_bodyOfResponse.addData(temp, i);
+								}
 								close(fd_tmp);
 								free(temp);
                             }
@@ -350,9 +354,9 @@ char* Response::give_me_response(Request request, WebServer server) {
 
 char* Response::edit_response() {
     size_t size;
-    size = _httpVersion.length() + _timeOfResponse.length() + _versionOfWebServer.length();
-	std::string tmp = _httpVersion + _timeOfResponse + _versionOfWebServer;
-	_bodyOfResponse.addData((char *)"", 1);
+    size = _httpVersion.length() + _timeOfResponse.length() + _versionOfWebServer.length() + 2;
+	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" + _versionOfWebServer;
+	//_bodyOfResponse.addData((char *)"", 1);
 	_lenOfResponse = size + _bodyOfResponse.getDataSize();
     return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), size, _bodyOfResponse.getDataSize()));
 }

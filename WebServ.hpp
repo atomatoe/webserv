@@ -37,8 +37,10 @@ private:
 	std::string                         _rootPath;
 	std::vector<Location>               _locations;
 	std::map<std::string, std::string>  _errorPage;
-	//
-	std::map<int, t_client> _list; // здесь будут храниться наши клиенты
+	std::map<int, t_client> 			_mapOfClients;
+
+private:
+	// здесь будут храниться наши клиенты
     sockaddr_in             _socket_addr; // стандартная структура (см в конце)
     socklen_t               _address_len; // Аргумент address_len задает размер (в байтах) структуры данных, указываемой аргументом addr.
 	sockaddr_in		        _out; // out - заполнит значениями клиента - пример принятия запроса
@@ -63,6 +65,7 @@ public:
     std::string                         getRootPath() const;
     std::map<std::string, std::string>  getErrorPage() const;
     std::vector<Location>               getLocations() const;
+	std::map<int, t_client> &			getClients();
 
     /* set */
     void    setIp(std::string);
@@ -73,6 +76,7 @@ public:
     /* add */
     void    addErrorPage(std::string, std::string);
     void    addLocation(Location location);
+    void 	addClient(int fd);
 };
 
 #endif
