@@ -77,6 +77,7 @@ void start_servers(std::vector<WebServer> servers)
 
 		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
 			if (FD_ISSET(it->get_server_fd(), &fd_read)) {
+				std::cout << "IN ACCEPT: " << it->get_server_fd() << std::endl;
 				fd = accept(it->get_server_fd(), 0, 0);
 				if (fd > 0)
 					it->addClient(fd);
@@ -85,33 +86,27 @@ void start_servers(std::vector<WebServer> servers)
 
 		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it)
 		{
-			for (std::map<int, t_client>::iterator i = it->getClients().begin(); i != it->getClients().end(); ++i)
-			{
-				if (FD_ISSET(i->first, &fd_read))
-				{
+			std::map<int, t_client>::iterator i = it->getClients().begin();
+			while (i != it->getClients().end()) {
+				if (FD_ISSET(i->first, &fd_read)) {
 					ret = recv(i->first, buf, 2000000, 0);
-					if (!i->second.isHeadersEnded && ret > 0)
-					{
+					if (!i->second.isHeadersEnded && ret > 0) {
 						i->second.receivedData->addData(buf, ret);
-						if ((len = i->second.receivedData->findMemoryFragment(doubleCRLF, 4)) != (size_t) -1)
-						{
+						if ((len = i->second.receivedData->findMemoryFragment(doubleCRLF, 4)) != (size_t) -1) {
 							tmp = i->second.receivedData->cutData(len + 4);
 							i->second.request = new Request(i->second.receivedData->toPointer());
 							i->second.request->getReqBody().addData(tmp.toPointer(), tmp.getDataSize());
 							i->second.isHeadersEnded = 1;
 							ret = recv(i->first, buf, 0, 0);
-							if (ret == 0)
-							{
+							if (ret == 0) {
 								i->second.isHeadersEnded = 2;
 								goto tmp;
 							}
 						}
 					}
-					else if (ret > 0 && i->second.isHeadersEnded == 1)
-					{
+					else if (ret > 0 && i->second.isHeadersEnded == 1) {
 						i->second.request->setReqBody(buf, ret);
-						if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1))
-						{
+						if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
 							i->second.request->getReqBody().cutData(len + 5);
 							i->second.request->ChunkedBodyProcessing();
 							i->second.isHeadersEnded = 2;
@@ -123,15 +118,14 @@ void start_servers(std::vector<WebServer> servers)
 							endOfReadingRequest(i, fd_write, fd_read, *it);
 						}
 					}
-					if (ret == 0)
-					{
+					if (ret == 0) {
 						endOfReadingRequest(i, fd_write, fd_read, *it);
+						i++;
 						break;
 					}
 				}
 				tmp:
-				if (i->second.isHeadersEnded == 2)
-				{
+				if (i->second.isHeadersEnded == 2) {
 					i->second.response = new Response();
 					i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse());
 					ret2 = 0;
@@ -143,9 +137,10 @@ void start_servers(std::vector<WebServer> servers)
 					delete i->second.request;
 					i->second.receivedData->clear();
 					i->second.toSendData->clear();
-					FD_CLR(i->first, &fd_read);
-					FD_CLR(i->first, &fd_write);
+					i = it->getClients().erase(i);
 				}
+				else
+					i++;
 			}
 		}
 	}
