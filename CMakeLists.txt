@@ -74,4 +74,4 @@ add_executable(webserv
         cgi_processing/cgi_processing.cpp
         newmain.cpp
         WebServ.cpp
-        WebServ.hpp)
+        WebServ.hpp Client.cpp Client.hpp)

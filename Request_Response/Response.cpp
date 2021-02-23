@@ -115,9 +115,9 @@ char* Response::give_me_response(Request request, WebServer server) {
 	Page_html autoindex;
 	char *tmp;
 
-    std::cout << std::endl;
-    std::cout << "Server: " << server.get_server_fd() << std::endl;
-    std::cout << "Port: " << server.getPort() << std::endl;
+   // std::cout << std::endl;
+   // std::cout << "Server: " << server.get_server_fd() << std::endl;
+   // std::cout << "Port: " << server.getPort() << std::endl;
     //std::cout << "Server root: " << server.getRootPath() << std::endl;
    // for(size_t i = 0; i != server.getLocations().size(); i++)
    // {
