@@ -74,7 +74,7 @@ std::vector<Location>               WebServer::getLocations() const {
 void            WebServer::setIp(std::string ip) {
     if (ip[0] == '.' || ip[ip.size() - 1] == '.')
         exitError("Incorrect value of ip: \"" + ip + "\"");
-    char **splitted = ft_split(ip.c_str(), '.');
+    char **splitted = ft_splitTim(ip.c_str(), '.');
     if (ft_strstrlen(splitted) != 4)
         exitError("Incorrect value of ip: \"" + ip + "\"");
     for (int i = 0; i < 4 ; i ++)
