@@ -12,6 +12,8 @@
 
 #ifndef INCLUDES_HPP
 # define INCLUDES_HPP
+# define DEFAULT "\e[39m\e[0m"
+# define GREEN "\e[92m"
 
 #include <iostream> // std::
 #include <sys/socket.h> // для socket
@@ -40,9 +42,14 @@ class Page_html;
 #include "../libft/libft.h"
 #include "page_html.hpp"
 
+
 char    *str_join(char *buf, char *add);
 char*   get_time(time_t time);
 void    *ft_memset(void *src, int g, size_t l);
+
+void    errorMalloc();
+void    init_servers(std::vector<WebServer> & servers, size_t count_server);
+void	exitSignal(int signalNum);
 
 #endif
   

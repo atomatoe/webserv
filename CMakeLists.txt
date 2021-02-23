@@ -72,6 +72,7 @@ add_executable(webserv
         gnl/get_next_line.hpp
         cgi_processing/cgi_utils.h
         cgi_processing/cgi_processing.cpp
-        newmain.cpp
+        main.cpp
+        main_utils.cpp
         WebServ.cpp
         WebServ.hpp)

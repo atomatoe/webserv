@@ -11,6 +11,7 @@ RM = rm -rf
 
 SRCS =	WebServ.cpp \
 		main.cpp \
+		main_utils.cpp \
 		includes/includes.cpp \
 		includes/page_html.cpp \
 		Request_Response/Bytes.cpp \
@@ -41,7 +42,7 @@ $(NAME): $(LABEL) $(OBJS)
 	@make -C $(DIR_GNL)
 	@echo "Preparing libft.."
 	@make -C $(DIR_LIBFT)
-	@$(CC) $(OBJS) $(INCLUDES_OBJS) $(RR_OBJS) $(PARSE_OBJS) $(GNL_A) $(LIBFT_A) -o $(NAME)
+	@$(CC) $(OBJS) $(INCLUDES_OBJS) $(RR_OBJS) $(PARSE_OBJS) $(GNL_A) $(LIBFT_A) -o $(NAME) #TODO add WWW flags
 	@echo "${GREEN}webserv is ready to work!${RESET}"
 
 %.o:%.cpp
