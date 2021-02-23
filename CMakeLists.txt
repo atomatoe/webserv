@@ -52,6 +52,7 @@ add_executable(webserv
         libft/ft_memsplit.cpp
         libft/ft_memdup.cpp
         libft/ft_memmem.cpp
+        libft/ft_splitString.cpp
         libft/libft.h
         parse/Location.cpp
         parse/Location.hpp

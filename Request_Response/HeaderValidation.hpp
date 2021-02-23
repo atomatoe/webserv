@@ -24,7 +24,8 @@ public:
         std::string		_message;
     public:
         HeaderValidationException(std::string const &message) :
-            _message("HeaderValidationException: incorrect line \"" + message + "\" in request head") { }
+            _message("Incorrect line \"" + message + "\" in request head") {
+        }
         virtual ~HeaderValidationException() throw() { }
         virtual const char*		what() const throw() { return (_message.c_str()); }
     };

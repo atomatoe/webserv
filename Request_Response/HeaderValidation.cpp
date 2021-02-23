@@ -42,45 +42,29 @@ void    HeaderValidation::isValidLine_First(std::string line) {
    if (getNumberOccurrences(line, " ") != 2 ||
             !ft_isalnum(line[0]) || !ft_isalnum(line[line.size() - 1]))
         throw HeaderValidationException(line);
-    char **splitted = ft_splitTim((char *)line.c_str(), ' ');
-    if (ft_strstrlen(splitted) != 3 ||
-        (strcmp(splitted[0], "GET") != 0 && strcmp(splitted[0], "POST") != 0
-        && strcmp(splitted[0], "PUT") != 0 && strcmp(splitted[0], "HEAD") != 0 )) {
-        ft_free_strstr(splitted);
+    std::vector<std::string> splitted = ft_splitString(line, " ");
+    if (splitted.size() != 3 || (strcmp(splitted[0].c_str(), "GET") != 0 && strcmp(splitted[0].c_str(), "POST") != 0
+        && strcmp(splitted[0].c_str(), "PUT") != 0 && strcmp(splitted[0].c_str(), "HEAD") != 0 ))
         throw HeaderValidationException(line);
-    }
-    ft_free_strstr(splitted);
 }
 
 void    HeaderValidation::isValidLine_Second(std::string line) {
     if (getNumberOccurrences(line, " ") != 1 ||
             !ft_isalnum(line[0]) || !ft_isalnum(line[line.size() - 1]))
         throw HeaderValidationException(line);
-    char **splitted = ft_splitTim((char *)line.c_str(), ' ');
-    if (ft_strstrlen(splitted) != 2 || strcmp(splitted[0], "Host:") != 0) {
-        ft_free_strstr(splitted);
+    std::vector<std::string> splitted = ft_splitString(line, " ");
+    if (splitted.size() != 2 || strcmp(splitted[0].c_str(), "Host:") != 0)
         throw HeaderValidationException(line);
-    }
-    ft_free_strstr(splitted);
 }
 
 void    HeaderValidation::isValidLine_KeyValue(std::string line) {
-    if (!ft_isalnum(line[0]) || !ft_isalnum(line[line.size() - 1]))
+    if (!ft_isalnum(line[0]))
         throw HeaderValidationException(line);
-    char **splitted = ft_splitTim((char *)line.c_str(), ':');
-    if (ft_strstrlen(splitted) != 2 || splitted[1][0] != ' ') {
-        ft_free_strstr(splitted);
+    if (!ft_isalnum(line[line.size() - 1]))
+        if (line[line.size() - 1] != '/')
+            throw HeaderValidationException(line);
+    if (ft_splitString(line, ": ").size() != 2)
         throw HeaderValidationException(line);
-    }
-    int i = 1;
-    int count = 0;
-    while (splitted[1][i++] == ' ')
-        count++;
-    if (count) {
-        ft_free_strstr(splitted);
-        throw HeaderValidationException("Incorrect line \"" + line + "\" in request head");
-    }
-    ft_free_strstr(splitted);
 }
 
 size_t  HeaderValidation::getHeaderCountLines() const {
