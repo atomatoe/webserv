@@ -108,7 +108,7 @@ void Request::ChunkedBodyProcessing(){
 		}
 		ind++;
 	}
-	_chunkedReqBody.addData("", 1);
+	_chunkedReqBody.addData((char *)"", 1);
 	std::cout << _chunkedReqBody.getDataSize() << std::endl;
 	//std::cout << "||" << _chunkedReqBody.toPointer() << "||" << std::endl;
 }
@@ -117,9 +117,10 @@ int Request::parsRequest(char *reqString){
 	char **strings;
 	char *copy;
 	copy = reqString;
+    _headValid.valid(reqString);
 	parsFirstLine(&copy); //todo valid
 	std::map<std::string, char*>::iterator iter = _info.begin();
-	if ((strings = ft_split(copy, '\r')) == NULL)
+	if ((strings = ft_splitTim(copy, '\r')) == NULL)
 		return -1;
 	parsHeaders(strings); //todo valid
 	return -1;

@@ -22,6 +22,7 @@
 #include <sys/select.h> // для макросов с работой select FD_CLR, FD_ISSET, FD_SET
 #include <map> // map STL
 #include <vector> // vector STL
+#include <list> // list STL
 #include <stdlib.h> // для маллок
 #include <sys/time.h> // для gettimeofday
 #include <dirent.h> // для readdir opendir
