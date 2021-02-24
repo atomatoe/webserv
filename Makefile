@@ -19,7 +19,8 @@ SRCS =	WebServ.cpp \
 		Request_Response/HeaderValidation.cpp \
 		parse/Location.cpp \
 		parse/ParseConfig.cpp \
-		parse/parse_utils.cpp
+		parse/parse_utils.cpp \
+		cgi_processing/cgi_processig.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 

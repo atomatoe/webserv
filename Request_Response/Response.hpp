@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:50 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/18 15:02:48 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/24 18:10:05 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,9 @@ public:
 	char* give_me_response(Request request, WebServer server);
 	char* edit_response();
 	int search_uri(WebServer server, char *uri);
-	int check_uri(WebServer server, char *uri);
-	void putErrorToBody(char *error, char *type);
+    int search_location(WebServer server, char *uri);
+    int check_uri(WebServer server, char *uri);
+	void putErrorToBody(char *error, char *type, WebServer server);
 
 	size_t getLenOfResponse() const;
 
