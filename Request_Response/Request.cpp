@@ -55,21 +55,28 @@ size_t hexToDec(const std::string &s) { return strtoul(s.c_str(), NULL, 16); }
 
 
 void Request::setReqBody(char *body, size_t len){
-	std::cout << body << std::endl;
 	_reqBody.addData(body, len);
 }
 
 Request::Request(char *reqString){
-	//std::cout << "==" << reqString << "==\n";
+	char *tmp;
+
 	_reqString = ft_strdup(reqString);
+	_pathToCgi = ft_strdup("");
 	fillMap();
 	parsRequest(reqString);
+	tmp = strchr(_info["uri"], '?');
+	_queryString = tmp ? ft_strdup(tmp + 1) : ft_strdup("");
 }
+
+
 Request::~Request(){
-	//free(_reqString); //todo free all needing
+	 //todo free all needing
 }
+
+
 int Request::parsHeaders(char **strings){
-	for (int i = 0; i < 18; i++){
+	for (int i = 0; i < 18; i++) {
 		_info[_headers[i]] = ft_strdup("");
 		for (int j = 0; strings[j]; j++){
 			if (strnstr(strings[j], _headers[i].c_str(), _headers[i].length()) != NULL){
@@ -78,12 +85,7 @@ int Request::parsHeaders(char **strings){
 			}
 		}
 	}
-//	std::cout << "IN REQUEST\n";
-// for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
-//  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
-// }
-// std::cout << "AFTER\n";
-	for (int i = 0; strings[i]; ++i){
+	for (int i = 0; strings[i]; ++i) {
 		free(strings[i]);
 	}
 	return 0;
@@ -93,7 +95,6 @@ void Request::ChunkedBodyProcessing(){
 	size_t ind = 1;
 	size_t size = 0;
 
-	std::cout << _reqBody.getDataSize() << std::endl;
 	memBody *chunkBody = ft_memsplit(_reqBody.toPointer(), (char *)"\r\n", _reqBody.getDataSize(), 2);
 
 	for (memBody:: iterator i = chunkBody->begin(); i->first != 0; ++i){
@@ -117,7 +118,7 @@ int Request::parsRequest(char *reqString){
 	char **strings;
 	char *copy;
 	copy = reqString;
-    _headValid.valid(reqString);
+  //  _headValid.valid(reqString);
 	parsFirstLine(&copy); //todo valid
 	std::map<std::string, char*>::iterator iter = _info.begin();
 	if ((strings = ft_splitTim(copy, '\r')) == NULL)
@@ -151,4 +152,16 @@ int Request::parsFirstLine(char **copy){
 		*copy = *copy + i + 1;
 	}
 	return 0;
+}
+
+std::string &Request::getPathToCgi(){
+	return _pathToCgi;
+}
+
+void Request::setPathToCgi(const std::string &pathToCgi) {
+	_pathToCgi = pathToCgi;
+}
+
+std::string &Request::getQueryString() {
+	return _queryString;
 }

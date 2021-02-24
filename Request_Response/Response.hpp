@@ -17,27 +17,30 @@
 #include "Bytes.h"
 class Request;
 #include "Request.hpp"
+#include "../cgi_processing/cgi_utils.h"
 
 class Response
 {
 private:
-    std::string _httpVersion;
-    std::string _timeOfResponse;
-    std::string _versionOfWebServer;
-    Bytes		_bodyOfResponse;
-    size_t 		_lenOfResponse;
+	std::string _httpVersion;
+	std::string _timeOfResponse;
+	std::string _versionOfWebServer;
+	Bytes		_bodyOfResponse;
+	size_t 		_lenOfResponse;
 
-    int         _location_id;
+	int         _location_id;
 public:
-    Response();
-    ~Response();
-    char* give_me_response(Request request, WebServer server);
-    char* edit_response();
-    int search_uri(WebServer server, char *uri);
-    int check_uri(WebServer server, char *uri);
+	Response();
+	~Response();
+	char* give_me_response(Request request, WebServer server);
+	char* edit_response();
+	int search_uri(WebServer server, char *uri);
+	int check_uri(WebServer server, char *uri);
 	void putErrorToBody(char *error, char *type);
 
 	size_t getLenOfResponse() const;
+
+	friend void toCGI(Response &response, Request request, WebServer server);
 
 };
 #endif

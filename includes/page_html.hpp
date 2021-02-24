@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #ifndef AUTOINDEX_HPP
 # define AUTOINDEX_HPP
 
@@ -19,17 +20,17 @@
 
 class Page_html
 {
-    private:
-        char* _html;
-        DIR* _dir;
-        dirent* _file;
-        struct stat buff;
-        char* get_way(std::string s1, char *s2);
-    public:
-        Page_html();
-        ~Page_html();
-        char* create_autoindex(std::string _directory);
-        char* create_error(char* code, char* text);
+private:
+	char* _html;
+	DIR* _dir;
+	dirent* _file;
+	struct stat buff;
+	char* get_way(std::string s1, char *s2);
+public:
+	Page_html();
+	~Page_html();
+	char* create_autoindex(std::string _directory);
+	char* create_error(char* code, char* text);
 };
 
 #endif

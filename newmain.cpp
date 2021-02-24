@@ -15,9 +15,6 @@ void fd_init(std::vector<WebServer> &servers, fd_set &fd_write, fd_set &fd_read,
 	for(std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); it++) {
 		FD_SET(it->get_server_fd(), &fd_read);
 		max_fd = it->get_server_fd();
-		//		FD_ZERO(&it->getFdRead());
-		//		FD_ZERO(&it->getFdWrite());
-		//FD_SET(it->get_server_fd(), &it->getFdWrite());
 	}
 }
 
@@ -34,8 +31,7 @@ void endOfReadingRequest(std::map<int, t_client>::iterator i, fd_set fd_write, f
 void init_servers(std::vector<WebServer> & servers, size_t count_server)
 {
 	size_t i = 0;
-	while(i != count_server)
-	{
+	while(i != count_server) {
 		servers[i].create_socket();
 		servers[i].build_server();
 		i++;
@@ -44,24 +40,24 @@ void init_servers(std::vector<WebServer> & servers, size_t count_server)
 
 void start_servers(std::vector<WebServer> servers)
 {
-	int max_fd;
-	fd_set fd_write;
-	fd_set fd_read;
-	char *buf;
-	int fd;
-	Bytes tmp;
-	size_t len;
-	int ret;
-	ssize_t ret2;
+	int			max_fd;
+	fd_set		fd_write;
+	fd_set		fd_read;
+	char		*buf;
+	int			fd;
+	Bytes		tmp;
+	size_t		len;
+	int			ret;
+	ssize_t		ret2;
 	if (!(buf = (char *) malloc(sizeof(char) * 2000001)))
 		exit(1);
 
 	int i = 1;
-	while (i)
-	{
+	while (i) {
 		if (i++ == 0)
 			break;
 		fd_init(servers, fd_write, fd_read, max_fd);
+
 		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
 			for (std::map<int, t_client>::iterator i = it->getClients().begin(); i != it->getClients().end(); ++i) {
 				if (i->second.isHeadersEnded < 2)
@@ -77,7 +73,6 @@ void start_servers(std::vector<WebServer> servers)
 
 		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
 			if (FD_ISSET(it->get_server_fd(), &fd_read)) {
-				std::cout << "IN ACCEPT: " << it->get_server_fd() << std::endl;
 				fd = accept(it->get_server_fd(), 0, 0);
 				if (fd > 0)
 					it->addClient(fd);
@@ -89,7 +84,7 @@ void start_servers(std::vector<WebServer> servers)
 			std::map<int, t_client>::iterator i = it->getClients().begin();
 			while (i != it->getClients().end()) {
 				if (FD_ISSET(i->first, &fd_read)) {
-					ret = recv(i->first, buf, 2000000, 0);
+					ret = recv(i->first, buf, 20, 0);
 					if (!i->second.isHeadersEnded && ret > 0) {
 						i->second.receivedData->addData(buf, ret);
 						if ((len = i->second.receivedData->findMemoryFragment(doubleCRLF, 4)) != (size_t) -1) {
@@ -111,8 +106,8 @@ void start_servers(std::vector<WebServer> servers)
 							i->second.request->ChunkedBodyProcessing();
 							i->second.isHeadersEnded = 2;
 							endOfReadingRequest(i, fd_write, fd_read, *it);
-						} else if (ret < 2000000 || i->second.request->getReqBody().findMemoryFragment(doubleCRLF, 4) != (size_t) -1)
-						{
+						}
+						else if (ret < 20 || i->second.request->getReqBody().findMemoryFragment(doubleCRLF, 4) != (size_t) -1) {
 							i->second.request->getReqBody().addData((char *) "", 1);
 							i->second.isHeadersEnded = 2;
 							endOfReadingRequest(i, fd_write, fd_read, *it);
@@ -127,17 +122,14 @@ void start_servers(std::vector<WebServer> servers)
 				tmp:
 				if (i->second.isHeadersEnded == 2) {
 					i->second.response = new Response();
-					i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse());
+					i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse()); //todo cgi call adding
+					i->second.toSendData->addData(doubleCRLF, 4);
 					ret2 = 0;
-					while (ret2 != i->second.toSendData->getDataSize())
+					while (ret2 != i->second.toSendData->getDataSize()){
 						ret2 += write(i->first, i->second.toSendData->toPointer() + ret2, i->second.toSendData->getDataSize() - ret2);
-					close(i->first); // как отправили все данные клиенту, отсоединяемся
-					i->second.isHeadersEnded = 0;
-					delete i->second.response;
-					delete i->second.request;
-					i->second.receivedData->clear();
-					i->second.toSendData->clear();
-					i = it->getClients().erase(i);
+					}
+					close(i->first);
+					i = it->getClients().erase(i); //todo maybe we must delete bytes in client
 				}
 				else
 					i++;
