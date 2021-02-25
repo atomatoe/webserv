@@ -171,8 +171,10 @@ char* Response::give_me_response(Request request, WebServer server)
 			//std::cout << "+++" << _bodyOfResponse.toPointer() << "+++" << _bodyOfResponse.getDataSize() << "+++" << std::endl;
 			tmp = _bodyOfResponse.toPointer();
 			_bodyOfResponse.addData("", 1);
-			this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)\r\nContent-Length: 142";
+			_httpVersion = "HTTP/1.1 201 Created\r\n";
+			this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)";
 //            std::cout << edit_response() << std::endl;
+		//	putErrorToBody((char *)"201", (char *)"Created", server);
             return (edit_response());
         }
     }
@@ -288,7 +290,7 @@ char* Response::edit_response() {
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" + _versionOfWebServer;
 	//_bodyOfResponse.addData((char *)"", 1);
 	_lenOfResponse = size + _bodyOfResponse.getDataSize();
-	//std::cout << ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), size, _bodyOfResponse.getDataSize()) << std::endl;
+//	std::cout << ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), size, _bodyOfResponse.getDataSize()) << std::endl;
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), size, _bodyOfResponse.getDataSize()));
 }
 

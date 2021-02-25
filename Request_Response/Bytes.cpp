@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Bytes.h"
 
-Bytes::Bytes() : _dataSize(0), _cutFlag(false), _data(new std::list< std::pair<size_t, char *> >()), _charData(ft_strdup("")){}
+Bytes::Bytes() : _dataSize(0), _data(new std::list< std::pair<size_t, char *> >()), _charData(ft_strdup("")){}
 
 Bytes::~Bytes() {}
 
@@ -15,8 +15,6 @@ void Bytes::addData(char *data, size_t size){
 }
 
 char  *Bytes::toPointer(){
-	if (_cutFlag)
-		return _charData;
 	char *tmp2;
 	char *tmp1;
 	size_t s = 0;
@@ -33,12 +31,7 @@ char  *Bytes::toPointer(){
 void Bytes::clear(){
 	_data->clear();
 	_dataSize = 0;
-	_cutFlag = false;
 	_charData = NULL; //todo leak
-}
-
-bool Bytes::isEmpty(){
-	return _dataSize == 0;
 }
 
 size_t Bytes::findMemoryFragment(char const *toFind, size_t len){
@@ -50,13 +43,21 @@ size_t Bytes::findMemoryFragment(char const *toFind, size_t len){
 }
 
 Bytes Bytes::cutData(size_t len){
-	Bytes ret;
+	Bytes ret = Bytes();
 	char *tmp = toPointer();
-	_charData = (char *)malloc(len + 1);
+	_charData = (char *)malloc(len);
 
 	memcpy(_charData, tmp, len); //todo own memcpy
-	_charData[len] = '\0';
 	ret.addData(tmp + len, _dataSize - len);
-	_cutFlag = true;
+	_data->clear();
+	_dataSize = 0;
+	addData(_charData, len);
 	return ret;
+}
+
+Bytes & Bytes::operator=(const Bytes &bytes) {
+	_data->clear();
+	_data = bytes._data;
+	_dataSize = bytes._dataSize;
+	return *this;
 }

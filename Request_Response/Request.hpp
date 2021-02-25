@@ -34,7 +34,7 @@ public:
 	char 			*getContentLength() {return _info["content-length"];}
 	char			*getTransferEncoding() {return _info["Transfer-Encoding"];}
 	char 			*getReqString() {return _reqString;}
-	Bytes 			getReqBody() {return _reqBody;}
+	Bytes 			& getReqBody() {return _reqBody;}
 	std::string &	getPathToCgi();
 
 	std::string &	getQueryString();

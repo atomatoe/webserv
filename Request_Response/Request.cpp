@@ -64,14 +64,15 @@ Request::Request(char *reqString){
 	//std::cout << "Request:" << reqString << ":endOfRequest\n";
 	_reqString = ft_strdup(reqString);
 	_pathToCgi = ft_strdup("");
+	_reqBody = Bytes();
 	fillMap();
 	parsRequest(reqString);
 	tmp = strchr(_info["uri"], '?');
 	_queryString = tmp ? ft_strdup(tmp + 1) : ft_strdup("");
 	//std::cout << "len: " << _info["content-length"] << std::endl;
-	 //for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
-	//	  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
-	 //}
+//	for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
+//		  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
+//	}
 }
 
 

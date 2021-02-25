@@ -15,7 +15,6 @@ private:
 	std::list< std::pair<size_t, char *> >*_data;
 	size_t _dataSize;
 	char *_charData;
-	bool _cutFlag;
 public:
 	Bytes();
 	~Bytes();
@@ -23,9 +22,9 @@ public:
 	size_t findMemoryFragment(char const *toFind, size_t len);
 	size_t getDataSize() const {return _dataSize;}
 	Bytes cutData(size_t len); //return remainder of cut
-	bool isEmpty();
 	char *toPointer();
 	void clear();
+	Bytes & operator=(Bytes const & bytes);
 };
 
 
