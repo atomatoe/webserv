@@ -148,7 +148,6 @@ int main(int ac, char **av)
 
 	ParseConfig parseConfig((ac == 2) ? av[1] : "configs/atomatoe/default.conf");
 	std::vector<WebServer> servers =  parseConfig.parse();
-	std::map<std::string, std::string> error_page;
 	size_t count_server = servers.size();
 
 	init_servers(servers, count_server);

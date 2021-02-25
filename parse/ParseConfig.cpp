@@ -32,7 +32,6 @@ bool    ParseConfig::compareLines(char *line, std::string find) {
     return (false);
 }
 
-
 /* check main params */
 bool    ParseConfig::checkServerName(char *line, WebServer &webServer) {
     if (compareLines(line, "server_name")) {
@@ -118,6 +117,25 @@ bool    ParseConfig::checkErrorPage(char *line, WebServer &webServer) {
     return (false);
 }
 
+bool    ParseConfig::checkAutoindex(char *line, WebServer &webServer) {
+	if (compareLines(line, "autoindex")) {
+		if (!checkTabs(line, 4))
+			exitError("Invalid number of spaces or tabs");
+		char *trimmedLine = ft_strtrim(line, " \t");
+		char *trimmedValue = ft_strtrim(trimmedLine + 9, " \t");
+		std::string trimmedValueStr(trimmedValue);
+		if (!trimmedValueStr.compare("on"))
+			webServer.setAutoIndex(true);
+		else if (!trimmedValueStr.compare("off"))
+			webServer.setAutoIndex(false);
+		else
+			exitError("Incorrect value of autoindex");
+		free(trimmedLine);
+		free(trimmedValue);
+		return (true);
+	}
+	return (false);
+}
 
 /* check location params */
 bool    ParseConfig::checkRootLoc(char *line, Location &location) {
@@ -176,26 +194,6 @@ bool    ParseConfig::checkCgiPass(char *line, Location &location) {
     return (false);
 }
 
-bool    ParseConfig::checkAutoindex(char *line, Location &location) {
-    if (compareLines(line, "autoindex")) {
-        if (!checkTabs(line, 8))
-            exitError("Invalid number of spaces or tabs");
-        char *trimmedLine = ft_strtrim(line, " \t");
-        char *trimmedValue = ft_strtrim(trimmedLine + 9, " \t");
-        std::string trimmedValueStr(trimmedValue);
-        if (!trimmedValueStr.compare("on"))
-            location.setAutoIndex(true);
-        else if (!trimmedValueStr.compare("off"))
-            location.setAutoIndex(false);
-        else
-            exitError("Incorrect value of autoindex");
-        free(trimmedLine);
-        free(trimmedValue);
-        return (true);
-    }
-    return (false);
-}
-
 bool    ParseConfig::checkLimitBody(char *line, Location &location) {
     if (compareLines(line, "limit_client_body_size")) {
         if (!checkTabs(line, 8))
@@ -223,7 +221,7 @@ bool    ParseConfig::checkAllowMethods(char *line, Location &location) {
         char *trimmedLine = ft_strtrim(line, " \t");
         char *trimmedValue = ft_strtrim(trimmedLine + ft_strlen("allow_methods"), " \t");
         std::string trimmedValueStr(trimmedValue);
-        for (int i = 0; i < allowMethods->size(); i++) {
+        for (int i = 0; i <= allowMethods->size(); i++) {
             if (!trimmedValueStr.compare(allowMethods[i])) {
                 location.changeAllowMethod(allowMethods[i], true);
                 free(trimmedLine);
@@ -239,11 +237,10 @@ bool    ParseConfig::checkAllowMethods(char *line, Location &location) {
 
 /* parse algorithm */
 std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
-    bool (ParseConfig::*_checkFuncsLocation[6])(char *line, Location &location) = {
+	bool (ParseConfig::*_checkFuncsLocation[5])(char *line, Location &location) = {
             &ParseConfig::checkRootLoc,
             &ParseConfig::checkIndex,
             &ParseConfig::checkCgiPass,
-            &ParseConfig::checkAutoindex,
             &ParseConfig::checkLimitBody,
             &ParseConfig::checkAllowMethods
     };
@@ -279,7 +276,7 @@ std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
             }
             else {
                 bool findParam = false;
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 5; i++)
                     if ((findParam = (this->*_checkFuncsLocation[i])(line, location)))
                         break;
                 if (!findParam)
@@ -295,12 +292,13 @@ std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
 }
 
 void            ParseConfig::parseServer(char *line) {
-    bool (ParseConfig::*_checkFuncs[5])(char *line, WebServer &webServer) = {
+	bool (ParseConfig::*_checkFuncs[6])(char *line, WebServer &webServer) = {
             &ParseConfig::checkServerName,
             &ParseConfig::checkIp,
             &ParseConfig::checkPort,
             &ParseConfig::checkRoot,
-            &ParseConfig::checkErrorPage
+            &ParseConfig::checkErrorPage,
+			&ParseConfig::checkAutoindex
     };
     WebServer webServer;
     while (get_next_line(_fd, &line)) {
@@ -317,7 +315,7 @@ void            ParseConfig::parseServer(char *line) {
             break;
         else if (checkTabs(line, 4)) {
                 bool findParam = false;
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 6; i++) {
                     if ((findParam = (this->*_checkFuncs[i])(line, webServer)))
                         break;
                 }
@@ -385,6 +383,7 @@ void                        ParseConfig::printWebservers() {
         std::cout << "ip: " + (*it).getIp() << std::endl;
         std::cout << "port: "; std::cout << (*it).getPort() << std::endl;
         std::cout << "root: " + (*it).getRootPath() << std::endl;
+		std::cout << "autoindex: "; std::cout << (*it).getAutoIndex() << std::endl;
 
         std::map<std::string, std::string> err_page = (*it).getErrorPage();
         std::map<std::string, std::string>::iterator it2 = err_page.begin();
@@ -411,7 +410,6 @@ void                        ParseConfig::printWebservers() {
                 it4++;
             }
 
-            std::cout << "\tautoindex: "; std::cout << (*it3).isAutoIndex() << std::endl;
             std::cout << "\tlimit_client_body_size: "; std::cout << (*it3).getLimitBody() << std::endl;
 
             std::map<std::string, bool> methods = (*it3).getAllowMethods();

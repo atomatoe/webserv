@@ -12,7 +12,7 @@
 
 #include "WebServ.hpp"
 
-WebServer::WebServer() : _port(-1) { }
+WebServer::WebServer() : _port(-1), _autoIndex(false) { }
 
 WebServer::~WebServer()
 {
@@ -119,3 +119,6 @@ void WebServer::addClient(int fd){
 std::map<int, t_client> &WebServer::getClients() {
 	return _mapOfClients;
 }
+
+bool  WebServer::getAutoIndex() const { return _autoIndex; }
+void  WebServer::setAutoIndex(bool autoIndex) { _autoIndex = autoIndex; }

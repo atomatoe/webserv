@@ -5,32 +5,16 @@ Location::Location() {
     _allowMethods.insert(std::pair<std::string, bool>("POST", false));
     _allowMethods.insert(std::pair<std::string, bool>("PUT", false));
     _allowMethods.insert(std::pair<std::string, bool>("HEAD", false));
-    _autoIndex = false;
     _limitBody = -1;
 }
 
 /* get */
-const std::string &                         Location::getUrl() const {
-    return _url;
-}
-const std::string &                         Location::getRoot() const {
-    return _root;
-}
-bool                                        Location::isAutoIndex() const {
-    return _autoIndex;
-}
-const std::map<std::string, std::string> &  Location::getCgiPath() const {
-    return _cgiPath;
-}
-int                                         Location::getLimitBody() const {
-    return _limitBody;
-}
-const std::map<std::string, bool> &         Location::getAllowMethods() const {
-    return _allowMethods;
-}
-const std::string &                         Location::getIndex() const {
-    return _index;
-}
+const std::string &                         Location::getUrl() const { return _url; }
+const std::string &                         Location::getRoot() const { return _root; }
+const std::map<std::string, std::string> &  Location::getCgiPath() const { return _cgiPath; }
+int                                         Location::getLimitBody() const { return _limitBody; }
+const std::map<std::string, bool> &         Location::getAllowMethods() const { return _allowMethods; }
+const std::string &                         Location::getIndex() const { return _index; }
 
 /* set */
 void                                        Location::setUrl(const std::string &url) {
@@ -42,9 +26,6 @@ void                                        Location::setRoot(const std::string 
     if (!isDirectory(rootPath))
         exitError("Smth wrong with root value: \"" + rootPath + "\"");
     _root = rootPath;
-}
-void                                        Location::setAutoIndex(bool autoIndex) {
-    _autoIndex = autoIndex;
 }
 void                                        Location::setLimitBody(int limitBody) {
     _limitBody = limitBody;

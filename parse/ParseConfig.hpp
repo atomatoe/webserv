@@ -26,12 +26,12 @@ private:
     bool            checkPort(char *line, WebServer &webServer);
     bool            checkRoot(char *line, WebServer &webServer);
     bool            checkErrorPage(char *line, WebServer &webServer);
+	bool    		checkAutoindex(char *line, WebServer &webServer);
 
-    /* check location params */
+	/* check location params */
     bool            checkRootLoc(char *line, Location &location);
     bool            checkIndex(char *line, Location &location);
     bool            checkCgiPass(char *line, Location &location);
-    bool            checkAutoindex(char *line, Location &location);
     bool            checkLimitBody(char *line, Location &location);
     bool            checkAllowMethods(char *line, Location &location);
 

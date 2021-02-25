@@ -104,8 +104,10 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
     this->_httpVersion += " ";
     this->_httpVersion += type;
     this->_httpVersion += "\n";
-    std::map<std::string, std::string>::iterator it = server.getErrorPage().begin();
-    while(it != server.getErrorPage().end())
+
+	std::map<std::string, std::string> error_p = server.getErrorPage();
+	std::map<std::string, std::string>::iterator it = error_p.begin();
+	while(it != error_p.end())
     {
      //   std::cout << it->first << std::endl;
         if(it->first == error)
@@ -145,7 +147,6 @@ char* Response::give_me_response(Request request, WebServer server)
 
     // -----------------------------------------------------
    // std::cout << std::endl;
-    bool _autoindex = true;
    // std::cout << "URI: " << request.getURI() << std::endl;
    // std::cout << "Method: " << request.getMetod() << std::endl;
    // std::cout << "Server root path: " << server.getRootPath() << std::endl;
@@ -181,7 +182,7 @@ char* Response::give_me_response(Request request, WebServer server)
 	/*end of CGI*/
     else if(strcmp(request.getMetod(), "GET") == 0)
     {
-        if(_autoindex == true)
+        if(server.getAutoIndex() == true)
         {
             directory = server.getRootPath() + request.getURI();
 //            std::cout << "directory: " << directory << std::endl;

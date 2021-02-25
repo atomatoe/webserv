@@ -7,7 +7,6 @@ class Location {
 private:
     std::string                         _url;
     std::string                         _root;
-    bool 		                        _autoIndex;
     std::string                         _index;
     std::map<std::string, std::string>  _cgiPath;
     int 		                        _limitBody;
@@ -19,7 +18,6 @@ public:
     /* get */
     const std::string &                         getUrl() const;
     const std::string &                         getRoot() const;
-    bool                                        isAutoIndex() const;
     const std::string &                         getIndex() const;
     const std::map<std::string, std::string> &  getCgiPath() const;
     int                                         getLimitBody() const;
@@ -28,7 +26,6 @@ public:
     /* set */
     void                                setUrl(const std::string &);
     void                                setRoot(const std::string &);
-    void                                setAutoIndex(bool);
     void                                setIndex(const std::string &);
     void                                addCgiPath(std::string, std::string);
     void                                setLimitBody(int);

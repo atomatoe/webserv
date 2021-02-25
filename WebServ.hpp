@@ -38,6 +38,7 @@ private:
 	std::vector<Location>               _locations;
 	std::map<std::string, std::string>  _errorPage;
 	std::map<int, t_client> 			_mapOfClients;
+	bool 		                        _autoIndex;
 
 private:
 	// здесь будут храниться наши клиенты
@@ -57,6 +58,8 @@ public:
     socklen_t *get_address_len();
     sockaddr_in *get_out();
 	std::map<int, t_client> &get_list();
+	bool getAutoIndex() const;
+	void setAutoIndex(bool autoIndex);
 
     /* get */
     std::string                         getIp() const;
