@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/24 18:52:26 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/25 18:54:10 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,8 @@ int Response::search_location(WebServer server, char *uri)
     int ret;
 
  //   std::cout << "uri 51 = " << uri << std::endl;
-
     if(stat(uri, &sb) == 0 && S_ISDIR(sb.st_mode)) {
- //       std::cout << "testers" << std::endl;
+    //    std::cout << "\ntesters 23\n" << std::endl;
         return (-1);
     }
     else
@@ -143,30 +142,32 @@ char* Response::give_me_response(Request request, WebServer server)
     int r_open;
     int r_read;
 
-//    std::cout <<
+    // -----------------------------------------------------
+    // std::cout << std::endl;
+    // std::cout << "URI: " << request.getURI() << std::endl;
+    // std::cout << "Method: " << request.getMetod() << std::endl;
+    // std::cout << "Server root path: " << server.getRootPath() << std::endl;
+    // -----------------------------------------------------
+    // Вывод запроса:
+    std::cout << request.getReqString() << std::endl;
+    std::cout << request.getReqBody().toPointer() << std::endl;
+    // ---------------
 
-    // -----------------------------------------------------
-   // std::cout << std::endl;
-   // std::cout << "URI: " << request.getURI() << std::endl;
-   // std::cout << "Method: " << request.getMetod() << std::endl;
-   // std::cout << "Server root path: " << server.getRootPath() << std::endl;
-    // -----------------------------------------------------
 
     _location_id = -1;
 	/*CGI calling*/
     if(strcmp(request.getMetod(), "POST") == 0)
     {
         this->_location_id = search_location(server, request.getURI());
-//        std::cout << "location id = " << this->_location_id  << std::endl;
-        if(this->_location_id == -1)
+        std::cout << "location id = " << this->_location_id  << std::endl;
+        if (!(server.getLocations()[this->_location_id].getAllowMethods()).find("POST")->second)
         {
-            putErrorToBody((char *)"411", (char *)"Length Required", server);
+            std::cout << "this method non true" << std::endl;
+            putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
         }
-        else if (!(server.getLocations()[this->_location_id].getAllowMethods()).find("POST")->second)
-                putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
         else
         {
-			std::cout << "TEST 23\n";
+			std::cout << "\nTEST 123\n" << this->_location_id  << std::endl;
         	request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/html.py"));
 			toCGI(*this, request, server);
 			//std::cout << "+++" << _bodyOfResponse.toPointer() << "+++" << _bodyOfResponse.getDataSize() << "+++" << std::endl;
@@ -174,7 +175,7 @@ char* Response::give_me_response(Request request, WebServer server)
 			_bodyOfResponse.addData("", 1);
 			_httpVersion = "HTTP/1.1 201 Created\r\n";
 			this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)";
-//            std::cout << edit_response() << std::endl;
+            std::cout << edit_response() << std::endl;
 		//	putErrorToBody((char *)"201", (char *)"Created", server);
             return (edit_response());
         }
@@ -243,32 +244,22 @@ char* Response::give_me_response(Request request, WebServer server)
     else if(strcmp(request.getMetod(), "PUT") == 0)
     {
         this->_location_id = search_location(server, request.getURI());
-//        std::cout << "location id = " << this->_location_id  << std::endl;
         if(this->_location_id == -1)
             putErrorToBody((char *)"404", (char *)"Not found", server);
         else if (!(server.getLocations()[this->_location_id].getAllowMethods()).find("PUT")->second)
                 putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
         else
         {
-//            std::cout << "zdes dolzno bit sozdanye faila" << std::endl;
-            // // std::cout << "content lenght = " << request.getContentLength() << std::endl;
-            // // int t = atoi(request.getContentLength());
-            // int t = 60;
-            // std::string tmp = request.getReqString();
-            // size_t it = tmp.find("\r\n\r\n");
-            // it += 4; // пропускаем /r/n/r/n, чтобы быть на первой букве body
-            // std::string buff;
-            // std::cout << "it = " << it << std::endl;
-            // for(size_t i = 0; i != t; i++)
-            //     buff += tmp[it++];
-            // std::string str = server.getLocations()[this->_location_id].getRoot() + delete_locations(request.getURI());
-            // std::cout << "str = " << str << std::endl;
-            // std::ofstream filename(str, std::ios::app); // std::ios::app - для записи в конец файла
-            // if(!filename)
-            //     putErrorToBody((char *)"007", (char *)"File is not created!", server);
-            // filename << buff;
-            // std::cout << "buff = " << buff << std::endl;
-            // filename.close();
+            // std::cout << "zdes dolzno bit sozdanye faila" << std::endl;
+            std::string tmp = request.getReqBody().toPointer();
+            tmp.resize(atoi(request.getContentLength()));
+            std::cout << "tmp = \n" << tmp << std::endl;
+            std::string str = server.getLocations()[this->_location_id].getRoot() + delete_locations(request.getURI());
+            std::ofstream filename(str, std::ios::app); // std::ios::app - для записи в конец файла
+            if(!filename)
+                putErrorToBody((char *)"007", (char *)"File is not created!", server);
+            filename << tmp;
+            filename.close();
         }
     }
     else if(strcmp(request.getMetod(), "HEAD") == 0)
@@ -281,7 +272,10 @@ char* Response::give_me_response(Request request, WebServer server)
     else if((strcmp(request.getMetod(), "GET") != 0) && (strcmp(request.getMetod(), "PUT") != 0) && (strcmp(request.getMetod(), "POST") != 0)
     && (strcmp(request.getMetod(), "GET") != 0) && (strcmp(request.getMetod(), "HEAD") != 0))
         this->_httpVersion = "HTTP/1.1 400 Bad Request\n";
-    // std::cout << edit_response() << std::endl;
+
+
+
+    std::cout << edit_response() << std::endl;
     return(edit_response());
 }
 
