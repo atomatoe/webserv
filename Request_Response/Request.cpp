@@ -61,12 +61,17 @@ void Request::setReqBody(char *body, size_t len){
 Request::Request(char *reqString){
 	char *tmp;
 
+	//std::cout << "Request:" << reqString << ":endOfRequest\n";
 	_reqString = ft_strdup(reqString);
 	_pathToCgi = ft_strdup("");
 	fillMap();
 	parsRequest(reqString);
 	tmp = strchr(_info["uri"], '?');
 	_queryString = tmp ? ft_strdup(tmp + 1) : ft_strdup("");
+	//std::cout << "len: " << _info["content-length"] << std::endl;
+	 //for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
+	//	  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
+	 //}
 }
 
 
@@ -79,15 +84,14 @@ int Request::parsHeaders(char **strings){
 	for (int i = 0; i < 18; i++) {
 		_info[_headers[i]] = ft_strdup("");
 		for (int j = 0; strings[j]; j++){
-			if (strnstr(strings[j], _headers[i].c_str(), _headers[i].length()) != NULL){
+			if (strnstr(strings[j], _headers[i].c_str(), strlen(strings[j])) != NULL){
 				free(_info[_headers[i]]);
-				_info[_headers[i]] = strdup(strings[j] + _headers[i].length() + 2); //todo leak
+				_info[_headers[i]] = strdup(strings[j] + _headers[i].length() + 3); //todo leak
 			}
 		}
 	}
-	for (int i = 0; strings[i]; ++i) {
+	for (int i = 0; strings[i]; ++i)
 		free(strings[i]);
-	}
 	return 0;
 }
 
@@ -115,16 +119,16 @@ void Request::ChunkedBodyProcessing(){
 }
 
 int Request::parsRequest(char *reqString){
-	char **strings;
-	char *copy;
-	copy = reqString;
+	char	**strings;
+	char	*copy;
 
+	copy = ft_strdup(reqString);
     _headValid.valid(reqString); // todo try-catch exception
-	parsFirstLine(&copy); //todo valid
+	parsFirstLine(&copy);
 	std::map<std::string, char*>::iterator iter = _info.begin();
 	if ((strings = ft_splitTim(copy, '\r')) == NULL)
 		return -1;
-	parsHeaders(strings); //todo valid
+	parsHeaders(strings);
 	return -1;
 }
 int Request::parsFirstLine(char **copy){

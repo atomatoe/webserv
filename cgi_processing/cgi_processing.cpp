@@ -40,7 +40,7 @@ void toCGI(Response &response, Request request, WebServer server){
 
 	pipe(trumpet_fd); //todo error
 	getEnv(env, request, server);
-	argv[0] = ft_strdup(request.getPathToCgi().c_str());
+	argv[0] = ft_strdup(request.getPathToCgi().c_str()); //
 	argv[1] = ft_strdup(request.getPathToCgi().c_str());
 	argv[2] = NULL;
 	pid_t pid;
@@ -58,7 +58,7 @@ void toCGI(Response &response, Request request, WebServer server){
 		close(trumpet_fd[0]);
 		close(trumpet_fd[1]);
 		wait(&status);
-		//std::cout << "___" <<  status << "___" << std::endl;
+		std::cout << "||||" << status << "||||" << std::endl;
 		lseek(fd_final, 0 , 0);
 		int ret, size = 0;
 		while ((ret = read(fd_final, &buf, 1)) > 0) {

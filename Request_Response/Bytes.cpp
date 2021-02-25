@@ -10,7 +10,6 @@ Bytes::Bytes() : _dataSize(0), _cutFlag(false), _data(new std::list< std::pair<s
 Bytes::~Bytes() {}
 
 void Bytes::addData(char *data, size_t size){
-	//std::cout << "+++" << data << "+++";
 	_data->push_back(std::pair<size_t,char *>(size, ft_memdup(data, size)));
 	_dataSize += size;
 }
@@ -22,7 +21,6 @@ char  *Bytes::toPointer(){
 	char *tmp1;
 	size_t s = 0;
 	tmp2 = ft_memdup("", 1);
-	//std::list< std::pair<size_t,  char *> >::iterator it1 = _data->begin();
 	for (std::list< std::pair<size_t,  char *> >::iterator it = _data->begin(); it != _data->end(); ++it){
 		tmp1 = tmp2;
 		tmp2 = ft_memjoin(tmp2, it->second, s, it->first);

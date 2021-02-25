@@ -48,10 +48,10 @@ int Response::search_location(WebServer server, char *uri)
     size_t t = 0;
     int ret;
 
-    std::cout << "uri 51 = " << uri << std::endl;
+ //   std::cout << "uri 51 = " << uri << std::endl;
 
     if(stat(uri, &sb) == 0 && S_ISDIR(sb.st_mode)) {
-        std::cout << "testers" << std::endl;
+ //       std::cout << "testers" << std::endl;
         return (-1);
     }
     else
@@ -107,7 +107,7 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
     std::map<std::string, std::string>::iterator it = server.getErrorPage().begin();
     while(it != server.getErrorPage().end())
     {
-        std::cout << it->first << std::endl;
+     //   std::cout << it->first << std::endl;
         if(it->first == error)
         {
             fd = open(server.getErrorPage()[error].c_str(), O_RDONLY);
@@ -141,14 +141,14 @@ char* Response::give_me_response(Request request, WebServer server)
     int r_open;
     int r_read;
 
-    std::cout << 
+//    std::cout <<
 
     // -----------------------------------------------------
-    std::cout << std::endl;
+   // std::cout << std::endl;
     bool _autoindex = true;
-    std::cout << "URI: " << request.getURI() << std::endl;
-    std::cout << "Method: " << request.getMetod() << std::endl;
-    std::cout << "Server root path: " << server.getRootPath() << std::endl;
+   // std::cout << "URI: " << request.getURI() << std::endl;
+   // std::cout << "Method: " << request.getMetod() << std::endl;
+   // std::cout << "Server root path: " << server.getRootPath() << std::endl;
     // -----------------------------------------------------
 
     _location_id = -1;
@@ -156,7 +156,7 @@ char* Response::give_me_response(Request request, WebServer server)
     if(strcmp(request.getMetod(), "POST") == 0)
     {
         this->_location_id = search_location(server, request.getURI());
-        std::cout << "location id = " << this->_location_id  << std::endl;
+//        std::cout << "location id = " << this->_location_id  << std::endl;
         if(this->_location_id == -1)
         {
             putErrorToBody((char *)"411", (char *)"Length Required", server);
@@ -170,7 +170,7 @@ char* Response::give_me_response(Request request, WebServer server)
 			//std::cout << "+++" << _bodyOfResponse.toPointer() << "+++" << _bodyOfResponse.getDataSize() << "+++" << std::endl;
 			tmp = _bodyOfResponse.toPointer();
 			this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)";
-            std::cout << edit_response() << std::endl;
+//            std::cout << edit_response() << std::endl;
             return (edit_response());
         }
     }
@@ -180,7 +180,7 @@ char* Response::give_me_response(Request request, WebServer server)
         if(_autoindex == true)
         {
             directory = server.getRootPath() + request.getURI();
-            std::cout << "directory: " << directory << std::endl;
+//            std::cout << "directory: " << directory << std::endl;
             if (stat(directory.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             {
                 // std::cout << "is dir" << std::endl;
@@ -238,14 +238,14 @@ char* Response::give_me_response(Request request, WebServer server)
     else if(strcmp(request.getMetod(), "PUT") == 0)
     {
         this->_location_id = search_location(server, request.getURI());
-        std::cout << "location id = " << this->_location_id  << std::endl;
+//        std::cout << "location id = " << this->_location_id  << std::endl;
         if(this->_location_id == -1)
             putErrorToBody((char *)"404", (char *)"Not found", server);
         else if (!(server.getLocations()[this->_location_id].getAllowMethods()).find("PUT")->second)
                 putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
         else
         {
-            std::cout << "zdes dolzno bit sozdanye faila" << std::endl;
+//            std::cout << "zdes dolzno bit sozdanye faila" << std::endl;
             // // std::cout << "content lenght = " << request.getContentLength() << std::endl;
             // // int t = atoi(request.getContentLength());
             // int t = 60;

@@ -55,9 +55,9 @@ const char* Page_html::create_autoindex(std::string _directory, char *uri)
     while((_file = readdir(_dir)))
     {
         _html += (char *)"<tr style=\"height: 18px;\"><td style=\"width: 50.25%; text-align: center; height: 30px;\" bgcolor=\"#1a7d99\"><a href=\"";
-        std::cout << "dir autoindex = " << _directory << std::endl;
-        std::cout << "file autoindex = " << _file->d_name << std::endl;
-        std::cout << "uri autoindex = " << uri << std::endl;
+        //std::cout << "dir autoindex = " << _directory << std::endl;
+        //std::cout << "file autoindex = " << _file->d_name << std::endl;
+        //std::cout << "uri autoindex = " << uri << std::endl;
         _html += uri;
         if(strcmp(uri, "/") != 0)
             _html += "/";
