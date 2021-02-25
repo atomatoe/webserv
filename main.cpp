@@ -28,7 +28,7 @@ void endOfReadingRequest(std::map<int, t_client>::iterator i, fd_set fd_write, f
 	i->second.toSendData->clear();
 	FD_CLR(i->first, &fd_read);
 	FD_CLR(i->first, &fd_write);
-	server.get_list().erase(i);
+	//server.get_list().erase(i);
 }
 
 void start_servers(std::vector<WebServer> servers)
@@ -96,9 +96,11 @@ void start_servers(std::vector<WebServer> servers)
                     else if (ret > 0 && i->second.isHeadersEnded == 1) {
                         i->second.request->setReqBody(buf, ret);
 						//std::cout << "in ret > 0 " << i->second.request->getReqBody().toPointer() << std::endl;
-						std::cout << ft_atoi(i->second.request->getContentLength()) << std::endl;
-						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength()))
+						//std::cout << "len: " << ft_atoi(i->second.request->getContentLength()) << std::endl;
+						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength())){
 							i->second.isHeadersEnded = 2;
+							goto tmp;
+						}
                         else if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
                             i->second.request->getReqBody().cutData(len + 5);
                             i->second.request->ChunkedBodyProcessing();
@@ -114,13 +116,13 @@ void start_servers(std::vector<WebServer> servers)
                     if (ret == 0) {
                         endOfReadingRequest(i, fd_write, fd_read, *it);
                         i++;
-                        break;
+                        goto tmp;
                     }
                 }
                 tmp:
                 if (i->second.isHeadersEnded == 2) {
                     i->second.response = new Response();
-                   // std::cout << "=====" << i->second.request->getReqBody().toPointer() << "=====" << std::endl;
+                  //  std::cout << "=====" << i->second.request->getReqBody().toPointer() << "=====" << std::endl;
                     i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse()); //todo cgi call adding
                     i->second.toSendData->addData((char *)doubleCRLF, 4);
                     ret2 = 0;

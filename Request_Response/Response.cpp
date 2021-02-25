@@ -165,11 +165,13 @@ char* Response::give_me_response(Request request, WebServer server)
                 putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
         else
         {
-			request.setPathToCgi(std::string("/Users/welease/projects/webserv/testing_cgi/cgi-bin/html.py"));
+			std::cout << "TEST 23\n";
+        	request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/html.py"));
 			toCGI(*this, request, server);
 			//std::cout << "+++" << _bodyOfResponse.toPointer() << "+++" << _bodyOfResponse.getDataSize() << "+++" << std::endl;
 			tmp = _bodyOfResponse.toPointer();
-			this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)";
+			_bodyOfResponse.addData("", 1);
+			this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)\r\nContent-Length: 142";
 //            std::cout << edit_response() << std::endl;
             return (edit_response());
         }
@@ -286,6 +288,7 @@ char* Response::edit_response() {
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" + _versionOfWebServer;
 	//_bodyOfResponse.addData((char *)"", 1);
 	_lenOfResponse = size + _bodyOfResponse.getDataSize();
+	//std::cout << ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), size, _bodyOfResponse.getDataSize()) << std::endl;
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), size, _bodyOfResponse.getDataSize()));
 }
 

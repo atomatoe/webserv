@@ -31,7 +31,7 @@ public:
 	char 			*getMetod() {return _info["metod"];};
 	char 			*getURI() {return _info["uri"];};
 	char 			*getContentType() {return _info["Content-Type"];}
-	char 			*getContentLength() {return _info["Content-Length"];}
+	char 			*getContentLength() {return _info["content-length"];}
 	char			*getTransferEncoding() {return _info["Transfer-Encoding"];}
 	char 			*getReqString() {return _reqString;}
 	Bytes 			getReqBody() {return _reqBody;}

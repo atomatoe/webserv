@@ -58,7 +58,6 @@ void toCGI(Response &response, Request request, WebServer server){
 		close(trumpet_fd[0]);
 		close(trumpet_fd[1]);
 		wait(&status);
-		std::cout << "||||" << status << "||||" << std::endl;
 		lseek(fd_final, 0 , 0);
 		int ret, size = 0;
 		while ((ret = read(fd_final, &buf, 1)) > 0) {
