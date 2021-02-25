@@ -27,21 +27,30 @@ public:
 	Request(char *reqString);
 	~Request();
 
-	void setReqBody(char *body, size_t len);
-	char *getMetod() {return _info["metod"];};
-	char *getURI() {return _info["uri"];};
-	char *getContentType() {return _info["Content-Type"];}
-	char *getContentLength() {return _info["Content-Length"];}
-	char *getReqString() {return _reqString;}
-	Bytes getReqBody() {return _reqBody;}
-	void ChunkedBodyProcessing();
-	char *getTransferEncoding() {return _info["Transfer-Encoding"];}
+	void 			setReqBody(char *body, size_t len);
+	char 			*getMetod() {return _info["metod"];};
+	char 			*getURI() {return _info["uri"];};
+	char 			*getContentType() {return _info["Content-Type"];}
+	char 			*getContentLength() {return _info["Content-Length"];}
+	char			*getTransferEncoding() {return _info["Transfer-Encoding"];}
+	char 			*getReqString() {return _reqString;}
+	Bytes 			getReqBody() {return _reqBody;}
+	std::string &	getPathToCgi();
+
+	std::string &	getQueryString();
+
+	void			setPathToCgi(const std::string &pathToCgi);
+
+	void			ChunkedBodyProcessing();
+
 private:
 	char                        *_reqString;
 	Bytes                       _reqBody;
 	Bytes                       _chunkedReqBody;
 	std::map<std::string,char*> _info;
     HeaderValidation            _headValid;
+    std::string					_pathToCgi;
+    std::string					_queryString;
 
     int parsRequest(char *reqString);
     int parsFirstLine(char **copy);

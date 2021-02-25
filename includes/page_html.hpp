@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 16:47:33 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/18 13:30:42 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/24 17:50:00 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 class Page_html
 {
     private:
-        char* _html;
+        std::string _html;
         DIR* _dir;
         dirent* _file;
         struct stat buff;
@@ -28,8 +28,8 @@ class Page_html
     public:
         Page_html();
         ~Page_html();
-        char* create_autoindex(std::string _directory);
-        char* create_error(char* code, char* text);
+        const char* create_autoindex(std::string _directory, char *uri);
+        const char* create_error(char* code, char* text);
 };
 
 #endif

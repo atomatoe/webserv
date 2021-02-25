@@ -6,9 +6,9 @@
 #define WEBSERV_CGI_UTILS_H
 
 #include <fcntl.h>
-#include "Request.hpp"
+class Response;
+#include "../Request_Response/Response.hpp"
 
-int toCGI(Request request, char** buffWriteFd);
-int getEnv(char **env, Request request);
+void toCGI(Response &response, Request request, WebServer server);
 
 #endif //WEBSERV_CGI_UTILS_H

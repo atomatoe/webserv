@@ -4,47 +4,47 @@
 
 #include "cgi_utils.h"
 
-int getEnv(char **env, Request request){
-	env[0] = ft_strdup("SERVER_NAME=127.0.0.1"); //todo in config file
+int getEnv(char **env, Request request, WebServer server){
+	env[0] = ft_strjoin("SERVER_NAME=", server.getIp().c_str());
 	env[1] = ft_strdup("SERVER_SOFTWARE=webserv/0.0");
 	env[2] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
 	env[3] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
-	env[4] = ft_strdup("SERVER_PORT=80"); //todo in config file
-	env[5] = ft_strjoin("REQUEST_METOD=", request.getMetod());
-	env[6] = ft_strjoin("PATH_INFO=", "/testing_cgi"); //todo path to file
-	env[7] = ft_strjoin("PATH_TRANSLATED=", "/projects/webserv/testing_cgi/"); //todo absol path
-	env[8] = ft_strjoin("SCRIPT_NAME=/cgi-bin/", "html.py");
-	env[9] = ft_strjoin("QUERY_STRING=", "/"); //todo from config
+	env[4] = ft_strjoin("SERVER_PORT=", std::to_string(server.getPort()).c_str());
+	env[5] = ft_strjoin("REQUEST_METHOD=", request.getMetod());
+	env[6] = ft_strjoin("PATH_INFO=", request.getURI());
+	env[7] = ft_strjoin("PATH_TRANSLATED=", request.getPathToCgi().c_str());
+	env[8] = ft_strjoin("SCRIPT_NAME=", strrchr(request.getPathToCgi().c_str(), '/'));
+	env[9] = ft_strjoin("QUERY_STRING=", request.getQueryString().c_str());
 	env[10] = ft_strjoin("REMOTE_HOST=", request.getURI());
 	env[11] = ft_strdup("REMOTE_ADDR=");
 	env[12] = ft_strdup("AUTH_TYPE=basic");
 	env[13] = ft_strdup("REMOTE_USER=");
 	env[14] = ft_strdup("REMOTE_IDENT");
 	env[15] = ft_strjoin("CONTENT_TYPE=", request.getContentType());
-	env[16] = ft_strjoin("CONTENT_LENGTH=", request.getContentLength());
-	env[17] = NULL;
+	env[16] = ft_strjoin("CONTENT_LENGTH=", request.getQueryString() == "" ? request.getContentLength() : std::to_string(request.getQueryString().length()).c_str());
+	env[17] = ft_strjoin("REQUEST_URI=http://" ,  (server.getIp() + ":" + std::to_string(server.getPort()) + request.getURI()).c_str());
+	env[18] = ft_strdup("HTTP_X_SECRET_HEADER_FOR_TEST=1");
+	env[19] = NULL;
 	return 0;
 }
 
-int toCGI(Request request, char** buffWriteFd){
-	char *env[18];
+void toCGI(Response &response, Request request, WebServer server){
+	char *env[20];
 	char *argv[3];
 	int status;
 	int trumpet_fd[2];
-	int fd_final = open("final", O_RDWR);
+	int fd_final = open("final", O_CREAT | O_RDWR | O_TRUNC, 0666);
 	char buf;
-	char buf_big[1000];
+	char *buf_big = (char *)malloc(100000);
 	int i = 0;
 
 	pipe(trumpet_fd); //todo error
-	if (getEnv(env, request) == -1)
-		return -1;
-	argv[0] = ft_strdup("testing_cgi/cgi-bin/html.py");
-	argv[1] = ft_strdup("~/Desktop/webserv_merged/testing_cgi/cgi-bin/");
+	getEnv(env, request, server);
+	argv[0] = ft_strdup(request.getPathToCgi().c_str());
+	argv[1] = ft_strdup(request.getPathToCgi().c_str());
 	argv[2] = NULL;
-
 	pid_t pid;
-	if ((pid = fork()) == 0){
+	if ((pid = fork()) == 0) {
 		close(trumpet_fd[1]);
 		dup2(trumpet_fd[0], 0);
 		close(trumpet_fd[0]);
@@ -53,24 +53,21 @@ int toCGI(Request request, char** buffWriteFd){
 		exit(execve(argv[0], argv, env));
 	}
 	else if (pid == -1) ;//todo error 500
-	else
-	{
+	else {
 		write(trumpet_fd[1], request.getReqString(), strlen(request.getReqString()));
 		close(trumpet_fd[0]);
 		close(trumpet_fd[1]);
 		wait(&status);
+		//std::cout << "___" <<  status << "___" << std::endl;
 		lseek(fd_final, 0 , 0);
-		//std::cout << "HERE\n";
-		while (read(fd_final, &buf, 1))
-		{ //todo buf with big size
+		int ret, size = 0;
+		while ((ret = read(fd_final, &buf, 1)) > 0) {
+			size += ret;
 			buf_big[i] = buf;
 			i++;
 		}
-		buf_big[i] = '\0';
-		char *tmp = *buffWriteFd;
-		*buffWriteFd = ft_strjoin(*buffWriteFd, buf_big); //todo leak
-		//std::cout << *buffWriteFd << std::endl;
-		free(tmp);
+		response._bodyOfResponse.clear();
+		response._bodyOfResponse.addData(buf_big, size);
 	}
-	return 0;
+	//return 0;
 }

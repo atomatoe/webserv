@@ -13,7 +13,7 @@ private:
 
     void    isValidLine_First(std::string);
     void    isValidLine_Second(std::string);
-    void    isValidLine_KeyValue(std::string);
+    void    isValidLine_KeyValue(std::string line, bool & hasHost);
 
 public:
     void    valid(char *);
@@ -28,6 +28,11 @@ public:
         }
         virtual ~HeaderValidationException() throw() { }
         virtual const char*		what() const throw() { return (_message.c_str()); }
+    };
+
+    class NoHostInHeaderException : public std::exception {
+    public:
+        virtual const char*		what() const throw() { return ("No \"HOST\" key in header"); }
     };
 };
 
