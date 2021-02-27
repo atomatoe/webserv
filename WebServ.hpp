@@ -21,15 +21,16 @@
 class Response;
 
 typedef struct client {
-	Request *request;
-	Response *response;
-	Bytes *receivedData;// то что запросит клиент
-	Bytes *toSendData; // то что отдадим клиенту
-	int isHeadersEnded;
+	Request *	request;
+	Response *	response;
+	Bytes * 	receivedData;// то что запросит клиент
+	Bytes * 	toSendData; // то что отдадим клиенту
+	int			phase;
+	time_t		time;
+	size_t 		sendBytes;
 } t_client;
 
-class WebServer
-{
+class WebServer {
 private:
 	std::string                         _ip;
 	int		                            _port;
@@ -52,7 +53,7 @@ public:
 	~WebServer();
 	void create_socket();
 	int build_server();
-	//geters
+	//getters
 	int get_server_fd();
 	sockaddr_in *get_socket_addr();
     socklen_t *get_address_len();

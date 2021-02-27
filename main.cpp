@@ -15,9 +15,6 @@ void fd_init(std::vector<WebServer> &servers, fd_set &fd_write, fd_set &fd_read,
 	for(std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); it++) {
 		FD_SET(it->get_server_fd(), &fd_read);
 		max_fd = it->get_server_fd();
-		//		FD_ZERO(&it->getFdRead());
-		//		FD_ZERO(&it->getFdWrite());
-		//FD_SET(it->get_server_fd(), &it->getFdWrite());
 	}
 }
 
@@ -41,7 +38,7 @@ void start_servers(std::vector<WebServer> servers)
     Bytes		tmp;
     size_t		len;
     int			ret;
-    ssize_t		tmp_len;
+    struct timeval tv;
     if (!(buf = (char *) malloc(sizeof(char) * 2000001)))
         exit(1);
 
@@ -54,7 +51,7 @@ void start_servers(std::vector<WebServer> servers)
 
         for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
             for (std::map<int, t_client>::iterator i = it->getClients().begin(); i != it->getClients().end(); ++i) {
-                if (i->second.isHeadersEnded < 2)
+                if (i->second.phase < 2)
                     FD_SET(i->first, &fd_read);
                 else
                     FD_SET(i->first, &fd_write);
@@ -79,38 +76,38 @@ void start_servers(std::vector<WebServer> servers)
             while (i != it->getClients().end()) {
                 if (FD_ISSET(i->first, &fd_read)) {
                     ret = read(i->first, buf, 2000000);
-                    if (!i->second.isHeadersEnded && ret > 0) {
+                    if (!i->second.phase && ret > 0) {
                         i->second.receivedData->addData(buf, ret);
                         if ((len = i->second.receivedData->findMemoryFragment((char *)doubleCRLF, 4)) != (size_t) -1) {
                             tmp = i->second.receivedData->cutData(len + 4);
                             i->second.request = new Request(i->second.receivedData->toPointer());
                             i->second.request->setReqBody(tmp.toPointer(), tmp.getDataSize());
-                            i->second.isHeadersEnded = 1;
+                            i->second.phase = 1;
                             if (ret < 2000000) {
 								if (i->second.request->getReqBody().getDataSize() > ft_atoi(i->second.request->getContentLength())){
 									i->second.request->getReqBody().cutData(ft_atoi(i->second.request->getContentLength()));
 								}
-                                i->second.isHeadersEnded = 2;
+                                i->second.phase = 2;
                                 goto tmp;
                             }
                         }
                     }
-                    else if (ret > 0 && i->second.isHeadersEnded == 1) {
+                    else if (ret > 0 && i->second.phase == 1) {
                         i->second.request->setReqBody(buf, ret);
 						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength())){
-							i->second.isHeadersEnded = 2;
+							i->second.phase = 2;
 							i->second.request->getReqBody().cutData(ft_atoi(i->second.request->getContentLength()));
 							goto tmp;
 						}
                         if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
                             i->second.request->getReqBody().cutData(len + 5);
                             i->second.request->ChunkedBodyProcessing();
-                            i->second.isHeadersEnded = 2;
+                            i->second.phase = 2;
                             endOfReadingRequest(i, fd_write, fd_read, *it);
                         }
                         //else if (ret < 20 || i->second.request->getReqBody().findMemoryFragment(doubleCRLF, 4) != (size_t) -1) { //todo maybe we don't need this else if
                         //    i->second.request->getReqBody().addData((char *) "", 1);
-                        //    i->second.isHeadersEnded = 2;
+                        //    i->second.phase = 2;
                         //    endOfReadingRequest(i, fd_write, fd_read, *it);
                         //}
                     }
@@ -121,17 +118,20 @@ void start_servers(std::vector<WebServer> servers)
                     }
                 }
                 tmp:
-                if (i->second.isHeadersEnded == 2) {
-                    i->second.response = new Response();
-//                    std::cout << "=====" << i->second.request->getReqBody().toPointer() << "=====" << std::endl;
-                    i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse()); //todo cgi call adding
-                    i->second.toSendData->addData((char *)doubleCRLF, 4);
-                    tmp_len = 0;
-                    while (tmp_len != i->second.toSendData->getDataSize()){
-                        tmp_len += send(i->first, i->second.toSendData->toPointer() + tmp_len, i->second.toSendData->getDataSize() - tmp_len, 0);
-                    }
-                    close(i->first);
-                    i = it->getClients().erase(i); //todo maybe we must delete bytes in client
+                if (i->second.phase >= 2) {
+                	gettimeofday(&tv, NULL);
+                	if (i->second.phase != 3) {
+						i->second.response = new Response();
+						i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse());
+						i->second.toSendData->addData((char *) doubleCRLF, 4);
+					}
+                    i->second.sendBytes += send(i->first, i->second.toSendData->toPointer() + i->second.sendBytes, i->second.toSendData->getDataSize() - i->second.sendBytes, 0);
+                    if (i->second.sendBytes)
+                    	i->second.phase = 3;
+                    if (i->second.sendBytes == i->second.toSendData->getDataSize() || tv.tv_sec - i->second.time > 300) {
+						close(i->first);
+						i = it->getClients().erase(i); //todo maybe we must delete bytes in client
+					}
                 }
                 else
                     i++;

@@ -108,12 +108,16 @@ void            WebServer::addLocation(Location location) {
 }
 
 void WebServer::addClient(int fd){
-	t_client tmp;
+	t_client        tmp;
+	struct timeval  tv;
 
+	gettimeofday(&tv, NULL);
 	_mapOfClients.insert(std::make_pair(fd, tmp));
+    _mapOfClients[fd].time = tv.tv_sec;
 	_mapOfClients[fd].toSendData = new Bytes();
 	_mapOfClients[fd].receivedData = new Bytes();
-	_mapOfClients[fd].isHeadersEnded = 0;
+	_mapOfClients[fd].phase = 0;
+	_mapOfClients[fd].sendBytes = 0;
 }
 
 std::map<int, t_client> &WebServer::getClients() {

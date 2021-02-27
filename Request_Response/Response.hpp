@@ -25,6 +25,7 @@ private:
 	std::string _httpVersion;
 	std::string _timeOfResponse;
 	std::string _versionOfWebServer;
+	std::string _contentLength;
 	Bytes		_bodyOfResponse;
 	size_t 		_lenOfResponse;
 
@@ -38,6 +39,7 @@ public:
     int search_location(WebServer server, char *uri);
     int check_uri(WebServer server, char *uri);
 	void putErrorToBody(char *error, char *type, WebServer server);
+	void methodGet(Request request, WebServer server);
 
 	size_t getLenOfResponse() const;
 
