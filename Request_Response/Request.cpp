@@ -61,7 +61,6 @@ void Request::setReqBody(char *body, size_t len){
 Request::Request(char *reqString){
 	char *tmp;
 
-	//std::cout << "Request:" << reqString << ":endOfRequest\n";
 	_reqString = ft_strdup(reqString);
 	_pathToCgi = ft_strdup("");
 	_reqBody = Bytes();
@@ -69,6 +68,7 @@ Request::Request(char *reqString){
 	parsRequest(reqString);
 	tmp = strchr(_info["uri"], '?');
 	_queryString = tmp ? ft_strdup(tmp + 1) : ft_strdup("");
+	std::cout << _queryString << std::endl;
 	//std::cout << "len: " << _info["content-length"] << std::endl;
 //	for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
 //		  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
@@ -116,7 +116,6 @@ void Request::ChunkedBodyProcessing(){
 	}
 	_chunkedReqBody.addData((char *)"", 1);
 	std::cout << _chunkedReqBody.getDataSize() << std::endl;
-	//std::cout << "||" << _chunkedReqBody.toPointer() << "||" << std::endl;
 }
 
 int Request::parsRequest(char *reqString){

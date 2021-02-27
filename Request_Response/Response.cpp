@@ -26,7 +26,7 @@ Response::Response()
     struct timeval tv;
     gettimeofday(&tv, NULL);
     this->_timeOfResponse = get_time(tv.tv_sec);
-    this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)\r\n\r\n";
+    this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)";
     this->_location_id = -1;
     _lenOfResponse = 0;
 }
@@ -199,8 +199,8 @@ char* Response::give_me_response(Request request, WebServer server)
     // std::cout << "Server root path: " << server.getRootPath() << std::endl;
     // -----------------------------------------------------
     // Вывод запроса:
-    std::cout << request.getReqString() << std::endl;
-    std::cout << request.getReqBody().toPointer() << std::endl;
+   // std::cout << request.getReqString() << std::endl;
+   // std::cout << request.getReqBody().toPointer() << std::endl;
     // ---------------
 
 
@@ -269,8 +269,8 @@ char* Response::give_me_response(Request request, WebServer server)
         //    this->_httpVersion = "HTTP/1.1 404 Not Found\n";
         // else if (!(server.getLocations()[this->_location_id].getAllowMethods()).find("HEAD")->second)
         //         putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
-        _versionOfWebServer = "Server: Webserv/1.0 (MacOS)\r\n";
-		std::string tmp1 = _httpVersion + _timeOfResponse + "\r\n" + _versionOfWebServer + _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + doubleCRLF;
+        _versionOfWebServer = "Server: Webserv/1.0 (MacOS)";
+		std::string tmp1 = _httpVersion + _timeOfResponse + "\r\n" + _versionOfWebServer + doubleCRLF;
 		std::cout << "++++++" << tmp1 << "++++++++" << std::endl;
 		_lenOfResponse = tmp1.length();
 		return const_cast<char *>(tmp1.c_str());
@@ -286,7 +286,7 @@ char* Response::give_me_response(Request request, WebServer server)
 }
 
 char* Response::edit_response() {
-	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" + _versionOfWebServer + _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + doubleCRLF;
+	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" + _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()));
 }
