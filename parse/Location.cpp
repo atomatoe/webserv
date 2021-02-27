@@ -18,7 +18,7 @@ const std::string &                         Location::getIndex() const { return 
 
 /* set */
 void                                        Location::setUrl(const std::string &url) {
-    if (url[0] != '.' && (url[0] != '/' || url[url.size() - 1] != '/'))
+    if (url[0] != '.' && url[0] != '/')
         exitError("Location url is incorrect");
     _url = url;
 }

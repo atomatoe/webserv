@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:50 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/24 18:10:05 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/27 21:24:48 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,16 @@ public:
 	char* give_me_response(Request request, WebServer server);
 	char* edit_response();
 	int search_uri(WebServer server, char *uri);
-    int search_location(WebServer server, char *uri);
-    int check_uri(WebServer server, char *uri);
 	void putErrorToBody(char *error, char *type, WebServer server);
-	void methodGet(Request request, WebServer server);
+	
+	void methodGetHead(Request request, WebServer server, Page_html page);
+	void methodPost(Request request, WebServer server, Page_html page);
+	void methodPut(Request request, WebServer server, Page_html page);
+	void check_file_or_dir(Request request, WebServer server);
+	std::string give_me_index(std::string index);
 
 	size_t getLenOfResponse() const;
 
 	friend void toCGI(Response &response, Request request, WebServer server);
-
 };
 #endif
