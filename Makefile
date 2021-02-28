@@ -21,7 +21,8 @@ SRCS =	WebServ.cpp \
 		parse/Location.cpp \
 		parse/ParseConfig.cpp \
 		parse/parse_utils.cpp \
-		cgi_processing/cgi_processing.cpp
+		cgi_processing/cgi_processing.cpp \
+		Auth_client/base64.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 

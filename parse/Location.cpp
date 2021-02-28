@@ -6,6 +6,8 @@ Location::Location() {
     _allowMethods.insert(std::pair<std::string, bool>("PUT", false));
     _allowMethods.insert(std::pair<std::string, bool>("HEAD", false));
     _limitBody = -1;
+    _auth_client.push_back("Host:webserv8190");
+    _auth_client.push_back("atomatoe:password777");
 }
 
 /* get */
@@ -15,6 +17,7 @@ const std::map<std::string, std::string> &  Location::getCgiPath() const { retur
 int                                         Location::getLimitBody() const { return _limitBody; }
 const std::map<std::string, bool> &         Location::getAllowMethods() const { return _allowMethods; }
 const std::string &                         Location::getIndex() const { return _index; }
+std::vector<std::string>                    Location::getAuthClient() const { return _auth_client; }
 
 /* set */
 void                                        Location::setUrl(const std::string &url) {

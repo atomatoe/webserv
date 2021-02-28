@@ -6,11 +6,12 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/28 15:32:46 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/28 19:23:31 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
+#include "../Auth_client/base64.h"
 
 /*
 GET ─получить данные
@@ -112,6 +113,8 @@ void Response::methodPut(Request request, WebServer server, Page_html page)
     this->_location_id = search_uri(server, request.getURI());
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
+    else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
+        putErrorToBody((char *)"401", (char *)"Unauthorized", server);
     else
     {     
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
@@ -142,6 +145,8 @@ void Response::methodPost(Request request, WebServer server, Page_html page)
     
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
+    else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
+        putErrorToBody((char *)"401", (char *)"Unauthorized", server);
     else
     {     
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
@@ -153,6 +158,21 @@ void Response::methodPost(Request request, WebServer server, Page_html page)
             tmp = _bodyOfResponse.toPointer();
         }
     }
+}
+
+int Response::check_auth(Request request, Location location)
+{
+    if(location.getAuthClient().empty())
+        return(0); // Не нужна авторизация для location
+    else // Нужна авторизация для location
+    {
+        if(strcmp(request.getAuthorization(), "") == 0) // если клиент без header авторизации
+            return(-1);
+        for(size_t it = 0; it != location.getAuthClient().size(); it++)
+            if(strcmp(ft_substr(request.getAuthorization(), 6, strlen(request.getAuthorization())), base64_encode(location.getAuthClient()[it]).c_str()) == 0)
+                return(0);
+    }
+    return(-1);
 }
 
 void Response::methodGetHead(Request request, WebServer server, Page_html page)
@@ -190,9 +210,10 @@ void Response::methodGetHead(Request request, WebServer server, Page_html page)
     else
     {
         this->_location_id = search_uri(server, request.getURI());
-        std::cout << "location id = " << this->_location_id << std::endl;
 		if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 			putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
+        else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
+            putErrorToBody((char *)"401", (char *)"Unauthorized", server);
         else
             check_file_or_dir(request, server);
     }
@@ -210,10 +231,13 @@ char* Response::give_me_response(Request request, WebServer server)
     // std::cout << "Server root path: " << server.getRootPath() << std::endl;
     // -----------------------------------------------------
     // Вывод запроса:
-    // std::cout << request.getReqString() << std::endl;
+    std::cout << request.getReqString() << std::endl;
     // std::cout << request.getReqBody().toPointer() << std::endl;
     // -----------------------------------------------------
     
+    // test = base64_encode(test);
+    // std::cout << test << std::endl;
+
     _location_id = -1;
     if((strcmp(request.getMetod(), "GET") == 0) || (strcmp(request.getMetod(), "HEAD") == 0)) {
         methodGetHead(request, server, page);
