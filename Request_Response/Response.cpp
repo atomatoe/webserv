@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/27 21:24:41 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/28 15:32:46 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,7 @@ void Response::methodGetHead(Request request, WebServer server, Page_html page)
         else
             check_file_or_dir(request, server);
     }
+    std::cout << _timeOfResponse << std::endl;
 }
 
 char* Response::give_me_response(Request request, WebServer server)

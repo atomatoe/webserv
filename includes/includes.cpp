@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 16:56:06 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/16 14:02:41 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/28 15:34:23 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,13 @@ char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делае�
     tm.tm_wday = 1;
     while(tmp > 86400) // дни
     {
-        if(tm.tm_wday > 6)
-            tm.tm_wday = 0;
         tmp -= 86400;
         tm.tm_mday++;
         tm.tm_wday++;
+        if(tm.tm_wday > 6)
+            tm.tm_wday = 0;
     }
+    std::cout << tm.tm_wday << std::endl;
     tm.tm_year = 70 + year; // получаем год
 
     long hms = tv.tv_sec % sec_per_day;
