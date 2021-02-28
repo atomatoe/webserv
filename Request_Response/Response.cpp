@@ -63,7 +63,7 @@ void Response::check_file_or_dir(Request request, WebServer server)
     }
 	if (r_open < 0)
     {
-        std::cout << "this test +++++++";
+       // std::cout << "this test +++++++";
         putErrorToBody((char *)"404", (char *)"Not found", server);
     }
 	else
@@ -106,7 +106,7 @@ void Response::methodPut(Request request, WebServer server, Page_html page)
     int r_open;
     int r_read;
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
-    std::cout << "directory = " << directory << std::endl;
+   // std::cout << "directory = " << directory << std::endl;
     struct stat sb;
     
     this->_location_id = search_uri(server, request.getURI());
@@ -120,21 +120,23 @@ void Response::methodPut(Request request, WebServer server, Page_html page)
         {
             // std::cout << "zdes dolzno bit sozdanye faila" << std::endl;
             std::string tmp = request.getReqBody().toPointer();
-            std::cout << "tmp = \n" << tmp << std::endl;
+           // std::cout << "tmp = \n" << tmp << std::endl;
             tmp.resize(atoi(request.getContentLength()));
             std::string str = server.getLocations()[this->_location_id].getRoot() + give_me_index(request.getURI());
-            std::cout << "str = " << str << std::endl;
+           // std::cout << "str = " << str << std::endl;
             std::ofstream filename(str, std::ios::app); // std::ios::app - для записи в конец файла
             if(!filename)
                 putErrorToBody((char *)"007", (char *)"File is not created!", server);
             filename << tmp;
             filename.close();
+            if (request.getReqBody().getDataSize() == 0) {
+            	_httpVersion = "HTTP/1.1 204 No Content\r\n";
+            }
         }
     }
 }
 
-void Response::methodPost(Request request, WebServer server, Page_html page)
-{
+void Response::methodPost(Request request, WebServer server, Page_html page) {
     char *tmp;
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     this->_location_id = search_uri(server, request.getURI());
@@ -162,7 +164,7 @@ void Response::methodGetHead(Request request, WebServer server, Page_html page)
 	char *tmp;
 	int r_open, r_read;
     
-    if(server.getAutoIndex() == true)
+    if(server.getAutoIndex())
 	{
 		directory = server.getRootPath() + request.getURI();
 		if (stat(directory.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)) {
@@ -190,7 +192,7 @@ void Response::methodGetHead(Request request, WebServer server, Page_html page)
     else
     {
         this->_location_id = search_uri(server, request.getURI());
-        std::cout << "location id = " << this->_location_id << std::endl;
+      //  std::cout << "location id = " << this->_location_id << std::endl;
 		if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 			putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
         else
@@ -203,8 +205,8 @@ char* Response::give_me_response(Request request, WebServer server)
 	Page_html page;
 
     // -----------------------------------------------------
-    std::cout << std::endl;
-    std::cout << "URI: " << request.getURI() << std::endl;
+   // std::cout << std::endl;
+   // std::cout << "URI: " << request.getURI() << std::endl;
     // std::cout << "Method: " << request.getMetod() << std::endl;
     // std::cout << "Server root path: " << server.getRootPath() << std::endl;
     // -----------------------------------------------------
@@ -273,8 +275,7 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
 	_bodyOfResponse.addData(tmp, ft_strlen(tmp));
 }
 
-char* Response::edit_response()
-{
+char* Response::edit_response() {
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()));

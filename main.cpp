@@ -37,11 +37,12 @@ void start_servers(std::vector<WebServer> servers)
     size_t		len;
     int			ret;
     struct timeval tv;
-    if (!(buf = (char *) malloc(sizeof(char) * 2000001)))
+    if (!(buf = (char *) malloc(sizeof(char) * 20000001)))
         exit(1);
 
     int j = 1;
     std::cout << GREEN << "Webserver is started" << DEFAULT<< std::endl;
+    int count = 0;
 	signal(SIGPIPE, SIG_IGN);
     while (j) {
         if (j++ == 0)
@@ -74,40 +75,51 @@ void start_servers(std::vector<WebServer> servers)
             std::map<int, t_client>::iterator i = it->getClients().begin();
             while (i != it->getClients().end()) {
                 if (FD_ISSET(i->first, &fd_read)) {
-                    ret = recv(i->first, buf, 2000000, 0);
+                	bzero(buf, 2000001);
+                    ret = recv(i->first, buf, 200000, 0);
                     if (!i->second.phase && ret > 0) {
                         i->second.receivedData->addData(buf, ret);
                         if (i->second.phase < 1 && (len = i->second.receivedData->findMemoryFragment((char *)doubleCRLF, 4)) != (size_t) -1) {
+                        	count++;
                             tmp = i->second.receivedData->cutData(len + 4);
-                            i->second.receivedData->addData("", 1);
+                            i->second.receivedData->addData((char *)"", 1);
                             i->second.request = new Request(i->second.receivedData->toPointer());
                             i->second.request->setReqBody(tmp.toPointer(), tmp.getDataSize());
                             i->second.phase = 1;
-                            if (ret < 2000000) {
-								if (i->second.request->getReqBody().getDataSize() > ft_atoi(i->second.request->getContentLength())){
-									i->second.request->getReqBody().cutData(ft_atoi(i->second.request->getContentLength()));
-								}
-                                i->second.phase = 2;
-                               i++;
-								continue;
+                            if (strcmp(i->second.request->getMetod(), "GET") == 0 || strcmp(i->second.request->getMetod(), "HEAD") == 0) {
+                            	i->second.phase = 2;
                             }
+							else if (strcmp(i->second.request->getTransferEncoding(), "chunked") == 0){
+								i++;
+								continue;
+							}
+                            else if (i->second.request->getReqBody().getDataSize() > ft_atoi(i->second.request->getContentLength())){
+								i->second.request->getReqBody().cutData(ft_atoi(i->second.request->getContentLength()));
+								i->second.phase = 2;
+                            }
+                            i++;
+							continue;
                         }
                     }
                     else if (ret > 0 && i->second.phase == 1) {
                         i->second.request->setReqBody(buf, ret);
-						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength())){
+                        std::cout << GREEN << j << "working\n" << DEFAULT << std::endl;
+                       // std::cout << BLUE << i->first << ":   " << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl << std::endl;
+						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength()) && strcmp(i->second.request->getTransferEncoding(), "chunked") != 0){
 							i->second.phase = 2;
 							i->second.request->getReqBody().cutData(ft_atoi(i->second.request->getContentLength()));
 							i++;
 							continue;
 						}
-                        if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
-                            i->second.request->getReqBody().cutData(len + 5);
+                        if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
+							len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
+                        	i->second.request->getReqBody().cutData(len);
+							//std::cout << "CHUNK: " << RED << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
                             i->second.request->ChunkedBodyProcessing();
+
                             i->second.phase = 2;
                            	i++;
 							continue;
-
                         }
                     }
                     if (ret == 0) {
@@ -123,7 +135,7 @@ void start_servers(std::vector<WebServer> servers)
 				}
 				if (i->second.phase == 3) {
 					gettimeofday(&tv, NULL);
-					if (i->second.sendBytes < i->second.toSendData->getDataSize() && tv.tv_sec - i->second.time < 300) {
+					if (i->second.sendBytes < i->second.toSendData->getDataSize() && tv.tv_sec - i->second.time < 10000000) {
 						if (FD_ISSET(i->first, &fd_write)) {
 							i->second.sendBytes += send(i->first, i->second.toSendData->toPointer() + i->second.sendBytes, i->second.toSendData->getDataSize() - i->second.sendBytes, 0);
 							if (errno == EPIPE) {
@@ -135,6 +147,8 @@ void start_servers(std::vector<WebServer> servers)
 							continue;
 						}
 					}
+					//std::cout << "REQUEST " << count << ": " << i->second.request->getReqBody().toPointer() << "++++++" << std::endl;
+					//std::cout << "RESPONSE: " << i->second.response->give_me_response(*(i->second.request), *it);
 					closeClientFd(&i, fd_write, fd_read, &*it);
 				}
 				else
@@ -144,8 +158,7 @@ void start_servers(std::vector<WebServer> servers)
     }
 }
 
-int main(int ac, char **av)
-{
+int main(int ac, char **av) {
     signal(SIGINT, exitSignal);
     signal(SIGTERM, exitSignal);
     signal(SIGQUIT, exitSignal);

@@ -35,7 +35,7 @@ memBody	*ft_memsplit(char *s, char *c, size_t size, size_t len)
 	mass = new memBody();
 	while (tmp_size){
 		line_getting(&line, &ll, c, &tmp_size, len);
-		std::cout << ft_memdup(line, ll) << std::endl;
+		//std::cout << "+++++" << ft_memdup(line, ll) << "+++++" << std::endl;
 		mass->push_back(std::pair<size_t, char *>(ll, ft_memdup(ll == len ? "" : line, ll)));
 	}
 	return (mass);

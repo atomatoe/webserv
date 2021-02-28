@@ -62,13 +62,14 @@ Request::Request(char *reqString){
 	char *tmp;
 
 	_reqString = ft_strdup(reqString);
+	//std::cout << GREEN << "\nREQ:" << DEFAULT << _reqString << GREEN <<  "----" << DEFAULT << std::endl;
 	_pathToCgi = ft_strdup("");
 	_reqBody = Bytes();
 	fillMap();
 	parsRequest(reqString);
 	tmp = strchr(_info["uri"], '?');
 	_queryString = tmp ? ft_strdup(tmp + 1) : ft_strdup("");
-	std::cout << _queryString << std::endl;
+	//std::cout << _queryString << std::endl;
 	//std::cout << "len: " << _info["content-length"] << std::endl;
 //	for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
 //		  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
@@ -101,21 +102,22 @@ void Request::ChunkedBodyProcessing(){
 	size_t size = 0;
 
 	memBody *chunkBody = ft_memsplit(_reqBody.toPointer(), (char *)"\r\n", _reqBody.getDataSize(), 2);
-
-	for (memBody:: iterator i = chunkBody->begin(); i->first != 0; ++i){
-		std::cout << i->first << " " << i->second << std::endl;
-	}
-
-	for (memBody:: iterator i = chunkBody->begin(); i->first != 0; ++i){
+	if (chunkBody->size() == 0)
+		return;
+	//for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
+	//	std::cout << "in chunk: " << i->first << " " << i->second << std::endl;
+	//}
+	for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
 		if (ind % 2)
 			size = hexToDec(std::string(i->second));
-		else {
+		else
 			_chunkedReqBody.addData(i->second, size);
-		}
 		ind++;
 	}
 	_chunkedReqBody.addData((char *)"", 1);
-	std::cout << _chunkedReqBody.getDataSize() << std::endl;
+	_reqBody.clear();
+	_reqBody.addData(_chunkedReqBody.toPointer(), _chunkedReqBody.getDataSize());
+	//std::cout << "size: " << _chunkedReqBody.getDataSize() << std::endl;
 }
 
 int Request::parsRequest(char *reqString){
@@ -123,7 +125,7 @@ int Request::parsRequest(char *reqString){
 	char	*copy;
 
 	copy = ft_strdup(reqString);
-    _headValid.valid(reqString); // todo try-catch exception
+   // _headValid.valid(reqString); // todo try-catch exception
 	parsFirstLine(&copy);
 	std::map<std::string, char*>::iterator iter = _info.begin();
 	if ((strings = ft_splitTim(copy, '\r')) == NULL)

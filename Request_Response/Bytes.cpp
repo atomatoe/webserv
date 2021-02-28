@@ -36,7 +36,7 @@ void Bytes::clear(){
 
 size_t Bytes::findMemoryFragment(char const *toFind, size_t len){
 	char *data = toPointer();
-	char *tmp = ft_memmem(data, _dataSize, toFind, len);
+	char *tmp = (char *)memmem(data, _dataSize, toFind, len);
 	if (tmp == NULL)
 		return (size_t)-1;
 	return tmp - data;
@@ -44,6 +44,10 @@ size_t Bytes::findMemoryFragment(char const *toFind, size_t len){
 
 Bytes Bytes::cutData(size_t len){
 	Bytes ret = Bytes();
+	if (len > _dataSize) {
+		clear();
+		return ret;
+	}
 	char *tmp = toPointer();
 	_charData = (char *)malloc(len);
 

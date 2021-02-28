@@ -6,8 +6,8 @@
 
 char	*ft_memdup(char const *src, size_t size) {
 	char	*dub;
-	if ((dub = (char*)malloc(size)) == NULL)
+	if ((dub = (char*)malloc(size + 1)) == NULL)
 		return NULL;
-	ft_memcpy((void *)dub, (void *)(src), size);
+	memcpy((void *)dub, (void *)(src), size);
 	return (dub);
 }

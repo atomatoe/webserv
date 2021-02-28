@@ -18,6 +18,8 @@
 #include <vector>
 #include "Request_Response/Response.hpp"
 #include "Request_Response/Request.hpp"
+# define RED  "\e[31m"
+# define BLUE "\e[34m"
 class Response;
 
 typedef struct client {
