@@ -100,14 +100,16 @@ int Request::parsHeaders(char **strings){
 void Request::ChunkedBodyProcessing(){
 	size_t ind = 1;
 	size_t size = 0;
+	size_t tmp = 0;
 
 	memBody *chunkBody = ft_memsplit(_reqBody.toPointer(), (char *)"\r\n", _reqBody.getDataSize(), 2);
 	if (chunkBody->size() == 0)
 		return;
-	//for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
-	//	std::cout << "in chunk: " << i->first << " " << i->second << std::endl;
-	//}
 	for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
+		std::cout << tmp++ <<" in chunk: " << i->first << " " << i->second << std::endl;
+	}
+	for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
+		std::cout << ind << std::endl;
 		if (ind % 2)
 			size = hexToDec(std::string(i->second));
 		else
@@ -116,7 +118,9 @@ void Request::ChunkedBodyProcessing(){
 	}
 	_chunkedReqBody.addData((char *)"", 1);
 	_reqBody.clear();
+	std::cout << "before\n";
 	_reqBody.addData(_chunkedReqBody.toPointer(), _chunkedReqBody.getDataSize());
+	std::cout << "After to pointer\n";
 	//std::cout << "size: " << _chunkedReqBody.getDataSize() << std::endl;
 }
 

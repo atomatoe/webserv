@@ -76,7 +76,7 @@ void start_servers(std::vector<WebServer> servers)
             while (i != it->getClients().end()) {
                 if (FD_ISSET(i->first, &fd_read)) {
                 	bzero(buf, 2000001);
-                    ret = recv(i->first, buf, 200000, 0);
+                    ret = recv(i->first, buf, 2000000, 0);
                     if (!i->second.phase && ret > 0) {
                         i->second.receivedData->addData(buf, ret);
                         if (i->second.phase < 1 && (len = i->second.receivedData->findMemoryFragment((char *)doubleCRLF, 4)) != (size_t) -1) {
@@ -103,7 +103,7 @@ void start_servers(std::vector<WebServer> servers)
                     }
                     else if (ret > 0 && i->second.phase == 1) {
                         i->second.request->setReqBody(buf, ret);
-                        std::cout << GREEN << j << "working\n" << DEFAULT << std::endl;
+                        std::cout << GREEN << j << " " <<  ret << " working\n" << DEFAULT << std::endl;
                        // std::cout << BLUE << i->first << ":   " << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl << std::endl;
 						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength()) && strcmp(i->second.request->getTransferEncoding(), "chunked") != 0){
 							i->second.phase = 2;

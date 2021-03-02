@@ -67,6 +67,7 @@ void toCGI(Response &response, Request request, WebServer server){
 		}
 		response._bodyOfResponse.clear();
 		response._bodyOfResponse.addData(buf_big, size);
+	//	std::cout << "BODY::::" << response._bodyOfResponse.toPointer() << ":::" << std::endl;
 	}
 	//return 0;
 }

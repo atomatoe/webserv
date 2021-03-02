@@ -148,11 +148,10 @@ void Response::methodPost(Request request, WebServer server, Page_html page) {
     {     
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Запрос POST не может идти на папку !!!!!", server);
-        else
-        {
-            request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/html.py"));
+        else {
+            request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/cgi_tester"));
             toCGI(*this, request, server);
-            tmp = _bodyOfResponse.toPointer();
+           // tmp = _bodyOfResponse.toPointer();
         }
     }
 }
@@ -233,7 +232,7 @@ char* Response::give_me_response(Request request, WebServer server)
         && (strcmp(request.getMetod(), "POST") != 0) && (strcmp(request.getMetod(), "HEAD") != 0))
         this->_httpVersion = "HTTP/1.1 400 Bad Request\r\n";
     // std::cout << "Ответ:\n" << edit_response() << std::endl;
-    return(edit_response());
+    return(edit_response(&request));
 }
 
 void Response::putErrorToBody(char *error, char *type, WebServer server)
@@ -275,7 +274,27 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
 	_bodyOfResponse.addData(tmp, ft_strlen(tmp));
 }
 
-char* Response::edit_response() {
+char* Response::edit_response(Request *request) {
+	if(strcmp(request->getMetod(), "POST") == 0) {
+		char *tmp = _bodyOfResponse.toPointer();
+		char *t;
+		if ((t = static_cast<char *>(memmem( tmp, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
+			Bytes body = _bodyOfResponse.cutData(t - tmp);
+			size_t len = body.getDataSize();
+			//std::string cl = "\r\nContent-length: " + std::to_string(len - 4);
+			//char *tmp1 = const_cast<char *>(cl.c_str());
+			//tmp = ft_memjoin("HTTP/1.1 200 OK\r\nServer: Webserv/1.0 (MacOS)\r\n", tmp1, 50, cl.length());
+			body.addData("", 1);
+			char *tmp3 = body.toPointer();
+			size_t len1 = body.getDataSize();
+			std::cout <<GREEN<< tmp3 << "\n" << len1 <<DEFAULT<< std::endl;
+			char *tmp1 = ft_memdup("HTTP/1.1 200 OK\r\nServer: Webserv/1.0 (MacOS)\r\nContent-length: 287\0", 70);
+			std::cout << tmp1 << std::endl;
+			char *tmp2 =  ft_strjoin(tmp1, tmp3);
+			std::cout << "\n\nANSWER:" <<tmp2 << ":::" << std::endl;
+			return (tmp2);
+		}
+	}
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()));
