@@ -60,8 +60,8 @@ void start_servers(std::vector<WebServer> servers)
             }
         }
 
-        select(max_fd + 1, &fd_read, &fd_write, NULL, NULL);
-
+        if (select(max_fd + 1, &fd_read, &fd_write, NULL, NULL) == -1)
+        	std::cout << BLUE << "ERROR" << DEFAULT << std::endl;
         for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
             if (FD_ISSET(it->get_server_fd(), &fd_read)) {
                 fd = accept(it->get_server_fd(), 0, 0);
@@ -102,8 +102,8 @@ void start_servers(std::vector<WebServer> servers)
                         }
                     }
                     else if (ret > 0 && i->second.phase == 1) {
+						std::cout << GREEN << j << " " <<  ret << " working\n" << DEFAULT << std::endl;
                         i->second.request->setReqBody(buf, ret);
-                        std::cout << GREEN << j << " " <<  ret << " working\n" << DEFAULT << std::endl;
                        // std::cout << BLUE << i->first << ":   " << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl << std::endl;
 						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength()) && strcmp(i->second.request->getTransferEncoding(), "chunked") != 0){
 							i->second.phase = 2;
@@ -111,7 +111,7 @@ void start_servers(std::vector<WebServer> servers)
 							i++;
 							continue;
 						}
-                        if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (i->second.request->getReqBody().findMemoryFragment1("0\r\n\r\n", 5) != (size_t) -1)) {
+                        if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
                         	len = i->second.request->getReqBody().findMemoryFragment1("0\r\n\r\n", 5);
                         	i->second.request->getReqBody().cutData(len);
 							//std::cout << "CHUNK: " << RED << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
