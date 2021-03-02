@@ -23,7 +23,7 @@ public:
     const std::map<std::string, std::string> &  getCgiPath() const;
     int                                         getLimitBody() const;
     const std::map<std::string, bool> &         getAllowMethods() const;
-    std::vector<std::string>                    getAuthClient() const;
+    std::vector<std::string>                    getAuthClients() const;
 
     /* set */
     void                                setUrl(const std::string &);
@@ -31,8 +31,10 @@ public:
     void                                setIndex(const std::string &);
     void                                addCgiPath(std::string, std::string);
     void                                setLimitBody(int);
-    void                                changeAllowMethod(std::string, bool);
 
+    /* add */
+    void                                addAllowMethod(std::string, bool);
+    void                                addAuthClient(const std::string &);
 };
 
 #endif

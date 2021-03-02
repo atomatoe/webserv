@@ -223,7 +223,7 @@ bool    ParseConfig::checkAllowMethods(char *line, Location &location) {
         std::string trimmedValueStr(trimmedValue);
         for (int i = 0; i <= allowMethods->size(); i++) {
             if (!trimmedValueStr.compare(allowMethods[i])) {
-                location.changeAllowMethod(allowMethods[i], true);
+                location.addAllowMethod(allowMethods[i], true);
                 free(trimmedLine);
                 free(trimmedValue);
                 return (true);
@@ -234,15 +234,29 @@ bool    ParseConfig::checkAllowMethods(char *line, Location &location) {
     return (false);
 }
 
+bool    ParseConfig::checkAuthClients(char *line, Location &location) {
+    if (compareLines(line, "auth_clients")) {
+        if (!checkTabs(line, 8))
+            exitError("Invalid number of spaces or tabs");
+        char *trimmedLine = ft_strtrim(line, " \t");
+        char *trimmedValue = ft_strtrim(trimmedLine + ft_strlen("auth_clients"), " \t");
+        location.addAuthClient(trimmedValue);
+        free(trimmedLine);
+        free(trimmedValue);
+        return (true);
+    }
+    return (false);
+}
 
 /* parse algorithm */
 std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
-	bool (ParseConfig::*_checkFuncsLocation[5])(char *line, Location &location) = {
+	bool (ParseConfig::*_checkFuncsLocation[6])(char *line, Location &location) = {
             &ParseConfig::checkRootLoc,
             &ParseConfig::checkIndex,
             &ParseConfig::checkCgiPass,
             &ParseConfig::checkLimitBody,
-            &ParseConfig::checkAllowMethods
+            &ParseConfig::checkAllowMethods,
+            &ParseConfig::checkAuthClients
     };
     Location location;
     if (compareLines(line, "location")) {
@@ -276,7 +290,7 @@ std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
             }
             else {
                 bool findParam = false;
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 6; i++)
                     if ((findParam = (this->*_checkFuncsLocation[i])(line, location)))
                         break;
                 if (!findParam)
@@ -420,6 +434,12 @@ void                        ParseConfig::printWebservers() {
                 std::cout << it5->second<< std::endl;
                 it5++;
             }
+
+            std::vector<std::string> auth_clients = (*it3).getAuthClients();
+            for (std::vector<std::string>::iterator it = auth_clients.begin(); it != auth_clients.end(); it++) {
+                std::cout << "\tauth_clients: " + *it << std::endl;
+            }
+
             it3++;
         }
         std::cout << std::endl;

@@ -162,14 +162,14 @@ void Response::methodPost(Request request, WebServer server, Page_html page)
 
 int Response::check_auth(Request request, Location location)
 {
-    if(location.getAuthClient().empty())
+    if(location.getAuthClients().empty())
         return(0); // Не нужна авторизация для location
     else // Нужна авторизация для location
     {
         if(strcmp(request.getAuthorization(), "") == 0) // если клиент без header авторизации
             return(-1);
-        for(size_t it = 0; it != location.getAuthClient().size(); it++)
-            if(strcmp(ft_substr(request.getAuthorization(), 6, strlen(request.getAuthorization())), base64_encode(location.getAuthClient()[it]).c_str()) == 0)
+        for(size_t it = 0; it != location.getAuthClients().size(); it++)
+            if(strcmp(ft_substr(request.getAuthorization(), 6, strlen(request.getAuthorization())), base64_encode(location.getAuthClients()[it]).c_str()) == 0)
                 return(0);
     }
     return(-1);

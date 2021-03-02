@@ -79,7 +79,7 @@ void start_servers(std::vector<WebServer> servers)
                         i->second.receivedData->addData(buf, ret);
                         if (i->second.phase < 1 && (len = i->second.receivedData->findMemoryFragment((char *)doubleCRLF, 4)) != (size_t) -1) {
                             tmp = i->second.receivedData->cutData(len + 4);
-                            i->second.receivedData->addData("", 1);
+                            i->second.receivedData->addData((char *)"", 1);
                             i->second.request = new Request(i->second.receivedData->toPointer());
                             i->second.request->setReqBody(tmp.toPointer(), tmp.getDataSize());
                             i->second.phase = 1;
