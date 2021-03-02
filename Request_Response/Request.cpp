@@ -12,6 +12,7 @@
 
 #include "Request.hpp"
 
+
 std::string _headers[18] = {
 		"Accept-Charsets",
 		"Accept-Language",
@@ -102,6 +103,7 @@ void Request::ChunkedBodyProcessing(){
 	size_t size = 0;
 	size_t tmp = 0;
 
+	//int fd = open("/Users/welease/webserv/MY", O_RDWR);
 	memBody *chunkBody = ft_memsplit(_reqBody.toPointer(), (char *)"\r\n", _reqBody.getDataSize(), 2);
 	if (chunkBody->size() == 0)
 		return;
@@ -116,10 +118,10 @@ void Request::ChunkedBodyProcessing(){
 			_chunkedReqBody.addData(i->second, size);
 		ind++;
 	}
-	_chunkedReqBody.addData((char *)"", 1);
 	_reqBody.clear();
 	std::cout << "before\n";
 	_reqBody.addData(_chunkedReqBody.toPointer(), _chunkedReqBody.getDataSize());
+//	write(fd,_reqBody.toPointer(), _reqBody.getDataSize());
 	std::cout << "After to pointer\n";
 	//std::cout << "size: " << _chunkedReqBody.getDataSize() << std::endl;
 }

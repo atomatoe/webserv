@@ -275,29 +275,28 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
 }
 
 char* Response::edit_response(Request *request) {
-	if(strcmp(request->getMetod(), "POST") == 0) {
-		char *tmp = _bodyOfResponse.toPointer();
+	int fd = open("/Users/welease/webserv/file", O_RDWR);
+	if (strcmp(request->getMetod(), "POST") == 0) {
+		char *tmp1 = _bodyOfResponse.toPointer();
 		char *t;
-		if ((t = static_cast<char *>(memmem( tmp, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
-			Bytes body = _bodyOfResponse.cutData(t - tmp);
-			size_t len = body.getDataSize();
-			//std::string cl = "\r\nContent-length: " + std::to_string(len - 4);
-			//char *tmp1 = const_cast<char *>(cl.c_str());
-			//tmp = ft_memjoin("HTTP/1.1 200 OK\r\nServer: Webserv/1.0 (MacOS)\r\n", tmp1, 50, cl.length());
-			body.addData("", 1);
-			char *tmp3 = body.toPointer();
-			size_t len1 = body.getDataSize();
-			std::cout <<GREEN<< tmp3 << "\n" << len1 <<DEFAULT<< std::endl;
-			char *tmp1 = ft_memdup("HTTP/1.1 200 OK\r\nServer: Webserv/1.0 (MacOS)\r\nContent-length: 287\0", 70);
-			std::cout << tmp1 << std::endl;
-			char *tmp2 =  ft_strjoin(tmp1, tmp3);
-			std::cout << "\n\nANSWER:" <<tmp2 << ":::" << std::endl;
-			return (tmp2);
+		if ((t = static_cast<char *>(memmem( tmp1, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
+			Bytes body = _bodyOfResponse.cutData(t - tmp1 + 4);
+			_bodyOfResponse = body;
 		}
 	}
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
+	write(fd, ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()), tmp.length() + _bodyOfResponse.getDataSize());
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()));
 }
 
 size_t Response::getLenOfResponse() const { return _lenOfResponse; }
+
+
+//HTTP/1.1 200 OK
+//		Date: Tue, 02 Mar 2021 15:39:23 GMT
+//		Content-length: 345
+//Server: Webserv/1.0 (MacOS)
+//
+//Status: 200 OK
+//		Content-Type: text/html; charset=utf-8

@@ -35,7 +35,7 @@ void toCGI(Response &response, Request request, WebServer server){
 	int trumpet_fd[2];
 	int fd_final = open("final", O_CREAT | O_RDWR | O_TRUNC, 0666);
 	char buf;
-	char *buf_big = (char *)malloc(100000);
+	char *buf_big = (char *)malloc(100000001);
 	int i = 0;
 
 	pipe(trumpet_fd); //todo error
@@ -54,7 +54,7 @@ void toCGI(Response &response, Request request, WebServer server){
 	}
 	else if (pid == -1) ;//todo error 500
 	else {
-		write(trumpet_fd[1], request.getReqString(), strlen(request.getReqString()));
+		write(trumpet_fd[1], request.getReqBody().toPointer(), request.getReqBody().getDataSize());
 		close(trumpet_fd[0]);
 		close(trumpet_fd[1]);
 		wait(&status);

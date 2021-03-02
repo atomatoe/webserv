@@ -20,6 +20,7 @@ public:
 	~Bytes();
 	void addData(char *data, size_t size);
 	size_t findMemoryFragment(char const *toFind, size_t len);
+	size_t findMemoryFragment1(const char *toFind, size_t len);
 	size_t getDataSize() const {return _dataSize;}
 	Bytes cutData(size_t len); //return remainder of cut
 	char *toPointer();

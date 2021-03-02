@@ -34,6 +34,15 @@ void Bytes::clear(){
 	_charData = NULL; //todo leak
 }
 
+size_t Bytes::findMemoryFragment1(const char *toFind, size_t len) {
+	std::list< std::pair<size_t,  char *> >::iterator it = --(_data->end());
+	//std::cout << "++" << it->second << "++\n";
+	char *tmp = (char *)memmem(it->second, it->first, toFind, len);
+	if (tmp == NULL)
+		return (size_t)-1;
+	return _dataSize - it->first + (tmp - it->second);
+}
+
 size_t Bytes::findMemoryFragment(char const *toFind, size_t len){
 	char *data = toPointer();
 	char *tmp = (char *)memmem(data, _dataSize, toFind, len);
