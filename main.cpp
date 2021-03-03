@@ -74,7 +74,7 @@ void start_servers(std::vector<WebServer> servers)
         {
             std::map<int, t_client>::iterator i = it->getClients().begin();
             while (i != it->getClients().end()) {
-            	std::cout << "size:   " << it->getClients().size() << std::endl;
+            	// std::cout << "size:   " << it->getClients().size() << std::endl;
                 if (FD_ISSET(i->first, &fd_read)) {
                 	bzero(buf, 2000001);
                     ret = recv(i->first, buf, 2000000, 0);
@@ -142,7 +142,7 @@ void start_servers(std::vector<WebServer> servers)
 					//std::cout << "response adding\n";
 					i->second.response = new Response();
 					i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse());
-					i->second.toSendData->addData((char *) doubleCRLF, 4);
+					// i->second.toSendData->addData((char *) doubleCRLF, 4);
 					i->second.phase = 3;
 				}
 				if (i->second.phase == 3) {
@@ -165,8 +165,6 @@ void start_servers(std::vector<WebServer> servers)
 						}
 					}
 					//std::cout << "REQUEST " << count << ": " << i->second.request->getReqBody().toPointer() << "++++++" << std::endl;
-					char *m = ft_memjoin(i->second.response->give_me_response(*(i->second.request), *it), "", i->second.response->getLenOfResponse(), 1);
-
 					//std::cout << "RESPONSE: " << GREEN << m << DEFAULT << std::endl;
 					closeClientFd(&i, fd_write, fd_read, &*it);
 				}

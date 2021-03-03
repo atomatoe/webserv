@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/27 21:24:41 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/03 15:52:12 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ void Response::methodPost(Request request, WebServer server, Page_html page) {
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Запрос POST не может идти на папку !!!!!", server);
         else {
-            request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/cgi_tester"));
+            request.setPathToCgi(std::string("/Users/atomatoe/Desktop/webserv2/testing_cgi/cgi-bin/cgi_tester"));
             toCGI(*this, request, server);
            // tmp = _bodyOfResponse.toPointer();
         }
@@ -219,7 +219,7 @@ char* Response::give_me_response(Request request, WebServer server)
     // std::cout << request.getReqString() << std::endl;
     // std::cout << request.getReqBody().toPointer() << std::endl;
     // -----------------------------------------------------
-    std::cout << "in give me \n";
+    // std::cout << "in give me \n";
     _location_id = -1;
     if((strcmp(request.getMetod(), "GET") == 0) || (strcmp(request.getMetod(), "HEAD") == 0)) {
         methodGetHead(request, server, page);
@@ -237,7 +237,6 @@ char* Response::give_me_response(Request request, WebServer server)
     else if((strcmp(request.getMetod(), "GET") != 0) && (strcmp(request.getMetod(), "PUT") != 0)
         && (strcmp(request.getMetod(), "POST") != 0) && (strcmp(request.getMetod(), "HEAD") != 0))
         this->_httpVersion = "HTTP/1.1 400 Bad Request\r\n";
-    // std::cout << "Ответ:\n" << edit_response() << std::endl;
     return(edit_response(&request));
 }
 
@@ -292,7 +291,7 @@ char* Response::edit_response(Request *request) {
 	}
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
-	//write(fd, ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()), tmp.length() + _bodyOfResponse.getDataSize());
+	// write(0, ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()), tmp.length() + _bodyOfResponse.getDataSize());
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()));
 }
 

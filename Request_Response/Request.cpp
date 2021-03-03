@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 18:11:47 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/18 16:11:02 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/03 15:51:57 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,20 +104,20 @@ void Request::ChunkedBodyProcessing(){
 	size_t tmp = 0;
 
 	//int fd = open("/Users/welease/webserv/MY", O_RDWR);
-	std::cout << "processing" << "\n" << _reqBody.toPointer() << "\n";
+	// std::cout << "processing" << "\n" << _reqBody.toPointer() << "\n";
 	memBody *chunkBody = ft_memsplit(_reqBody.toPointer(), (char *)"\r\n", _reqBody.getDataSize(), 2);
-	for (memBody::iterator it = chunkBody->begin(); it != chunkBody->end(); ++it) {
-		std::cout << GREEN << tmp++ << " " << it->second <<  " " << it->first << DEFAULT << std::endl;
-	}
-	std::cout << "\n\n\n";
+	// for (memBody::iterator it = chunkBody->begin(); it != chunkBody->end(); ++it) {
+	// 	std::cout << GREEN << tmp++ << " " << it->second <<  " " << it->first << DEFAULT << std::endl;
+	// }
+	// std::cout << "\n\n\n";
 	if (chunkBody->size() == 0)
 		return;
 	tmp = 0;
+	// for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
+	// 	std::cout << tmp++ <<" in chunk: " << i->first << " " << i->second << std::endl;
+	// }
 	for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
-		std::cout << tmp++ <<" in chunk: " << i->first << " " << i->second << std::endl;
-	}
-	for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
-		std::cout << ind << std::endl;
+		// std::cout << ind << std::endl;
 		if (ind % 2)
 			size = hexToDec(std::string(i->second));
 		else
@@ -125,10 +125,10 @@ void Request::ChunkedBodyProcessing(){
 		ind++;
 	}
 	_reqBody.clear();
-	std::cout << "before\n";
+	// std::cout << "before\n";
 	_reqBody.addData(_chunkedReqBody.toPointer(), _chunkedReqBody.getDataSize());
 //	write(fd,_reqBody.toPointer(), _reqBody.getDataSize());
-	std::cout << "After to pointer\n";
+	// std::cout << "After to pointer\n";
 	//std::cout << "size: " << _chunkedReqBody.getDataSize() << std::endl;
 }
 

@@ -71,7 +71,7 @@ void toCGI(Response &response, Request request, WebServer server){
 		Bytes m;
 		m.addData(response._bodyOfResponse.toPointer(), response._bodyOfResponse.getDataSize());
 		m.addData("", 1);
-		std::cout << "BODY::::" << BLUE << m.toPointer() <<  DEFAULT << ":::" << std::endl;
+		// std::cout << "BODY::::" << BLUE << m.toPointer() <<  DEFAULT << ":::" << std::endl;
 	}
 	//return 0;
 }

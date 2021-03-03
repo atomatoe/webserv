@@ -7,9 +7,6 @@
 char		*ft_memjoin(char *s1, char *s2, size_t len1, size_t len2)
 {
 	char	*res;
-	size_t	i1 = 0;
-	size_t	i2 = 0;
-	size_t	i3 = 0;
 
 	res = (char *)malloc(len1 + len2);
 	if (res == NULL)
