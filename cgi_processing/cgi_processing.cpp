@@ -29,14 +29,14 @@ int getEnv(char **env, Request request, WebServer server){
 }
 
 void toCGI(Response &response, Request request, WebServer server){
+	std::cout << "IN CGI\n";
 	char *env[20];
 	char *argv[3];
 	int status;
 	int trumpet_fd[2];
 	int fd_final = open("final", O_CREAT | O_RDWR | O_TRUNC, 0666);
-	char buf;
+	char buf[1001];
 	char *buf_big = (char *)malloc(100000001);
-	int i = 0;
 
 	pipe(trumpet_fd); //todo error
 	getEnv(env, request, server);
@@ -60,14 +60,18 @@ void toCGI(Response &response, Request request, WebServer server){
 		wait(&status);
 		lseek(fd_final, 0 , 0);
 		int ret, size = 0;
-		while ((ret = read(fd_final, &buf, 1)) > 0) {
+		bzero(buf, 1000);
+		while ((ret = read(fd_final, &buf, 1000)) > 0) {
+			memmove(buf_big + size, buf, ret);
 			size += ret;
-			buf_big[i] = buf;
-			i++;
+			bzero(buf, 1000);
 		}
 		response._bodyOfResponse.clear();
 		response._bodyOfResponse.addData(buf_big, size);
-	//	std::cout << "BODY::::" << response._bodyOfResponse.toPointer() << ":::" << std::endl;
+		Bytes m;
+		m.addData(response._bodyOfResponse.toPointer(), response._bodyOfResponse.getDataSize());
+		m.addData("", 1);
+		std::cout << "BODY::::" << BLUE << m.toPointer() <<  DEFAULT << ":::" << std::endl;
 	}
 	//return 0;
 }

@@ -83,6 +83,7 @@ void start_servers(std::vector<WebServer> servers)
                         	count++;
                             tmp = i->second.receivedData->cutData(len + 4);
                             i->second.receivedData->addData((char *)"", 1);
+                            std::cout << BLUE << i->second.receivedData->toPointer() << DEFAULT << std::endl;
                             i->second.request = new Request(i->second.receivedData->toPointer());
                             i->second.request->setReqBody(tmp.toPointer(), tmp.getDataSize());
                             i->second.phase = 1;
@@ -90,6 +91,16 @@ void start_servers(std::vector<WebServer> servers)
                             	i->second.phase = 2;
                             }
 							else if (strcmp(i->second.request->getTransferEncoding(), "chunked") == 0){
+								std::cout << GREEN << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
+								std::cout << "HERREEEEEE\n";
+								if (i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1) {
+									len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
+									i->second.request->getReqBody().cutData(len);
+									//std::cout << "CHUNK: " << RED << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
+									i->second.request->ChunkedBodyProcessing();
+
+									i->second.phase = 2;
+								}
 								i++;
 								continue;
 							}
@@ -102,9 +113,8 @@ void start_servers(std::vector<WebServer> servers)
                         }
                     }
                     else if (ret > 0 && i->second.phase == 1) {
-						std::cout << GREEN << j << " " <<  ret << " working\n" << DEFAULT << std::endl;
+						//std::cout << GREEN << j << " " <<  ret << " working\n" << DEFAULT << std::endl;
                         i->second.request->setReqBody(buf, ret);
-                       // std::cout << BLUE << i->first << ":   " << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl << std::endl;
 						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength()) && strcmp(i->second.request->getTransferEncoding(), "chunked") != 0){
 							i->second.phase = 2;
 							i->second.request->getReqBody().cutData(ft_atoi(i->second.request->getContentLength()));
@@ -112,9 +122,8 @@ void start_servers(std::vector<WebServer> servers)
 							continue;
 						}
                         if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
-                        	len = i->second.request->getReqBody().findMemoryFragment1("0\r\n\r\n", 5);
+                        	len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
                         	i->second.request->getReqBody().cutData(len);
-							//std::cout << "CHUNK: " << RED << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
                             i->second.request->ChunkedBodyProcessing();
 
                             i->second.phase = 2;
@@ -123,17 +132,20 @@ void start_servers(std::vector<WebServer> servers)
                         }
                     }
                     if (ret == 0) {
+                    	std::cout << "In ret == 0\n";
                         i++;
 						continue;
                     }
                 }
 				if (i->second.phase == 2) {
+					std::cout << "response adding\n";
 					i->second.response = new Response();
 					i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse());
 					i->second.toSendData->addData((char *) doubleCRLF, 4);
 					i->second.phase = 3;
 				}
 				if (i->second.phase == 3) {
+					std::cout << "sending\n";
 					gettimeofday(&tv, NULL);
 					if (i->second.sendBytes < i->second.toSendData->getDataSize() && tv.tv_sec - i->second.time < 10000000) {
 						if (FD_ISSET(i->first, &fd_write)) {
@@ -148,7 +160,9 @@ void start_servers(std::vector<WebServer> servers)
 						}
 					}
 					//std::cout << "REQUEST " << count << ": " << i->second.request->getReqBody().toPointer() << "++++++" << std::endl;
-					//std::cout << "RESPONSE: " << i->second.response->give_me_response(*(i->second.request), *it);
+					char *m = ft_memjoin(i->second.response->give_me_response(*(i->second.request), *it), "", i->second.response->getLenOfResponse(), 1);
+
+					std::cout << "RESPONSE: " << GREEN << m << DEFAULT << std::endl;
 					closeClientFd(&i, fd_write, fd_read, &*it);
 				}
 				else

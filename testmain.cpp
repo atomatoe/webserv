@@ -5,5 +5,5 @@
 #include "libft/libft.h"
 
 int main() {
-	char *tmp = ft_memdup("3\r\ndfg\r\n0\r\n");
+	char *tmp = ft_memdup("c8\r\ncccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\r\n")
 }

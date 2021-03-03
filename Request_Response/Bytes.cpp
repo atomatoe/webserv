@@ -14,18 +14,14 @@ void Bytes::addData(char *data, size_t size){
 	_dataSize += size;
 }
 
-char  *Bytes::toPointer(){
-	char *tmp2;
-	char *tmp1;
-	size_t s = 0;
-	tmp2 = ft_memdup("", 1);
+char *Bytes::toPointer() {
+	size_t i = 0;
+	char *ret = (char *)malloc(_dataSize);
 	for (std::list< std::pair<size_t,  char *> >::iterator it = _data->begin(); it != _data->end(); ++it){
-		tmp1 = tmp2;
-		tmp2 = ft_memjoin(tmp2, it->second, s, it->first);
-		s += it->first;
-		free(tmp1);
+		memmove(ret + i, it->second, it->first);
+		i += it->first;
 	}
-	return tmp2;
+	return ret;
 }
 
 void Bytes::clear(){
@@ -34,14 +30,21 @@ void Bytes::clear(){
 	_charData = NULL; //todo leak
 }
 
-size_t Bytes::findMemoryFragment1(const char *toFind, size_t len) {
-	std::list< std::pair<size_t,  char *> >::iterator it = --(_data->end());
-	//std::cout << "++" << it->second << "++\n";
-	char *tmp = (char *)memmem(it->second, it->first, toFind, len);
-	if (tmp == NULL)
-		return (size_t)-1;
-	return _dataSize - it->first + (tmp - it->second);
-}
+//size_t Bytes::findMemoryFragment1(const char *toFind, size_t len) {
+//	std::list< std::pair<size_t,  char *> >::iterator it = --(_data->end());
+//	//std::cout << "++" << it->second << "++\n";
+//	char *tmp = (char *)memmem(it->second, it->first, toFind, len);
+//	if (tmp == NULL)
+//		return (size_t)-1;
+//	return _dataSize - it->first + (tmp - it->second);
+//}
+
+//size_t Bytes::find(const char &toFind, size_t len) {
+//	std::list< std::pair<size_t,  char *> >::iterator it = _data->begin();
+//	while (it != _data->end()) {
+//		for (size_t i = )
+//	}
+//}
 
 size_t Bytes::findMemoryFragment(char const *toFind, size_t len){
 	char *data = toPointer();

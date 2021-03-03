@@ -104,9 +104,15 @@ void Request::ChunkedBodyProcessing(){
 	size_t tmp = 0;
 
 	//int fd = open("/Users/welease/webserv/MY", O_RDWR);
+	std::cout << "processing" << "\n" << _reqBody.toPointer() << "\n";
 	memBody *chunkBody = ft_memsplit(_reqBody.toPointer(), (char *)"\r\n", _reqBody.getDataSize(), 2);
+	for (memBody::iterator it = chunkBody->begin(); it != chunkBody->end(); ++it) {
+		std::cout << GREEN << tmp++ << " " << it->second <<  " " << it->first << DEFAULT << std::endl;
+	}
+	std::cout << "\n\n\n";
 	if (chunkBody->size() == 0)
 		return;
+	tmp = 0;
 	for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
 		std::cout << tmp++ <<" in chunk: " << i->first << " " << i->second << std::endl;
 	}

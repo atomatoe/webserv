@@ -138,6 +138,7 @@ void Response::methodPut(Request request, WebServer server, Page_html page)
 
 void Response::methodPost(Request request, WebServer server, Page_html page) {
     char *tmp;
+
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     this->_location_id = search_uri(server, request.getURI());
     struct stat sb;
@@ -145,7 +146,12 @@ void Response::methodPost(Request request, WebServer server, Page_html page) {
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else
-    {     
+    {
+    	std::cout << "SIZE: " << request.getReqBody().getDataSize() << std::endl;
+    	if (request.getReqBody().getDataSize() > server.getLocations()[this->_location_id].getLimitBody()) {
+    		putErrorToBody((char *)"400", (char *)"Bad Request", server);
+    		return;
+    	}
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Запрос POST не может идти на папку !!!!!", server);
         else {
@@ -213,7 +219,7 @@ char* Response::give_me_response(Request request, WebServer server)
     // std::cout << request.getReqString() << std::endl;
     // std::cout << request.getReqBody().toPointer() << std::endl;
     // -----------------------------------------------------
-    
+    std::cout << "in give me \n";
     _location_id = -1;
     if((strcmp(request.getMetod(), "GET") == 0) || (strcmp(request.getMetod(), "HEAD") == 0)) {
         methodGetHead(request, server, page);
@@ -275,7 +281,7 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
 }
 
 char* Response::edit_response(Request *request) {
-	int fd = open("/Users/welease/webserv/file", O_RDWR);
+	//int fd = open("/Users/welease/webserv/file", O_RDWR);
 	if (strcmp(request->getMetod(), "POST") == 0) {
 		char *tmp1 = _bodyOfResponse.toPointer();
 		char *t;
@@ -286,7 +292,7 @@ char* Response::edit_response(Request *request) {
 	}
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
-	write(fd, ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()), tmp.length() + _bodyOfResponse.getDataSize());
+	//write(fd, ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()), tmp.length() + _bodyOfResponse.getDataSize());
 	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()));
 }
 
