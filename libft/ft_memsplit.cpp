@@ -12,6 +12,9 @@ static void			line_getting(char **s, size_t *ll, char *c, size_t *size, size_t l
 		*s += len;
 	*ll = 0;
 
+	if (ft_memmem(*s, len, c, len)){
+		*s += len;
+	}
 	if ((tmp = ft_memmem(*s, *size, c, len))){
 		*ll = tmp - *s;
 		if (*ll == len)
@@ -35,10 +38,10 @@ memBody	*ft_memsplit(char *s, char *c, size_t size, size_t len)
 	mass = new memBody();
 	while (tmp_size){
 		line_getting(&line, &ll, c, &tmp_size, len);
-		//std::cout << "+++++" << ft_memdup(line, ll) << "+++++" << std::endl;
 		if (ll == 0)
 			continue;
-		mass->push_back(std::pair<size_t, char *>(ll, ft_memdup(ll == len ? "" : line, ll)));
+		//std::cout << "+++++" << ft_memdup(line, ll) << "+++++" << std::endl;
+		mass->push_back(std::pair<size_t, char *>(ll, ft_memdup(memcmp(line, c, len) == 0 ? "" : line, ll)));
 	}
 	return (mass);
 }

@@ -105,11 +105,11 @@ void Response::methodPut(Request request, WebServer server, Page_html page)
 {
     int r_open;
     int r_read;
+	this->_location_id = search_uri(server, request.getURI());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
    // std::cout << "directory = " << directory << std::endl;
     struct stat sb;
-    
-    this->_location_id = search_uri(server, request.getURI());
+
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else
@@ -139,17 +139,17 @@ void Response::methodPut(Request request, WebServer server, Page_html page)
 void Response::methodPost(Request request, WebServer server, Page_html page) {
     char *tmp;
 
+	this->_location_id = search_uri(server, request.getURI());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
-    this->_location_id = search_uri(server, request.getURI());
     struct stat sb;
     
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else
     {
-    	std::cout << "SIZE: " << request.getReqBody().getDataSize() << std::endl;
+    	//std::cout << "SIZE: " << request.getReqBody().getDataSize() << std::endl;
     	if (request.getReqBody().getDataSize() > server.getLocations()[this->_location_id].getLimitBody()) {
-    		putErrorToBody((char *)"400", (char *)"Bad Request", server);
+    		putErrorToBody((char *)"413", (char *)"Payload Too Large", server);
     		return;
     	}
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))

@@ -74,6 +74,7 @@ void start_servers(std::vector<WebServer> servers)
         {
             std::map<int, t_client>::iterator i = it->getClients().begin();
             while (i != it->getClients().end()) {
+            	std::cout << "size:   " << it->getClients().size() << std::endl;
                 if (FD_ISSET(i->first, &fd_read)) {
                 	bzero(buf, 2000001);
                     ret = recv(i->first, buf, 2000000, 0);
@@ -83,7 +84,7 @@ void start_servers(std::vector<WebServer> servers)
                         	count++;
                             tmp = i->second.receivedData->cutData(len + 4);
                             i->second.receivedData->addData((char *)"", 1);
-                            std::cout << BLUE << i->second.receivedData->toPointer() << DEFAULT << std::endl;
+                           // std::cout << BLUE << i->second.receivedData->toPointer() << DEFAULT << std::endl;
                             i->second.request = new Request(i->second.receivedData->toPointer());
                             i->second.request->setReqBody(tmp.toPointer(), tmp.getDataSize());
                             i->second.phase = 1;
@@ -91,8 +92,8 @@ void start_servers(std::vector<WebServer> servers)
                             	i->second.phase = 2;
                             }
 							else if (strcmp(i->second.request->getTransferEncoding(), "chunked") == 0){
-								std::cout << GREEN << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
-								std::cout << "HERREEEEEE\n";
+							//	std::cout << GREEN << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
+							//	std::cout << "HERREEEEEE\n";
 								if (i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1) {
 									len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
 									i->second.request->getReqBody().cutData(len);
@@ -132,13 +133,13 @@ void start_servers(std::vector<WebServer> servers)
                         }
                     }
                     if (ret == 0) {
-                    	std::cout << "In ret == 0\n";
+                    //	std::cout << "In ret == 0\n";
                         i++;
 						continue;
                     }
                 }
 				if (i->second.phase == 2) {
-					std::cout << "response adding\n";
+					//std::cout << "response adding\n";
 					i->second.response = new Response();
 					i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse());
 					i->second.toSendData->addData((char *) doubleCRLF, 4);
@@ -147,7 +148,7 @@ void start_servers(std::vector<WebServer> servers)
 				if (i->second.phase == 3) {
 					std::cout << "sending\n";
 					gettimeofday(&tv, NULL);
-					if (i->second.sendBytes < i->second.toSendData->getDataSize() && tv.tv_sec - i->second.time < 10000000) {
+					if (i->second.sendBytes < i->second.toSendData->getDataSize()) {
 						if (FD_ISSET(i->first, &fd_write)) {
 							i->second.sendBytes += send(i->first, i->second.toSendData->toPointer() + i->second.sendBytes, i->second.toSendData->getDataSize() - i->second.sendBytes, 0);
 							if (errno == EPIPE) {
@@ -158,11 +159,15 @@ void start_servers(std::vector<WebServer> servers)
 							i++;
 							continue;
 						}
+						else {
+							closeClientFd(&i, fd_write, fd_read, &*it);
+							continue;
+						}
 					}
 					//std::cout << "REQUEST " << count << ": " << i->second.request->getReqBody().toPointer() << "++++++" << std::endl;
 					char *m = ft_memjoin(i->second.response->give_me_response(*(i->second.request), *it), "", i->second.response->getLenOfResponse(), 1);
 
-					std::cout << "RESPONSE: " << GREEN << m << DEFAULT << std::endl;
+					//std::cout << "RESPONSE: " << GREEN << m << DEFAULT << std::endl;
 					closeClientFd(&i, fd_write, fd_read, &*it);
 				}
 				else

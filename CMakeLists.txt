@@ -11,6 +11,48 @@ include_directories(libft)
 include_directories(parse)
 include_directories(Request_Response)
 
+add_executable(test
+        testmain.cpp
+        libft/ft_atoi.cpp
+        libft/ft_bzero.cpp
+        libft/ft_calloc.cpp
+        libft/ft_free_strstr.cpp
+        libft/ft_isalnum.cpp
+        libft/ft_isalpha.cpp
+        libft/ft_isascii.cpp
+        libft/ft_isdigit.cpp
+        libft/ft_isprint.cpp
+        libft/ft_isspace.cpp
+        libft/ft_itoa.cpp
+        libft/ft_memchr.cpp
+        libft/ft_memcmp.cpp
+        libft/ft_memcpy.cpp
+        libft/ft_memdup.cpp
+        libft/ft_memjoin.cpp
+        libft/ft_memmem.cpp
+        libft/ft_memsplit.cpp
+        libft/ft_putchar_fd.cpp
+        libft/ft_putendl_fd.cpp
+        libft/ft_putnbr_fd.cpp
+        libft/ft_putstr_fd.cpp
+        libft/ft_splitString.cpp
+        libft/ft_splitTim.cpp
+        libft/ft_str_is_num.cpp
+        libft/ft_strchr.cpp
+        libft/ft_strdup.cpp
+        libft/ft_strjoin.cpp
+        libft/ft_strlcat.cpp
+        libft/ft_strlcpy.cpp
+        libft/ft_strlen.cpp
+        libft/ft_strmapi.cpp
+        libft/ft_strncmp.cpp
+        libft/ft_strnstr.cpp
+        libft/ft_strrchr.cpp
+        libft/ft_strstrlen.cpp
+        libft/ft_strtrim.cpp
+        libft/ft_substr.cpp
+        libft/libft.h)
+
 add_executable(webserv
         cgi_processing/cgi_processing.cpp
         cgi_processing/cgi_utils.h
