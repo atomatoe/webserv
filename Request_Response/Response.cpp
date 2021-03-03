@@ -155,7 +155,7 @@ void Response::methodPost(Request request, WebServer server, Page_html page) {
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Запрос POST не может идти на папку !!!!!", server);
         else {
-            request.setPathToCgi(std::string("/Users/atomatoe/Desktop/webserv2/testing_cgi/cgi-bin/cgi_tester"));
+            request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/cgi_tester"));
             toCGI(*this, request, server);
            // tmp = _bodyOfResponse.toPointer();
         }

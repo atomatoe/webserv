@@ -118,6 +118,7 @@ void WebServer::addClient(int fd){
 	_mapOfClients[fd].receivedData = new Bytes();
 	_mapOfClients[fd].phase = 0;
 	_mapOfClients[fd].sendBytes = 0;
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 }
 
 std::map<int, t_client> &WebServer::getClients() {

@@ -27,6 +27,7 @@ char *Bytes::toPointer() {
 void Bytes::clear(){
 	_data->clear();
 	_dataSize = 0;
+	free(_charData);
 	_charData = NULL; //todo leak
 }
 

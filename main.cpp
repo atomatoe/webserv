@@ -8,7 +8,7 @@
 #include "includes/includes.hpp"
 #include "parse/ParseConfig.hpp"
 #include "signal.h"
-
+# define RED  "\e[31m"
 void fd_init(std::vector<WebServer> &servers, fd_set &fd_write, fd_set &fd_read, int &max_fd)
 {
 	FD_ZERO(&fd_write); // зануление fd
@@ -23,11 +23,16 @@ void closeClientFd(std::map<int, t_client>::iterator * i, fd_set fd_write, fd_se
 	FD_CLR((*i)->first, &fd_read);
 	FD_CLR((*i)->first, &fd_write);
 	close((*i)->first);
+	//delete (*i)->second.request;
+	//delete (*i)->second.toSendData;
+	//delete (*i)->second.response;
+	//delete (*i)->second.receivedData;
 	*i = server->getClients().erase(*i);
 }
 
-void start_servers(std::vector<WebServer> servers)
-{
+
+
+void start_servers(std::vector<WebServer> servers) {
     int			max_fd;
     fd_set		fd_write;
     fd_set		fd_read;
@@ -37,7 +42,9 @@ void start_servers(std::vector<WebServer> servers)
     size_t		len;
     int			ret;
     struct timeval tv;
-    if (!(buf = (char *) malloc(sizeof(char) * 20000001)))
+    size_t count1 = 0;
+    size_t p = 0;
+    if (!(buf = (char *) malloc(sizeof(char) * 200000001)))
         exit(1);
 
     int j = 1;
@@ -51,12 +58,17 @@ void start_servers(std::vector<WebServer> servers)
 
         for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
             for (std::map<int, t_client>::iterator i = it->getClients().begin(); i != it->getClients().end(); ++i) {
-                if (i->second.phase < 2)
+                if (i->second.phase < 2) {
+                	std::cout << GREEN << p << " to read set " << i->first << " phase: " << i->second.phase << DEFAULT << std::endl;
 					FD_SET(i->first, &fd_read);
-                else
+				}
+                else {
+                	std::cout <<GREEN << p << i->first << " to write set " << i->first <<  DEFAULT << std::endl;
 					FD_SET(i->first, &fd_write);
+				}
                 if (i->first > max_fd)
                     max_fd = i->first;
+                p++;
             }
         }
 
@@ -74,47 +86,59 @@ void start_servers(std::vector<WebServer> servers)
         {
             std::map<int, t_client>::iterator i = it->getClients().begin();
             while (i != it->getClients().end()) {
+				gettimeofday(&tv, NULL);
             	// std::cout << "size:   " << it->getClients().size() << std::endl;
                 if (FD_ISSET(i->first, &fd_read)) {
-                	bzero(buf, 2000001);
-                    ret = recv(i->first, buf, 2000000, 0);
+                	bzero(buf, 20000001);
+                    ret = recv(i->first, buf, 20000000, 0);
+                    if (ret <= 0){
+						closeClientFd(&i, fd_write, fd_read, &*it);
+						continue;
+                    }
+					if (errno == EPIPE) {
+						std::cout << "sigpipe" << std::endl;
+						closeClientFd(&i, fd_write, fd_read, &*it);
+						errno = 0;
+						continue;
+					}
                     if (!i->second.phase && ret > 0) {
                         i->second.receivedData->addData(buf, ret);
                         if (i->second.phase < 1 && (len = i->second.receivedData->findMemoryFragment((char *)doubleCRLF, 4)) != (size_t) -1) {
                         	count++;
                             tmp = i->second.receivedData->cutData(len + 4);
                             i->second.receivedData->addData((char *)"", 1);
-                           // std::cout << BLUE << i->second.receivedData->toPointer() << DEFAULT << std::endl;
+                           	 std::cout << BLUE << i->second.receivedData->toPointer() << DEFAULT << std::endl;
                             i->second.request = new Request(i->second.receivedData->toPointer());
+                            count1++;
+                            std::cout << i->first << " count1: " << count1 << std::endl;
                             i->second.request->setReqBody(tmp.toPointer(), tmp.getDataSize());
                             i->second.phase = 1;
                             if (strcmp(i->second.request->getMetod(), "GET") == 0 || strcmp(i->second.request->getMetod(), "HEAD") == 0) {
                             	i->second.phase = 2;
+                            	goto tmp;
                             }
-							else if (strcmp(i->second.request->getTransferEncoding(), "chunked") == 0){
-							//	std::cout << GREEN << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
-							//	std::cout << "HERREEEEEE\n";
+							if (strcmp(i->second.request->getTransferEncoding(), "chunked") == 0){
 								if (i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1) {
 									len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
 									i->second.request->getReqBody().cutData(len);
 									//std::cout << "CHUNK: " << RED << i->second.request->getReqBody().toPointer() << DEFAULT << std::endl;
 									i->second.request->ChunkedBodyProcessing();
-
 									i->second.phase = 2;
+									goto tmp;
 								}
 								i++;
 								continue;
 							}
-                            else if (i->second.request->getReqBody().getDataSize() > ft_atoi(i->second.request->getContentLength())){
+                            if (i->second.request->getReqBody().getDataSize() > ft_atoi(i->second.request->getContentLength())){
 								i->second.request->getReqBody().cutData(ft_atoi(i->second.request->getContentLength()));
 								i->second.phase = 2;
+								goto tmp;
                             }
                             i++;
 							continue;
                         }
                     }
                     else if (ret > 0 && i->second.phase == 1) {
-						//std::cout << GREEN << j << " " <<  ret << " working\n" << DEFAULT << std::endl;
                         i->second.request->setReqBody(buf, ret);
 						if (i->second.request->getReqBody().getDataSize() >= ft_atoi(i->second.request->getContentLength()) && strcmp(i->second.request->getTransferEncoding(), "chunked") != 0){
 							i->second.phase = 2;
@@ -132,44 +156,42 @@ void start_servers(std::vector<WebServer> servers)
 							continue;
                         }
                     }
-                    if (ret == 0) {
-                    //	std::cout << "In ret == 0\n";
-                        i++;
-						continue;
-                    }
                 }
+                tmp:
 				if (i->second.phase == 2) {
-					//std::cout << "response adding\n";
 					i->second.response = new Response();
 					i->second.toSendData->addData(i->second.response->give_me_response(*(i->second.request), *it), i->second.response->getLenOfResponse());
-					// i->second.toSendData->addData((char *) doubleCRLF, 4);
 					i->second.phase = 3;
 				}
 				if (i->second.phase == 3) {
-					std::cout << "sending\n";
-					gettimeofday(&tv, NULL);
+					std::cout << RED << "sending " << i->first << DEFAULT << std::endl;
 					if (i->second.sendBytes < i->second.toSendData->getDataSize()) {
 						if (FD_ISSET(i->first, &fd_write)) {
-							i->second.sendBytes += send(i->first, i->second.toSendData->toPointer() + i->second.sendBytes, i->second.toSendData->getDataSize() - i->second.sendBytes, 0);
+							std::cout << i->first << " in response set" << std::endl;
+							size_t r;
+							r = send(i->first, i->second.toSendData->toPointer() + i->second.sendBytes, i->second.toSendData->getDataSize() - i->second.sendBytes, 0);
+							std::cout << r << " sended bytes\n";
+							if (r < 0) {
+								std::cout << "ERROR\n";
+								closeClientFd(&i, fd_write, fd_read, &*it);
+								continue;
+							}
+							i->second.sendBytes += r;
 							if (errno == EPIPE) {
+								std::cout << "sigpipe" << std::endl;
 								closeClientFd(&i, fd_write, fd_read, &*it);
 								errno = 0;
 								continue;
 							}
-							i++;
-							continue;
-						}
-						else {
-							closeClientFd(&i, fd_write, fd_read, &*it);
-							continue;
+							if (i->second.sendBytes >= i->second.toSendData->getDataSize()){
+								std::cout << "closing " << i->first << std::endl;
+								closeClientFd(&i, fd_write, fd_read, &*it);
+								continue;
+							}
 						}
 					}
-					//std::cout << "REQUEST " << count << ": " << i->second.request->getReqBody().toPointer() << "++++++" << std::endl;
-					//std::cout << "RESPONSE: " << GREEN << m << DEFAULT << std::endl;
-					closeClientFd(&i, fd_write, fd_read, &*it);
 				}
-				else
-					i++;
+				i++;
             }
         }
     }
