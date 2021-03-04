@@ -1,0 +1,259 @@
+[92mWebserver is started[39m[0m
+[92m0 to read set 5 phase: 0[39m[0m
+[34mGET / HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 1
+[31msending 5[39m[0m
+[92m15 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+23 sended bytes
+closing 5
+[92m2 to read set 5 phase: 0[39m[0m
+[92m3 to read set 5 phase: 0[39m[0m
+[92m4 to read set 5 phase: 0[39m[0m
+[34mPOST / HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Transfer-Encoding: chunked
+Content-Type: test/file
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 2
+[92m5 to read set 5 phase: 1[39m[0m
+[92m65 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+1014 sended bytes
+closing 5
+[92m7 to read set 5 phase: 0[39m[0m
+[92m8 to read set 5 phase: 0[39m[0m
+[92m9 to read set 5 phase: 0[39m[0m
+[92m10 to read set 5 phase: 0[39m[0m
+[92m11 to read set 5 phase: 0[39m[0m
+[34mHEAD / HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+
+[39m[0m
+5 count1: 3
+[92m125 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+92 sended bytes
+closing 5
+[92m12 to read set 5 phase: 0[39m[0m
+[92m13 to read set 5 phase: 0[39m[0m
+[92m14 to read set 5 phase: 0[39m[0m
+[92m15 to read set 5 phase: 0[39m[0m
+[92m16 to read set 5 phase: 0[39m[0m
+[92m17 to read set 5 phase: 0[39m[0m
+[34mGET /directory HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 4
+[92m185 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92m18 to read set 5 phase: 0[39m[0m
+[92m19 to read set 5 phase: 0[39m[0m
+[92m20 to read set 5 phase: 0[39m[0m
+[92m21 to read set 5 phase: 0[39m[0m
+[92m22 to read set 5 phase: 0[39m[0m
+[34mGET /directory/youpi.bad_extension HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 5
+[92m235 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92m23 to read set 5 phase: 0[39m[0m
+[92m24 to read set 5 phase: 0[39m[0m
+[92m25 to read set 5 phase: 0[39m[0m
+[92m26 to read set 5 phase: 0[39m[0m
+[92m27 to read set 5 phase: 0[39m[0m
+[34mGET /directory/youpi.bla HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 6
+[92m285 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92m28 to read set 5 phase: 0[39m[0m
+[92m29 to read set 5 phase: 0[39m[0m
+[92m30 to read set 5 phase: 0[39m[0m
+[92m31 to read set 5 phase: 0[39m[0m
+[92m32 to read set 5 phase: 0[39m[0m
+[92m33 to read set 5 phase: 0[39m[0m
+[92m34 to read set 5 phase: 0[39m[0m
+[92m35 to read set 5 phase: 0[39m[0m
+[34mGET /directory/oulalala HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 7
+[92m365 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+996 sended bytes
+closing 5
+[92m36 to read set 5 phase: 0[39m[0m
+[92m37 to read set 5 phase: 0[39m[0m
+[92m38 to read set 5 phase: 0[39m[0m
+[92m39 to read set 5 phase: 0[39m[0m
+[92m40 to read set 5 phase: 0[39m[0m
+[34mGET /directory/nop HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 8
+[92m415 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92m41 to read set 5 phase: 0[39m[0m
+[92m42 to read set 5 phase: 0[39m[0m
+[92m43 to read set 5 phase: 0[39m[0m
+[92m44 to read set 5 phase: 0[39m[0m
+[92m45 to read set 5 phase: 0[39m[0m
+[92m46 to read set 5 phase: 0[39m[0m
+[34mGET /directory/nop/ HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 9
+[92m475 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92m47 to read set 5 phase: 0[39m[0m
+[92m48 to read set 5 phase: 0[39m[0m
+[92m49 to read set 5 phase: 0[39m[0m
+[92m50 to read set 5 phase: 0[39m[0m
+[34mGET /directory/nop/other.pouic HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 10
+[92m515 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92m51 to read set 5 phase: 0[39m[0m
+[92m52 to read set 5 phase: 0[39m[0m
+[92m53 to read set 5 phase: 0[39m[0m
+[92m54 to read set 5 phase: 0[39m[0m
+[92m55 to read set 5 phase: 0[39m[0m
+[92m56 to read set 5 phase: 0[39m[0m
+[34mGET /directory/nop/other.pouac HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 11
+[92m575 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+996 sended bytes
+closing 5
+[92m57 to read set 5 phase: 0[39m[0m
+[92m58 to read set 5 phase: 0[39m[0m
+[92m59 to read set 5 phase: 0[39m[0m
+[92m60 to read set 5 phase: 0[39m[0m
+[92m61 to read set 5 phase: 0[39m[0m
+[92m62 to read set 5 phase: 0[39m[0m
+[92m63 to read set 5 phase: 0[39m[0m
+[34mGET /directory/Yeah HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 12
+[92m645 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+996 sended bytes
+closing 5
+[92m64 to read set 5 phase: 0[39m[0m
+[92m65 to read set 5 phase: 0[39m[0m
+[92m66 to read set 5 phase: 0[39m[0m
+[92m67 to read set 5 phase: 0[39m[0m
+[92m68 to read set 5 phase: 0[39m[0m
+[92m69 to read set 5 phase: 0[39m[0m
+[92m70 to read set 5 phase: 0[39m[0m
+[92m71 to read set 5 phase: 0[39m[0m
+[34mGET /directory/Yeah/not_happy.bad_extension HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 13
+[92m725 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92m72 to read set 5 phase: 0[39m[0m
+[92m73 to read set 5 phase: 0[39m[0m
+[92m74 to read set 5 phase: 0[39m[0m
+[92m75 to read set 5 phase: 0[39m[0m
+[92m76 to read set 5 phase: 0[39m[0m
+[92m77 to read set 5 phase: 0[39m[0m
+[92m78 to read set 5 phase: 0[39m[0m
+[92m79 to read set 5 phase: 0[39m[0m
+[92m80 to read set 5 phase: 0[39m[0m
+[92m81 to read set 5 phase: 0[39m[0m
+[34mPUT /put_test/file_should_exist_after HTTP/1.1
+Host: localhost:8080
+User-Agent: Go-http-client/1.1
+Transfer-Encoding: chunked
+Accept-Encoding: gzip
+
+[39m[0m
+5 count1: 14
+[92m82 to read set 5 phase: 1[39m[0m
+[92m83 to read set 5 phase: 1[39m[0m
+[92m84 to read set 5 phase: 1[39m[0m
+[92m85 to read set 5 phase: 1[39m[0m
+[92m86 to read set 5 phase: 1[39m[0m
+[92m87 to read set 5 phase: 1[39m[0m
+[92m885 to write set 5[39m[0m
+[31msending 5[39m[0m
+5 in response set
+104 sended bytes
+closing 5
+[92mWebserv has finished working[39m[0m

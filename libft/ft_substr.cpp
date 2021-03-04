@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-
+#include <cstring>
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	index;
@@ -20,13 +20,14 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	index = 0;
 	if (s == NULL)
 		return (NULL);
-	if (start >= ft_strlen(s))
-		return (result_string = ft_strdup(""));
+	if (start >= strlen(s))
+		return (result_string = strdup(""));
 	result_string = (char *)malloc(len + 1);
 	if (result_string == NULL)
 		return (NULL);
-	while ((index < len))
-		result_string[index++] = s[start++];
-	result_string[index] = '\0';
+	memmove(result_string, s + start, len);
+	//while ((index < len))
+	//	result_string[index++] = s[start++];
+	result_string[len] = '\0';
 	return (result_string);
 }

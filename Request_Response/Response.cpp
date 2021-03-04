@@ -174,7 +174,7 @@ void Response::methodGetHead(Request request, WebServer server, Page_html page)
 		directory = server.getRootPath() + request.getURI();
 		if (stat(directory.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)) {
 			tmp = (char *)page.create_autoindex(directory.c_str(), request.getURI());
-			_bodyOfResponse.addData(tmp, ft_strlen(tmp));
+			_bodyOfResponse.addData(tmp, strlen(tmp));
 		}
 		else // this is no dir
 		{
@@ -267,7 +267,7 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
                 if(i < 0)
                     putErrorToBody((char *)"000", (char *)"The file cannot be read, bitch", server);
                 else
-                    _bodyOfResponse.addData(temp, ft_strlen(temp));
+                    _bodyOfResponse.addData(temp, strlen(temp));
                 free(temp);
                 close(fd);
             }
@@ -276,7 +276,7 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
         it++;
     }
 	tmp = (char *)errors.create_error(error, type);
-	_bodyOfResponse.addData(tmp, ft_strlen(tmp));
+	_bodyOfResponse.addData(tmp, strlen(tmp));
 }
 
 char* Response::edit_response(Request *request) {

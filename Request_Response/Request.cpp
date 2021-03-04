@@ -36,7 +36,7 @@ std::string _headers[18] = {
 void Request::fillMap(){
 	int i = 0;
 	std::map<std::string, char*>::iterator iter = _info.begin();
-	char *tmp = ft_strdup("\0");
+	char *tmp = strdup("\0");
 	while (i < 18){
 		iter = _info.insert(iter, std::pair<std::string, char *>(std::string(_headers[i]), tmp));
 		i++;
@@ -62,14 +62,14 @@ void Request::setReqBody(char *body, size_t len){
 Request::Request(char *reqString){
 	char *tmp;
 
-	_reqString = ft_strdup(reqString);
+	_reqString = strdup(reqString);
 	//std::cout << GREEN << "\nREQ:" << DEFAULT << _reqString << GREEN <<  "----" << DEFAULT << std::endl;
-	_pathToCgi = ft_strdup("");
+	_pathToCgi = strdup("");
 	_reqBody = Bytes();
 	fillMap();
 	parsRequest(reqString);
 	tmp = strchr(_info["uri"], '?');
-	_queryString = tmp ? ft_strdup(tmp + 1) : ft_strdup("");
+	_queryString = tmp ? strdup(tmp + 1) : strdup("");
 	//std::cout << _queryString << std::endl;
 	//std::cout << "len: " << _info["content-length"] << std::endl;
 //	for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
@@ -85,7 +85,7 @@ Request::~Request(){
 
 int Request::parsHeaders(char **strings){
 	for (int i = 0; i < 18; i++) {
-		_info[_headers[i]] = ft_strdup("");
+		_info[_headers[i]] = strdup("");
 		for (int j = 0; strings[j]; j++){
 			if (strnstr(strings[j], _headers[i].c_str(), strlen(strings[j])) != NULL){
 				free(_info[_headers[i]]);
@@ -136,7 +136,7 @@ int Request::parsRequest(char *reqString){
 	char	**strings;
 	char	*copy;
 
-	copy = ft_strdup(reqString);
+	copy = strdup(reqString);
    // _headValid.valid(reqString); // todo try-catch exception
 	parsFirstLine(&copy);
 	std::map<std::string, char*>::iterator iter = _info.begin();
