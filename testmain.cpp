@@ -31,7 +31,6 @@ void start_servers(std::vector<WebServer> servers) {
 	Bytes			tmp;
 	ssize_t			ret;
 	struct timeval 	t;
-	std::list<Client*>::iterator tmpiter;
 
 	if (!(buf = (char *) malloc(sizeof(char) * 256001)))
 		exit(1);
@@ -39,7 +38,7 @@ void start_servers(std::vector<WebServer> servers) {
 	int j = 1;
 	size_t p = 0;
 	std::cout << GREEN << "Webserver is started" << DEFAULT<< std::endl;
-	signal(SIGPIPE, SIG_IGN);
+//	signal(SIGPIPE, SIG_IGN);
 	size_t count1 = 0;
 	while (j) {
 		if (j++ == 0)
@@ -111,7 +110,7 @@ void start_servers(std::vector<WebServer> servers) {
 						//	(*i)->setPhase(sendingResponse);
 						//	FD_SET((*i)->getClientFd(), &fd_write);
 						//	goto tmp;
-						//}
+						//
 						++i;
 						continue;
 //						goto tmp;
@@ -139,20 +138,22 @@ void start_servers(std::vector<WebServer> servers) {
 				//++i;
 				//continue;
 			}
-			//tmp:
-			if ((*i)->getPhase() == sendingResponse && FD_ISSET((*i)->getClientFd(), &fd_write)) {
-				ret = send((*i)->getClientFd(), (*i)->getToSendData()->toPointer() + (*i)->getSendBytes(), (*i)->getToSendData()->getDataSize() - (*i)->getSendBytes(), 0);
-				//std::cout << RED << "sending " << (*i)->getClientFd() << " " << ret << " bytes " << DEFAULT << std::endl;
-				if (ret < 0) {
-					exit(0);
-					(*i)->setPhase(closing);
-				}
-				if (errno == EPIPE) {
-					exit(0);
-					(*i)->setPhase(closing);
-					errno = 0;
-				}
-				(*i)->setSendBytes((*i)->getSendBytes() + ret);
+//			tmp:
+            signal(SIGPIPE, SIG_IGN);
+            if ((*i)->getPhase() == sendingResponse && FD_ISSET((*i)->getClientFd(), &fd_write)) {
+                ret = send((*i)->getClientFd(), (*i)->getToSendData()->toPointer() + (*i)->getSendBytes(), (*i)->getToSendData()->getDataSize() - (*i)->getSendBytes(), 0);
+//				std::cout << RED << "sending " << (*i)->getClientFd() << " " << ret << " bytes " << DEFAULT << std::endl;
+                if (ret < 0) {
+                    exit(0);
+                    (*i)->setPhase(closing);
+                }
+                if (errno == EPIPE) {
+                    exit(0);
+                    (*i)->setPhase(closing);
+                    errno = 0;
+                }
+
+                (*i)->setSendBytes((*i)->getSendBytes() + ret);
 				if ((*i)->getSendBytes() == (*i)->getToSendData()->getDataSize())
 					(*i)->setPhase(closing);
 			}
@@ -162,8 +163,8 @@ void start_servers(std::vector<WebServer> servers) {
 		for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ) {
 			if ((*it)->getPhase() == closing) {
 				//std::cout << BLUE << "closing " << (*it)->getClientFd() << DEFAULT << std::endl;
-				FD_CLR((*it)->getClientFd(), &fd_read);
-				FD_CLR((*it)->getClientFd(), &fd_write);
+//				FD_CLR((*it)->getClientFd(), &fd_read);
+//				FD_CLR((*it)->getClientFd(), &fd_write);
 				close((*it)->getClientFd());
 				it = clients.erase(it);
 			}

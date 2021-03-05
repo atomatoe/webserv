@@ -73,7 +73,7 @@ void Response::check_file_or_dir(Request request, WebServer server)
 	    if(r_read < 0)
 		    putErrorToBody((char *)"000", (char *)"The file cannot be read, bitch", server);
 	    else
-		    _bodyOfResponse.addData(temp, r_read);
+            _bodyOfResponse.addData(temp, r_read);
 	    free(temp);
 	    close(r_open);
 	}  
@@ -90,9 +90,9 @@ int Response::search_uri(WebServer server, char *uri)
         i = strlen(tmp);
         for(size_t it = 0; it != server.getLocations().size(); it++) {
             if ((server.getLocations()[it].getUrl()) == tmp) // проверка на существование такого location по запросу
-                return(it);
+                return (it);
         }
-        while(tmp[i] != '/' && i != 1)
+        while (tmp[i] != '/' && i != 1)
             i--;
         buf = ft_substr(tmp, 0, i);
         free(tmp);
@@ -155,7 +155,7 @@ void Response::methodPost(Request request, WebServer server, Page_html page) {
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Запрос POST не может идти на папку !!!!!", server);
         else {
-            request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/cgi_tester"));
+            request.setPathToCgi(std::string("/Users/qtamaril/Desktop/qtamaril/webserv/testing_cgi/cgi-bin/cgi_tester"));
             toCGI(*this, request, server);
            // tmp = _bodyOfResponse.toPointer();
         }
