@@ -115,7 +115,7 @@ add_executable(webserv
         Request_Response/Request.hpp
         Request_Response/Response.cpp
         Request_Response/Response.hpp
-        main.cpp
+        testmain.cpp
         main_utils.cpp
         WebServ.cpp
-        WebServ.hpp)
+        WebServ.hpp Client.cpp Client.h)

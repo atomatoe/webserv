@@ -22,16 +22,6 @@
 # define BLUE "\e[34m"
 class Response;
 
-typedef struct client {
-	Request *	request;
-	Response *	response;
-	Bytes * 	receivedData;// то что запросит клиент
-	Bytes * 	toSendData; // то что отдадим клиенту
-	int			phase;
-	time_t		time;
-	size_t 		sendBytes;
-} t_client;
-
 class WebServer {
 private:
 	std::string                         _ip;
@@ -40,7 +30,6 @@ private:
 	std::string                         _rootPath;
 	std::vector<Location>               _locations;
 	std::map<std::string, std::string>  _errorPage;
-	std::map<int, t_client> 			_mapOfClients;
 	bool 		                        _autoIndex;
 
 private:
@@ -60,7 +49,6 @@ public:
 	sockaddr_in *get_socket_addr();
     socklen_t *get_address_len();
     sockaddr_in *get_out();
-	std::map<int, t_client> &get_list();
 	bool getAutoIndex() const;
 	void setAutoIndex(bool autoIndex);
 
@@ -71,7 +59,6 @@ public:
     std::string                         getRootPath() const;
     std::map<std::string, std::string>  getErrorPage() const;
     std::vector<Location>               getLocations() const;
-	std::map<int, t_client> &			getClients();
 
     /* set */
     void    setIp(std::string);
@@ -82,7 +69,6 @@ public:
     /* add */
     void    addErrorPage(std::string, std::string);
     void    addLocation(Location location);
-    void 	addClient(int fd);
 };
 
 #endif

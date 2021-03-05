@@ -44,7 +44,7 @@ void start_servers(std::vector<WebServer> servers) {
     size_t count1 = 0;
     struct timeval t;
     size_t p = 0;
-    if (!(buf = (char *) malloc(sizeof(char) * 256001)))
+    if (!(buf = (char *) malloc(sizeof(char) * 512001)))
         exit(1);
 
     int j = 1;
@@ -58,15 +58,6 @@ void start_servers(std::vector<WebServer> servers) {
 
 		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
 			for (std::map<int, t_client>::iterator i = it->getClients().begin(); i != it->getClients().end(); ++i) {
-				if (i->second.phase == 5) {
-					std::cout << BLUE << "closing " << i->first << DEFAULT << std::endl;
-					FD_CLR(i->first, &fd_read);
-					FD_CLR(i->first, &fd_write);
-					close(i->first);
-					i = it->getClients().erase(i);
-					if (i == it->getClients().end())
-						break;
-				}
 				if (i->second.phase < 2) {
 					std::cout << GREEN << p << " to read set " << i->first << " phase: " << i->second.phase << DEFAULT << std::endl;
 					FD_SET(i->first, &fd_read);
@@ -80,13 +71,29 @@ void start_servers(std::vector<WebServer> servers) {
 			}
 		}
 
-		t.tv_sec = 300;
+		t.tv_sec = 240;
 		t.tv_usec = 0;
 
 		if (select(max_fd + 1, &fd_read, &fd_write, 0, &t) < 0) {
 			std::cout << "end of cycle" << std::endl;
 			break;
 		};
+
+		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
+			for (std::map<int, t_client>::iterator i = it->getClients().begin(); i != it->getClients().end(); ++i)
+			{
+				if (i->second.phase == 5)
+				{
+					std::cout << BLUE << "closing " << i->first << DEFAULT << std::endl;
+					FD_CLR(i->first, &fd_read);
+					FD_CLR(i->first, &fd_write);
+					close(i->first);
+					i = it->getClients().erase(i);
+					if (i == it->getClients().end())
+						break;
+				}
+			}
+		}
 
 		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
 			if (FD_ISSET(it->get_server_fd(), &fd_read)) {
@@ -100,17 +107,18 @@ void start_servers(std::vector<WebServer> servers) {
 			std::map<int, t_client>::iterator i = it->getClients().begin();
 			while (i != it->getClients().end()) {
 				if (FD_ISSET(i->first, &fd_read)) {
-					bzero(buf, 256001);
-					ret = recv(i->first, buf, 256000, MSG_TRUNC);
+					bzero(buf, 512001);
+					ret = recv(i->first, buf, 512000, MSG_TRUNC);
 					if (ret <= 0) {
 						std::cout << "recv fail" << std::endl;
+						//exit(0);
 						closeClientFd(&i, fd_write, fd_read, &*it);
 						std::cout << "cont" << std::endl;
 						continue;
 					}
 					if (errno == EPIPE) {
 						std::cout << "sigpipe" << std::endl;
-						//exit(0);
+						exit(0);
 						closeClientFd(&i, fd_write, fd_read, &*it);
 						errno = 0;
 						continue;
@@ -144,16 +152,16 @@ void start_servers(std::vector<WebServer> servers) {
 								i->second.request->getReqBody().cutData(atoi(i->second.request->getContentLength()));
 								i->second.phase = 2;
 							}
-							i++;
-							continue;
+							//i++;
+							//continue;
 						}
 					} else if (ret > 0 && i->second.phase == 1) {
 						i->second.request->setReqBody(buf, ret);
 						if (i->second.request->getReqBody().getDataSize() >= atoi(i->second.request->getContentLength()) && strcmp(i->second.request->getTransferEncoding(), "chunked") != 0) {
 							i->second.phase = 2;
 							i->second.request->getReqBody().cutData(atoi(i->second.request->getContentLength()));
-							i++;
-							continue;
+							//i++;
+							//continue;
 						}
 						if (strncmp(i->second.request->getTransferEncoding(), "chunked", 7) == 0 && (i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != (size_t) -1)) {
 							len = i->second.request->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
@@ -161,8 +169,8 @@ void start_servers(std::vector<WebServer> servers) {
 							i->second.request->ChunkedBodyProcessing();
 
 							i->second.phase = 2;
-							i++;
-							continue;
+							//i++;
+							//continue;
 						}
 					}
 				}
@@ -172,24 +180,24 @@ void start_servers(std::vector<WebServer> servers) {
 					i->second.phase = 3;
 				}
 				if (i->second.phase == 3) {
-					std::cout << RED << "sending " << i->first << DEFAULT << std::endl;
 					if (i->second.sendBytes < i->second.toSendData->getDataSize()) {
 						if (FD_ISSET(i->first, &fd_write)) {
-							std::cout << i->first << " in response set" << std::endl;
+						//	std::cout << i->first << " in response set" << std::endl;
 							ssize_t r;
 							r = send(i->first, i->second.toSendData->toPointer() + i->second.sendBytes, i->second.toSendData->getDataSize() - i->second.sendBytes, 0);
-							std::cout << r << " sended bytes\n";
-							if (errno == EPIPE) {
-								std::cout << "sigpipe" << std::endl;
-								exit(0);
-								closeClientFd(&i, fd_write, fd_read, &*it);
-								errno = 0;
-								continue;
-							}
+							//std::cout << r << " sended bytes\n";
+							std::cout << RED << "sending " << i->first << " " << r << "bytes " << DEFAULT << std::endl;
 							if (r < 0) {
 								std::cout << "ERROR\n";
-								exit(0);
+								//exit(0);
 								closeClientFd(&i, fd_write, fd_read, &*it);
+								continue;
+							}
+							if (errno == EPIPE) {
+								std::cout << "sigpipe" << std::endl;
+								//exit(0);
+								closeClientFd(&i, fd_write, fd_read, &*it);
+								errno = 0;
 								continue;
 							}
 							i->second.sendBytes += r;

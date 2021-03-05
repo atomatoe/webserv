@@ -61,8 +61,10 @@ void Request::setReqBody(char *body, size_t len){
 
 Request::Request(char *reqString){
 	char *tmp;
+	size_t len;
 
 	_reqString = strdup(reqString);
+	_parsedHeaders = false;
 	//std::cout << GREEN << "\nREQ:" << DEFAULT << _reqString << GREEN <<  "----" << DEFAULT << std::endl;
 	_pathToCgi = strdup("");
 	_reqBody = Bytes();
@@ -75,8 +77,21 @@ Request::Request(char *reqString){
 //	for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
 //		  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
 //	}
+	if (strcmp(getMetod(), "GET") == 0 || strcmp(getMetod(), "HEAD") == 0)
+		_parsedHeaders = true;
+	else if (strcmp(getTransferEncoding() , "chunked") == 0 && _reqBody.findMemoryFragment("0\r\n\r\n", 5) != (size_t)-1) {
+		len = _reqBody.findMemoryFragment("0\r\n\r\n", 5);
+		_reqBody.cutData(len);
+		ChunkedBodyProcessing();
+		_parsedHeaders = true;
+	}
+	if (_reqBody.getDataSize() < atoi(getContentLength())) {
+		_reqBody.cutData(atoi(getContentLength()));
+		_parsedHeaders = true;
+	}
 }
 
+bool Request::isHeadersParsed() { return _parsedHeaders; };
 
 Request::~Request(){
 	 //todo free all needing

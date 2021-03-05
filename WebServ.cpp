@@ -56,7 +56,7 @@ int WebServer::get_server_fd() { return(this->_server_fd); }
 sockaddr_in *WebServer::get_socket_addr() { return(&this->_socket_addr); }
 socklen_t *WebServer::get_address_len() { return(&this->_address_len); }
 sockaddr_in *WebServer::get_out() { return(&this->_out); }
-std::map<int, t_client> &WebServer::get_list() { return(this->_mapOfClients); }
+
 
 
 ////////////////* from Timur */
@@ -105,24 +105,6 @@ void            WebServer::addErrorPage(std::string error, std::string path) {
 }
 void            WebServer::addLocation(Location location) {
     this->_locations.push_back(location);
-}
-
-void WebServer::addClient(int fd){
-	t_client        tmp;
-	struct timeval  tv;
-
-	gettimeofday(&tv, NULL);
-	_mapOfClients.insert(std::make_pair(fd, tmp));
-    _mapOfClients[fd].time = tv.tv_sec;
-	_mapOfClients[fd].toSendData = new Bytes();
-	_mapOfClients[fd].receivedData = new Bytes();
-	_mapOfClients[fd].phase = 0;
-	_mapOfClients[fd].sendBytes = 0;
-	fcntl(fd, F_SETFL, O_NONBLOCK);
-}
-
-std::map<int, t_client> &WebServer::getClients() {
-	return _mapOfClients;
 }
 
 bool  WebServer::getAutoIndex() const { return _autoIndex; }

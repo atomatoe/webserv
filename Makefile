@@ -9,8 +9,9 @@ FLAGS_W = -Wall -Wextra -Werror
 CC = clang++
 RM = rm -rf
 
-SRCS =	WebServ.cpp \
-		main.cpp \
+SRCS =	Client.cpp \
+		WebServ.cpp \
+		testmain.cpp \
 		main_utils.cpp \
 		includes/includes.cpp \
 		includes/page_html.cpp \

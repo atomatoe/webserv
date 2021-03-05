@@ -36,6 +36,7 @@ public:
 	char 			*getReqString() {return _reqString;}
 	Bytes 			& getReqBody() {return _reqBody;}
 	std::string &	getPathToCgi();
+	bool 			isHeadersParsed() ;
 
 	std::string &	getQueryString();
 
@@ -51,6 +52,7 @@ private:
     HeaderValidation            _headValid;
     std::string					_pathToCgi;
     std::string					_queryString;
+    bool 						_parsedHeaders;
 
     int parsRequest(char *reqString);
     int parsFirstLine(char **copy);
