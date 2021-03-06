@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/03 15:52:12 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/06 15:45:49 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ Response::Response() {
     _lenOfResponse = 0;
 }
 
-Response::~Response() { }
+Response::~Response()
+{
+	// _bodyOfResponse.clear();  // +2 leak, wtf?
+}
 
 std::string Response::give_me_index(std::string index)
 {
@@ -91,8 +94,14 @@ int Response::search_uri(WebServer & server, char *uri)
     {
         i = strlen(tmp);
         for(size_t it = 0; it != server.getLocations().size(); it++) {
-            if ((server.getLocations()[it].getUrl()) == tmp) // проверка на существование такого location по запросу
+            if ((server.getLocations()[it].getUrl()) == tmp) { // проверка на существование такого location по запросу
+                // free(tmp); // this 1 leak 
+                /*
+                Test multiple workers(5) doing multiple times(15): GET on /
+                FATAL ERROR ON LAST TEST: Get http://localhost:8080/: net/http: HTTP/1.x transport connection broken: write tcp 127.0.0.1:63075->127.0.0.1:8080: write: broken pipe
+                */
                 return (it);
+            }
         }
         while (tmp[i] != '/' && i != 1)
             i--;
@@ -100,7 +109,7 @@ int Response::search_uri(WebServer & server, char *uri)
         free(tmp);
         tmp = buf;
     }
-    return(-1);
+    return(0);
 }
 
 void Response::methodPut(Request & request, WebServer & server, Page_html & page)
@@ -157,7 +166,7 @@ void Response::methodPost(Request & request, WebServer & server, Page_html & pag
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Запрос POST не может идти на папку !!!!!", server);
         else {
-            request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/cgi_tester"));
+            request.setPathToCgi(std::string("/Users/atomatoe/Desktop/webserv/testing_cgi/cgi-bin/cgi_tester"));
             toCGI(*this, request, server);
            // tmp = _bodyOfResponse.toPointer();
         }
@@ -210,7 +219,6 @@ void Response::methodGetHead(Request & request, WebServer & server, Page_html & 
 char* Response::give_me_response(Request  request, WebServer & server)
 {
 	Page_html page;
-
     // -----------------------------------------------------
    // std::cout << std::endl;
    // std::cout << "URI: " << request.getURI() << std::endl;
@@ -294,7 +302,10 @@ char* Response::edit_response(Request *request) {
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(_bodyOfResponse.getDataSize()) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
 	// write(0, ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()), tmp.length() + _bodyOfResponse.getDataSize());
-	return (ft_memjoin((char *)tmp.c_str(), _bodyOfResponse.toPointer(), tmp.length(), _bodyOfResponse.getDataSize()));
+    char *t = _bodyOfResponse.toPointer();
+    char *tmps = ft_memjoin((char *)tmp.c_str(), t, tmp.length(), _bodyOfResponse.getDataSize());
+    free(t);
+	return (tmps);
 }
 
 size_t Response::getLenOfResponse() const { return _lenOfResponse; }

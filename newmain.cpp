@@ -105,18 +105,26 @@ void start_servers(std::vector<WebServer> servers) {
 				}
 				if ((*i)->getPhase() == responseGenerate) {
 					(*i)->setResponse(new Response());
+					// std::cout << GREEN << "TEST sleep 1 \n";
+					// sleep(8);
+					// std::cout << RED << "TEST sleep 2 \n";
 					(*i)->getToSendData()->addData((*i)->getResponse()->give_me_response(*((*i)->getRequest()), (*i)->getWebServer()), (*i)->getResponse()->getLenOfResponse());
+					// std::cout << GREEN << "TEST sleep 3 \n";
+					// sleep(8);
+					// std::cout << RED << "TEST sleep 4 \n";
 					(*i)->setPhase(sendingResponse);
 				}
 			}
 			if (FD_ISSET((*i)->getClientFd(), &fd_write)) {
-				ret = send((*i)->getClientFd(), (*i)->getToSendData()->toPointer() + (*i)->getSendBytes(), (*i)->getToSendData()->getDataSize() - (*i)->getSendBytes(), 0);
+				frtmp = (*i)->getToSendData()->toPointer();
+				ret = write((*i)->getClientFd(), frtmp + (*i)->getSendBytes(), (*i)->getToSendData()->getDataSize() - (*i)->getSendBytes());
 				if (ret < 0 || errno == EPIPE) {
 					exit(errno);
 				}
 				(*i)->setSendBytes((*i)->getSendBytes() + ret);
 				if ((*i)->getSendBytes() == (*i)->getToSendData()->getDataSize())
 					(*i)->setPhase(closing);
+				free(frtmp);
 			}
 			++i;
 		}
@@ -125,6 +133,7 @@ void start_servers(std::vector<WebServer> servers) {
 			if ((*it)->getPhase() == closing) {
 				std::cout <<  BLUE <<"closing " << (*it)->getClientFd() << DEFAULT << std::endl;
 				close((*it)->getClientFd());
+				delete *it;
 				it = clients.erase(it);
 			}
 			else

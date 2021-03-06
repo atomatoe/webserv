@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 15:48:01 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/24 17:50:03 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/06 15:10:10 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ Page_html::~Page_html() { };
 
 const char* Page_html::create_autoindex(std::string _directory, char *uri)
 {
+    char *tmp;
     _dir = opendir(_directory.c_str());
 
     _file = readdir(_dir);
@@ -66,9 +67,13 @@ const char* Page_html::create_autoindex(std::string _directory, char *uri)
         _html += _file->d_name;
         if (_file->d_type == 4)
 			_html += "/";
-        stat(get_way(_directory, _file->d_name), &buff); // нужен полный путь до файла
+        tmp = get_way(_directory, _file->d_name);
+        stat(tmp, &buff); // нужен полный путь до файла
+        free(tmp);
         _html += (char *)"</a></td>\n<td style=\"width: 49.75%; height: 30px; text-align: center;\" bgcolor=\"#1a7d99\">";
-        _html += get_time(buff.st_mtimespec.tv_sec);
+        tmp = get_time(buff.st_mtimespec.tv_sec);
+        _html += tmp;
+        free(tmp);
         _html += (char *)"</td>\n</tr>";
     }
     _html += (char *)"</tbody>\n</table>";

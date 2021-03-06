@@ -35,13 +35,10 @@ Client::Client(WebServer & webServer, int & clientFd) {
 }
 
 Client::~Client() {
-	//close(_clientFd);
-	//free(_request);
-	//free(_response);
-	//free(_toSendData);
-	//free(_receivedData);
-	//_receivedData->clear();
-	//_toSendData->clear();
+	delete(_request);
+	delete(_response);
+	delete(_toSendData);
+	delete(_receivedData);
 }
 
 void Client::setRequest(Request *request) {
