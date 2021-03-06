@@ -11,7 +11,7 @@ RM = rm -rf
 
 SRCS =	Client.cpp \
 		WebServ.cpp \
-		testmain.cpp \
+		newmain.cpp \
 		main_utils.cpp \
 		includes/includes.cpp \
 		includes/page_html.cpp \

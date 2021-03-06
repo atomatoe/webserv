@@ -30,7 +30,7 @@
 #include <dirent.h> // для readdir opendir
 #include <sys/stat.h> // для lstat stat
 #include <fstream> // для работы с файлами ofstream
-#define doubleCRLF "\r\n\r\n"
+#define doubleCRLF (char *)"\r\n\r\n"
 
 class Location;
 class ParseConfig;

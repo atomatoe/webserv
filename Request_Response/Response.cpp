@@ -19,13 +19,15 @@ POST ─ редактировать данные
 DELETE ─ удалить данные
 */
 
-Response::Response()
-{
+Response::Response() {
+	char *tmp;
     struct timeval tv;
     this->_httpVersion = "HTTP/1.1 200 OK\r\n";
     this->_contentLength = "Content-length: ";
     gettimeofday(&tv, NULL);
-    this->_timeOfResponse = get_time(tv.tv_sec);
+    tmp = get_time(tv.tv_sec);
+    _timeOfResponse = tmp;
+    free(tmp);
     this->_versionOfWebServer = "Server: Webserv/1.0 (MacOS)";
     this->_location_id = -1;
     _lenOfResponse = 0;
@@ -44,7 +46,7 @@ std::string Response::give_me_index(std::string index)
     return(tmp);
 }
 
-void Response::check_file_or_dir(Request request, WebServer server)
+void Response::check_file_or_dir(Request & request, WebServer & server)
 {
     int r_open;
     int r_read;
@@ -79,7 +81,7 @@ void Response::check_file_or_dir(Request request, WebServer server)
 	}  
 }
 
-int Response::search_uri(WebServer server, char *uri)
+int Response::search_uri(WebServer & server, char *uri)
 {
     char *tmp = strdup(uri);
     char *buf;
@@ -101,7 +103,7 @@ int Response::search_uri(WebServer server, char *uri)
     return(-1);
 }
 
-void Response::methodPut(Request request, WebServer server, Page_html page)
+void Response::methodPut(Request & request, WebServer & server, Page_html & page)
 {
     int r_open;
     int r_read;
@@ -136,7 +138,7 @@ void Response::methodPut(Request request, WebServer server, Page_html page)
     }
 }
 
-void Response::methodPost(Request request, WebServer server, Page_html page) {
+void Response::methodPost(Request & request, WebServer & server, Page_html & page) {
     char *tmp;
 
 	this->_location_id = search_uri(server, request.getURI());
@@ -155,14 +157,14 @@ void Response::methodPost(Request request, WebServer server, Page_html page) {
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Запрос POST не может идти на папку !!!!!", server);
         else {
-            request.setPathToCgi(std::string("/Users/qtamaril/Desktop/qtamaril/webserv/testing_cgi/cgi-bin/cgi_tester"));
+            request.setPathToCgi(std::string("/Users/welease/webserv/testing_cgi/cgi-bin/cgi_tester"));
             toCGI(*this, request, server);
            // tmp = _bodyOfResponse.toPointer();
         }
     }
 }
 
-void Response::methodGetHead(Request request, WebServer server, Page_html page)
+void Response::methodGetHead(Request & request, WebServer & server, Page_html & page)
 {
     std::string directory;
     struct stat sb;
@@ -205,7 +207,7 @@ void Response::methodGetHead(Request request, WebServer server, Page_html page)
     }
 }
 
-char* Response::give_me_response(Request request, WebServer server)
+char* Response::give_me_response(Request  request, WebServer & server)
 {
 	Page_html page;
 

@@ -63,20 +63,16 @@ Request::Request(char *reqString){
 	char *tmp;
 	size_t len;
 
-	_reqString = strdup(reqString);
+	tmp = strstr(reqString, "\r\n\r\n");
+	len = tmp - reqString + 4;
+	_reqBody.addData(reqString + len, strlen(reqString) - len);
+	_reqString = ft_substr(reqString, 0, len);
 	_parsedHeaders = false;
-	//std::cout << GREEN << "\nREQ:" << DEFAULT << _reqString << GREEN <<  "----" << DEFAULT << std::endl;
-	_pathToCgi = strdup("");
-	_reqBody = Bytes();
 	fillMap();
 	parsRequest(reqString);
+	std::cout << "after" << std::endl;
 	tmp = strchr(_info["uri"], '?');
-	_queryString = tmp ? strdup(tmp + 1) : strdup("");
-	//std::cout << _queryString << std::endl;
-	//std::cout << "len: " << _info["content-length"] << std::endl;
-//	for (std::map<std::string, char *>::iterator iter = _info.begin(); iter != _info.end(); iter++){
-//		  std::cout << iter->first << ": " << "|" << iter->second << "|" << std::endl;
-//	}
+	_queryString = tmp ? tmp + 1 : "";
 	if (strcmp(getMetod(), "GET") == 0 || strcmp(getMetod(), "HEAD") == 0)
 		_parsedHeaders = true;
 	else if (strcmp(getTransferEncoding() , "chunked") == 0 && _reqBody.findMemoryFragment("0\r\n\r\n", 5) != (size_t)-1) {
@@ -85,8 +81,9 @@ Request::Request(char *reqString){
 		ChunkedBodyProcessing();
 		_parsedHeaders = true;
 	}
-	if (_reqBody.getDataSize() < atoi(getContentLength())) {
-		_reqBody.cutData(atoi(getContentLength()));
+	if (_reqBody.getDataSize() < atoi(getContentLength()) && strcmp(getContentLength(), "") != 0) {
+		Bytes tmp = _reqBody.cutData(atoi(getContentLength()));
+		tmp.clear();
 		_parsedHeaders = true;
 	}
 }
@@ -94,7 +91,6 @@ Request::Request(char *reqString){
 bool Request::isHeadersParsed() { return _parsedHeaders; };
 
 Request::~Request(){
-	 //todo free all needing
 }
 
 
@@ -110,29 +106,18 @@ int Request::parsHeaders(char **strings){
 	}
 	for (int i = 0; strings[i]; ++i)
 		free(strings[i]);
+	free(strings);
 	return 0;
 }
 
 void Request::ChunkedBodyProcessing(){
 	size_t ind = 1;
 	size_t size = 0;
-	size_t tmp = 0;
 
-	//int fd = open("/Users/welease/webserv/MY", O_RDWR);
-	// std::cout << "processing" << "\n" << _reqBody.toPointer() << "\n";
 	memBody *chunkBody = ft_memsplit(_reqBody.toPointer(), (char *)"\r\n", _reqBody.getDataSize(), 2);
-	// for (memBody::iterator it = chunkBody->begin(); it != chunkBody->end(); ++it) {
-	// 	std::cout << GREEN << tmp++ << " " << it->second <<  " " << it->first << DEFAULT << std::endl;
-	// }
-	// std::cout << "\n\n\n";
 	if (chunkBody->size() == 0)
 		return;
-	tmp = 0;
-	// for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
-	// 	std::cout << tmp++ <<" in chunk: " << i->first << " " << i->second << std::endl;
-	// }
 	for (memBody:: iterator i = chunkBody->begin(); i != chunkBody->end(); ++i){
-		// std::cout << ind << std::endl;
 		if (ind % 2)
 			size = hexToDec(std::string(i->second));
 		else
@@ -140,24 +125,23 @@ void Request::ChunkedBodyProcessing(){
 		ind++;
 	}
 	_reqBody.clear();
-	// std::cout << "before\n";
 	_reqBody.addData(_chunkedReqBody.toPointer(), _chunkedReqBody.getDataSize());
-//	write(fd,_reqBody.toPointer(), _reqBody.getDataSize());
-	// std::cout << "After to pointer\n";
-	//std::cout << "size: " << _chunkedReqBody.getDataSize() << std::endl;
 }
 
 int Request::parsRequest(char *reqString){
 	char	**strings;
 	char	*copy;
+	char 	*t;
 
 	copy = strdup(reqString);
+	t = copy;
    // _headValid.valid(reqString); // todo try-catch exception
 	parsFirstLine(&copy);
 	std::map<std::string, char*>::iterator iter = _info.begin();
 	if ((strings = ft_splitTim(copy, '\r')) == NULL)
 		return -1;
 	parsHeaders(strings);
+	free(t);
 	return -1;
 }
 int Request::parsFirstLine(char **copy){
@@ -168,21 +152,18 @@ int Request::parsFirstLine(char **copy){
 		i = tmp - *copy;
 		tmp = ft_substr(*copy, 0, i);
 		iter = _info.insert(iter, std::pair<std::string, char *>(std::string("metod"), tmp));
-		//free(tmp);  //todo leak
 		*copy = *copy + i + 1;
 	}
 	if ((tmp = strchr(*copy, ' ')) != NULL){
 		i = tmp - *copy;
 		tmp = ft_substr(*copy, 0, i); // сделал start с 1 символа (пропуская /)
 		iter = _info.insert(iter, std::pair<std::string, char *>(std::string("uri"), tmp));
-		//free(tmp); //todo leak
 		*copy = *copy + i + 1;
 	}
 	if ((tmp = strchr(*copy, '\n')) != NULL){
 		i = tmp - *copy;
 		tmp = ft_substr(*copy, 0, i - 1);
 		iter = _info.insert(iter, std::pair<std::string, char *>(std::string("http"), tmp));
-		//free(tmp);  //todo leak
 		*copy = *copy + i + 1;
 	}
 	return 0;

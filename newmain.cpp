@@ -1,5 +1,5 @@
 //
-// Created by Wynn Elease on 2/28/21.
+// Created by Wynn Elease on 3/6/21.
 //
 
 #include "WebServ.hpp"
@@ -31,26 +31,22 @@ void start_servers(std::vector<WebServer> servers) {
 	Bytes			tmp;
 	ssize_t			ret;
 	struct timeval 	t;
-
+	char *			frtmp;
 	if (!(buf = (char *) malloc(sizeof(char) * 256001)))
 		exit(1);
 
 	int j = 1;
 	size_t p = 0;
 	std::cout << GREEN << "Webserver is started" << DEFAULT<< std::endl;
-//	signal(SIGPIPE, SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);
 	size_t count1 = 0;
 	while (j) {
 		if (j++ == 0)
 			break;
 		fd_init(servers, fd_write, fd_read, max_fd);
 		for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ++it) {
-			//if ((*it)->getPhase() < responseGenerate) {
-				//std::cout << GREEN << p << " to read set " << (*it)->getClientFd() << " phase: " << (*it)->getPhase() << DEFAULT << std::endl;
-				FD_SET((*it)->getClientFd(), &fd_read);
-			//}
+			FD_SET((*it)->getClientFd(), &fd_read);
 			if ((*it)->getPhase() >= responseGenerate) {
-				//std::cout << GREEN << p << " " <<  (*it)->getClientFd() << " to write set " << DEFAULT << std::endl;
 				FD_SET((*it)->getClientFd(), &fd_write);
 			}
 			if ((*it)->getClientFd() > max_fd)
@@ -63,8 +59,6 @@ void start_servers(std::vector<WebServer> servers) {
 
 		select(max_fd + 1, &fd_read, &fd_write, 0, &t);
 
-		int e = 0;
-
 		for (std::vector<WebServer>::iterator it = servers.begin(); it != servers.end(); ++it) {
 			if (FD_ISSET(it->get_server_fd(), &fd_read)) {
 				fd = accept(it->get_server_fd(), 0, 0);
@@ -74,75 +68,53 @@ void start_servers(std::vector<WebServer> servers) {
 		}
 
 		for (std::vector<Client*>::iterator i = clients.begin(); i != clients.end();) {
+			bzero(buf, 256001);
 			if (FD_ISSET((*i)->getClientFd(), &fd_read)) {
-				bzero(buf, 256001);
 				ret = recv((*i)->getClientFd(), buf, 256000, MSG_TRUNC);
-				if (ret <= 0) {
+				if (ret <= 0 || errno == EPIPE) {
 					std::cout << "recv fail" << std::endl;
-//					exit(0);
 					(*i)->setPhase(closing);
-					std::cout << "cont" << std::endl;
-					i++;
-					continue;
-				}
-				if (errno == EPIPE) {
-					std::cout << "sigpipe" << std::endl;
-					exit(0);
-					i = clients.erase(i);
-					errno = 0;
+					++i;
 					continue;
 				}
 				if ((*i)->getPhase() == parsHeaders) {
 					(*i)->getReceivedData()->addData(buf, ret);
-					if ((*i)->getPhase() == parsHeaders && (len = (*i)->getReceivedData()->findMemoryFragment((char *)doubleCRLF, 4)) != notFound) {
-						tmp = (*i)->getReceivedData()->cutData(len + 4);
-						(*i)->getReceivedData()->addData((char *)"", 1);
-						//std::cout << BLUE << (*i)->getReceivedData()->toPointer() << DEFAULT << std::endl;
-						(*i)->setRequest(new Request((*i)->getReceivedData()->toPointer()));
-						count1++;
-						std::cout << "count1: " << count1 << std::endl;
-						(*i)->getRequest()->setReqBody(tmp.toPointer(), tmp.getDataSize());
+					if ((*i)->getReceivedData()->findMemoryFragment(doubleCRLF, 4) != notFound) {
 						(*i)->setPhase(parsBody);
+						(*i)->getReceivedData()->addData((char *)"", 1);
+						//frtmp = (*i)->getReceivedData()->toPointer();
+						(*i)->setRequest(new Request((*i)->getReceivedData()->toPointer()));
+						std::cout << "fd: " << (*i)->getClientFd() << " count1: " << count1++ << std::endl;
 						if ((*i)->getRequest()->isHeadersParsed())
 							(*i)->setPhase(responseGenerate);
-						++i;
-						continue;
 					}
 				}
-				else if ((*i)->getPhase() >= parsBody) {
-					(*i)->getRequest()->setReqBody(buf, ret);
+				else if ((*i)->getPhase() == parsBody){
+					(*i)->getRequest()->getReqBody().addData(buf, ret);
 					if (strcmp((*i)->getRequest()->getTransferEncoding(), "chunked") != 0 && (*i)->getRequest()->getReqBody().getDataSize() >= atoi((*i)->getRequest()->getContentLength())) {
 						(*i)->getRequest()->getReqBody().cutData(atoi((*i)->getRequest()->getContentLength()));
 						(*i)->setPhase(responseGenerate);
 					}
 					if (strcmp((*i)->getRequest()->getTransferEncoding(), "chunked") == 0 &&
-							(*i)->getRequest()->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != notFound) {
+						(*i)->getRequest()->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != notFound) {
 						len = (*i)->getRequest()->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
 						(*i)->getRequest()->getReqBody().cutData(len);
 						(*i)->getRequest()->ChunkedBodyProcessing();
 						(*i)->setPhase(responseGenerate);
 					}
 				}
+				if ((*i)->getPhase() == responseGenerate) {
+					(*i)->setResponse(new Response());
+					(*i)->getToSendData()->addData((*i)->getResponse()->give_me_response(*((*i)->getRequest()), (*i)->getWebServer()), (*i)->getResponse()->getLenOfResponse());
+					(*i)->setPhase(sendingResponse);
+				}
 			}
-			if ((*i)->getPhase() == responseGenerate) {
-				(*i)->setResponse(new Response());
-				(*i)->getToSendData()->addData((*i)->getResponse()->give_me_response(*((*i)->getRequest()), (*i)->getWebServer()), (*i)->getResponse()->getLenOfResponse());
-				(*i)->setPhase(sendingResponse);
-				++i;
-				continue;
-			}
-            signal(SIGPIPE, SIG_IGN);
-            if ((*i)->getPhase() == sendingResponse && FD_ISSET((*i)->getClientFd(), &fd_write)) {
-                ret = send((*i)->getClientFd(), (*i)->getToSendData()->toPointer() + (*i)->getSendBytes(), (*i)->getToSendData()->getDataSize() - (*i)->getSendBytes(), 0);
-//				std::cout << RED << "sending " << (*i)->getClientFd() << " " << ret << " bytes " << DEFAULT << std::endl;
-                if (ret < 0) {
-                    exit(0);
-                }
-                if (errno == EPIPE) {
-                    exit(0);
-                    errno = 0;
-                }
-                (*i)->setSendBytes((*i)->getSendBytes() + ret);
+			if (FD_ISSET((*i)->getClientFd(), &fd_write)) {
+				ret = send((*i)->getClientFd(), (*i)->getToSendData()->toPointer() + (*i)->getSendBytes(), (*i)->getToSendData()->getDataSize() - (*i)->getSendBytes(), 0);
+				if (ret < 0 || errno == EPIPE) {
+					exit(errno);
+				}
+				(*i)->setSendBytes((*i)->getSendBytes() + ret);
 				if ((*i)->getSendBytes() == (*i)->getToSendData()->getDataSize())
 					(*i)->setPhase(closing);
 			}
@@ -151,13 +123,13 @@ void start_servers(std::vector<WebServer> servers) {
 
 		for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ) {
 			if ((*it)->getPhase() == closing) {
+				std::cout <<  BLUE <<"closing " << (*it)->getClientFd() << DEFAULT << std::endl;
 				close((*it)->getClientFd());
 				it = clients.erase(it);
 			}
 			else
 				++it;
 		}
-
 	}
 }
 

@@ -35,7 +35,11 @@ Client::Client(WebServer & webServer, int & clientFd) {
 }
 
 Client::~Client() {
-	close(_clientFd);
+	//close(_clientFd);
+	//free(_request);
+	//free(_response);
+	//free(_toSendData);
+	//free(_receivedData);
 	//_receivedData->clear();
 	//_toSendData->clear();
 }
