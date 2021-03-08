@@ -11,11 +11,9 @@ private:
     std::map<std::string, std::string>  _cgiPath;
     int 		                        _limitBody;
     std::map<std::string, bool>         _allowMethods;
-    std::vector<std::string>            _auth_client;
 
 public:
     Location();
-    void                                        addAuthClient(const std::string &file);
 
     /* get */
     const std::string &                         getUrl() const;
@@ -24,8 +22,6 @@ public:
     const std::map<std::string, std::string> &  getCgiPath() const;
     int                                         getLimitBody() const;
     const std::map<std::string, bool> &         getAllowMethods() const;
-    std::vector<std::string>                    getAuthClients() const;
-
 
     /* set */
     void                                setUrl(const std::string &);

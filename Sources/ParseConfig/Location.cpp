@@ -15,7 +15,6 @@ const std::map<std::string, std::string> &  Location::getCgiPath() const { retur
 int                                         Location::getLimitBody() const { return _limitBody; }
 const std::map<std::string, bool> &         Location::getAllowMethods() const { return _allowMethods; }
 const std::string &                         Location::getIndex() const { return _index; }
-std::vector<std::string>                    Location::getAuthClients() const { return _auth_client; }
 
 /* set */
 void                                        Location::setUrl(const std::string &url) {
@@ -49,23 +48,3 @@ void                                        Location::changeAllowMethod(std::str
     _allowMethods[key] = value;
 }
 
-void                                        Location::addAuthClient(const std::string &file) {
-    int         fd;
-    char        *line;
-
-    if (!isFileRead(file) || (fd = open(file.c_str(), O_RDONLY)) < 0)
-        exitError("Smth wrong with auth_clients: \"" + file + "\"");
-    while (get_next_line(fd, &line)) {
-        std::string     lineStr(line);
-        std::vector<std::string> spliited = ft_splitString(line, ":");
-        if (!ft_isalnum(line[0]) || !ft_isalnum(line[ft_strlen(line) - 1]) || spliited.size() != 2 || lineStr.find(' ') != std::string::npos) {
-            free(line);
-            close(fd);
-            exitError("Incorrect value of auth_clients: \"" + lineStr + "\"");
-        }
-        _auth_client.push_back(lineStr);
-        free(line);
-    }
-    free(line);
-    close(fd);
-}

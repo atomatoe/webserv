@@ -34,7 +34,6 @@ private:
     bool            checkCgiPass(char *line, Location &location);
     bool            checkLimitBody(char *line, Location &location);
     bool            checkAllowMethods(char *line, Location &location);
-    bool            checkAuthClients(char *line, Location &location);
 
     /* parse algorithm */
     void            parseServer(char *line);

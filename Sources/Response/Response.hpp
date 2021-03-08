@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:50 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/08 17:31:10 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/27 21:24:48 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 class Request;
 #include "../Request/Request.hpp"
 #include "../CGI/utilsOfCGI.hpp"
-#include "../../Auth_client/base64.h"
 
 class Response {
 
@@ -46,8 +45,6 @@ public:
 	std::string 	indexSearching(std::string index);
 	Bytes & 		getBodyOfResponse();
 	size_t 			getLenOfResponse() const;
-	int				check_auth(Request request, Location location);
-
 
 	friend void 	toCGI(Response &response, Request & request, WebServer & server);
 };
