@@ -15,7 +15,7 @@ SRCS =	Sources/main.cpp \
         Sources/PageHtmlGeneration/PageHtml.cpp \
         GetNextLine/get_next_line.cpp \
         GetNextLine/get_next_line_utils.cpp \
-        Includes/Includes.cpp \
+        Includes/includes.cpp \
         Sources/Response/Response.cpp \
         Sources/WebServer/WebServ.cpp \
         Sources/Request/Request.cpp \
@@ -24,7 +24,6 @@ SRCS =	Sources/main.cpp \
 		Sources/Client/Client.cpp \
 		Sources/Bytes/Bytes.cpp \
 		Sources/ParseConfig/ParseConfig.cpp \
-		AuthClients/base64.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
