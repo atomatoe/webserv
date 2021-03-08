@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:50 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/27 21:24:48 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/08 19:48:32 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,5 +47,6 @@ public:
 	size_t 			getLenOfResponse() const;
 
 	friend void 	toCGI(Response &response, Request & request, WebServer & server);
+	int 			check_auth(Request & request, Location & location);
 };
 #endif

@@ -38,6 +38,8 @@ private:
     /* parse algorithm */
     void            parseServer(char *line);
     std::string     parseLocation(char *line, WebServer &webServer);
+    bool            checkAuthClients(char *line, Location &location);
+
 
 public:
     ParseConfig(std::string);

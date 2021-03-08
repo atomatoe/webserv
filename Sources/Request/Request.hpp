@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 18:11:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/18 16:15:24 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/08 19:42:29 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ public:
 	std::string 				getContentType() {return _info["Content-Type"];}
 	std::string 				getContentLength() {return _info["content-length"];}
 	std::string					getTransferEncoding() {return _info["Transfer-Encoding"];}
+	std::string					getAuthorization() {return _info["Authorization"];}
 	Bytes 		& 				getReqBody() {return _reqBody;}
 	std::string &				getPathToCgi();
 	std::string &				getQueryString();
