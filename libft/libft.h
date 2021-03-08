@@ -6,7 +6,7 @@
 /*   By: welease <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/01 14:49:55 by welease           #+#    #+#             */
-/*   Updated: 2021/03/03 16:17:46 by welease          ###   ########.fr       */
+/*   Updated: 2021/03/06 16:57:16 by welease          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char				        *ft_strchr(const char *s, int c);
 char				        *ft_strrchr(const char *s, int c);
 char				        *ft_strnstr(char *str, char *to_find, size_t len);
 int					        ft_strncmp(const char *s1, const char *s2, size_t n);
-int					        ft_atoi(char *str);
+int					        ft_atoi(const char *str);
 int					        ft_isalpha(int c);
 int					        ft_isdigit(int c);
 int					        ft_isalnum(int c);

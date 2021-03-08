@@ -6,39 +6,16 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/10 16:56:06 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/02/28 15:34:23 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/02/16 14:02:41 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes.hpp"
+#include "Includes.hpp"
 
-char *str_join(char *buf, char *add)
-{
-	char	*newbuf;
-	int		len;
-    if(add == NULL) // добавил эту проверку, для http метода гет (функция может вернуть в stdjoin NULL)
-        return(buf);
-	if (buf == 0)
-		len = 0;
-	else
-		len = strlen(buf);
-	newbuf = (char *)malloc(sizeof(*newbuf) * (len + strlen(add) + 1));
-	if (newbuf == 0)
-		return (0);
-	newbuf[0] = 0;
-	if (buf != 0)
-		strcat(newbuf, buf);
-	free(buf);
-	strcat(newbuf, add);
-	return (newbuf);
-}
-
-// О структуре tm: https://www.opennet.ru/docs/RUS/glibc/glibc-17.html
-char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делает такую строку для ответа за запрос клиента
-{ // Функция принимает количество прошедших секунд с 1 янв. 1970г.
+char* get_time(time_t time) {
     struct timeval tv;
     struct timezone tz;
-    struct tm tm; // здесь будет наша дата лежать
+    struct tm tm;
     int sec_per_day = 86400;
     int sec_per_hour = 3600;
     int sec_per_min = 60;
@@ -63,11 +40,9 @@ char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делае�
         year++;
     }
     tm.tm_mon = 0;
-    while(tmp > 2419200) // месяца
-    {
-        if(tm.tm_mon == 0) { tmp -= 2678400; tm.tm_mon++; } // январь
-        else if(tm.tm_mon == 1) // февраль (может быть высокосным)
-        {
+    while(tmp > 2419200) {
+        if(tm.tm_mon == 0) { tmp -= 2678400; tm.tm_mon++; }
+        else if(tm.tm_mon == 1) {
             if(flag == 4)
                 tmp -= 2505600;
             else
@@ -87,15 +62,15 @@ char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делае�
     }
     tm.tm_mday = 1;
     tm.tm_wday = 1;
-    while(tmp > 86400) // дни
-    {
+    while(tmp > 86400) {
+        if(tm.tm_wday > 6)
+            tm.tm_wday = 0;
         tmp -= 86400;
         tm.tm_mday++;
         tm.tm_wday++;
-        if(tm.tm_wday > 6)
-            tm.tm_wday = 0;
+		if(tm.tm_wday > 6)
+			tm.tm_wday = 0;
     }
-    std::cout << tm.tm_wday << std::endl;
     tm.tm_year = 70 + year; // получаем год
 
     long hms = tv.tv_sec % sec_per_day;
@@ -113,19 +88,16 @@ char* get_time(time_t time) // Date: Mon, 27 Jul 2009 12:28:53 GMT - делае�
     tm.tm_gmtoff = 0; // не используем
     tm.tm_yday = 0; // не используем
     strftime (buf, 100, "Date: %a, %d %b %Y %X %Z", &tm);
-    // std::cout << buf << std::endl;
     return(buf);
 }
 
-void	*ft_memset(void *src, int g, size_t l)
-{
+void	*ft_memset(void *src, int g, size_t l) {
 	size_t			i;
 	unsigned char	*str;
 
 	str = (unsigned char *)src;
 	i = 0;
-	while (i < l)
-	{
+	while (i < l) {
 		str[i] = g;
 		i++;
 	}

@@ -1,27 +1,29 @@
 NAME = webserv
-GNL_A = gnl/gnl.a
-LIBFT_A = libft/libft.a
+GNL_A = GetNextLine/gnl.a
+LIBFT_A = Libft/libft.a
 
-DIR_GNL = gnl
-DIR_LIBFT = libft
+DIR_GNL = GetNextLine
+DIR_LIBFT = Libft
 
 FLAGS_W = -Wall -Wextra -Werror
 CC = clang++
 RM = rm -rf
 
-SRCS =	WebServ.cpp \
-		main.cpp \
-		main_utils.cpp \
-		includes/includes.cpp \
-		includes/page_html.cpp \
-		Request_Response/Bytes.cpp \
-		Request_Response/Request.cpp \
-		Request_Response/Response.cpp \
-		Request_Response/HeaderValidation.cpp \
-		parse/Location.cpp \
-		parse/ParseConfig.cpp \
-		parse/parse_utils.cpp \
-		cgi_processing/cgi_processing.cpp \
+SRCS =	Sources/main.cpp \
+        Sources/ServersProcessing.cpp \
+        Sources/CGI/CGI.cpp \
+        Sources/PageHtmlGeneration/PageHtml.cpp \
+        GetNextLine/get_next_line.cpp \
+        GetNextLine/get_next_line_utils.cpp \
+        Includes/Includes.cpp \
+        Sources/Response/Response.cpp \
+        Sources/WebServer/WebServ.cpp \
+        Sources/Request/Request.cpp \
+        Sources/ParseConfig/Location.cpp \
+        Sources/ParseConfig/ParseUtils.cpp \
+		Sources/Client/Client.cpp \
+		Sources/Bytes/Bytes.cpp \
+		Sources/ParseConfig/ParseConfig.cpp \
 		Auth_client/base64.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
@@ -40,12 +42,12 @@ endif
 all: $(NAME)
 
 $(NAME): $(LABEL) $(OBJS)
-	@echo "Preparing gnl.."
+	@echo "Preparing GetNextLine..."
 	@make -C $(DIR_GNL)
-	@echo "Preparing libft.."
+	@echo "Preparing Libft..."
 	@make -C $(DIR_LIBFT)
 	@$(CC) $(OBJS) $(INCLUDES_OBJS) $(RR_OBJS) $(PARSE_OBJS) $(GNL_A) $(LIBFT_A) -o $(NAME) #TODO add WWW flags
-	@echo "${GREEN}webserv is ready to work!${RESET}"
+	@echo "${GREEN}WebServer is ready to work!٩(๑˃̵ᴗ˂̵)و${RESET}"
 
 %.o:%.cpp
 	@$(CC) -o $@ -c $<
@@ -54,12 +56,12 @@ clean:
 	@make -C $(DIR_GNL) clean
 	@make -C $(DIR_LIBFT) clean
 	@$(RM) $(OBJS)
-	@echo "${YELLOW}all cleaned${RESET}"
+	@echo "${YELLOW}All cleaned!${RESET}"
 
 fclean: clean
 	@make -C $(DIR_GNL) fclean
 	@make -C $(DIR_LIBFT) fclean
 	@$(RM) $(NAME)
-	@echo "${YELLOW}all fcleaned${RESET}"
+	@echo "${YELLOW}All fcleaned!${RESET}"
 
 re: fclean all

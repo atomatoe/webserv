@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static int	checkspace(char *str)
+static int	checkspace(const char *str)
 {
 	if (*str == ' ' ||
 		*str == '\t' ||
@@ -24,7 +24,7 @@ static int	checkspace(char *str)
 	return (0);
 }
 
-int			ft_atoi(char *str)
+int			ft_atoi(const char *str)
 {
 	int	res;
 	int	minus;

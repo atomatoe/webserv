@@ -29,7 +29,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ) $(HEADERS)
 	@ar rc $(NAME) $(OBJ)
-	@echo "${BLUE}libft is done${RESET}"
+	@echo "${BLUE}Libft is done!${RESET}"
 
 %.o:%.cpp
 	@$(CC) $(CFLAGS) -o $@ -c $<
