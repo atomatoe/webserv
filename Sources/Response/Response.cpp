@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/08 19:51:23 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/08 20:43:34 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void Response::checkFileOrDir(Request & request, WebServer & server) {
     if ((stat(directory.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)) || (request.getURI() == server.getLocations()[_location_id].getUrl()))
         r_open = open(server.getLocations()[_location_id].getIndex().c_str(), O_RDONLY);
     else {
+        directory = server.getLocations()[_location_id].getRoot() +  "/" + request.getURI().substr(server.getLocations()[_location_id].getUrl().length(), request.getURI().length());
         if ((stat(directory.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)) || (request.getURI() == server.getLocations()[_location_id].getUrl()))
             r_open = open((directory + indexSearching(server.getLocations()[_location_id].getIndex())).c_str(), O_RDONLY);
         else
@@ -137,6 +138,7 @@ void Response::methodPost(Request & request, WebServer & server, Page_html & pag
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
         else {
+            // std::cout << server.getLocations()[_location_id].getCgiPath() << std::endl;
             request.setPathToCgi(std::string("/Users/welease/webserv/TestingCGI/cgi-bin/cgi_tester"));
             try {
 				toCGI(*this, request, server);
@@ -191,9 +193,6 @@ Bytes & Response::getBodyOfResponse() { return _bodyOfResponse; }
 char* Response::responseGenerating(Request & request, WebServer & server) {
 	Page_html page;
 
-    std::cout << request.getReqBody().toPointer() << std::endl;
-    std::cout << request.getQueryString() << std::endl;
-    std::cout << request.getURI() << std::endl;
     _location_id = -1;
     if(request.getMetod() == "GET" || request.getMetod() == "HEAD") {
         methodGetHead(request, server, page);
