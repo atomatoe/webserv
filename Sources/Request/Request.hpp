@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Request.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/16 18:11:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/08 19:42:29 by atomatoe         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef WEBSERV_REQUEST_H
 #define WEBSERV_REQUEST_H
 #include <map>
@@ -37,24 +25,25 @@ public:
 	Bytes 		& 				getReqBody() {return _reqBody;}
 	std::string &				getPathToCgi();
 	std::string &				getQueryString();
+	std::string &				getConnection();
 	bool 						isHeadersParsed() ;
 	void						setPathToCgi(const std::string &pathToCgi);
 	void						ChunkedBodyProcessing();
 
 private:
-	char                        *_reqString;
+	std::string					_reqString;
 	Bytes                       _reqBody;
 	Bytes                       _chunkedReqBody;
 	std::map<std::string,std::string> _info;
-//    HeaderValidation            _headValid;
-    std::string					_pathToCgi;
-    std::string					_queryString;
-    bool 						_parsedHeaders;
+//	HeaderValidation            _headValid;
+	std::string					_pathToCgi;
+	std::string					_queryString;
+	bool 						_parsedHeaders;
 
-    int 						parsRequest(char *reqString);
-    int 						parsFirstLine(char **copy);
-    void 						checkEndOfBody();
-    void 						fillMap();
+	int 						parsRequest(char *reqString);
+	int 						parsFirstLine(char **copy);
+	void 						checkEndOfBody();
+	void 						fillMap();
 	int 						parsHeaders(char **strings);
 };
 #endif

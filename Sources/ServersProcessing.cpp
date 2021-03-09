@@ -108,7 +108,10 @@ void sendResponse(Client * & client, ssize_t & ret) {
 	free(tmp);
 	if (client->getSendBytes() == client->getToSendData()->getDataSize()) {
 		std::cout << GREEN << "Response №" << g_count - 1 << " successfully send ♡〜٩( ˃́▿˂̀ )۶〜♡" << DEFAULT << std::endl;
-		client->clear();
+		if (client->getRequest()->getConnection() == "close")
+			client->setPhase(closing);
+		else
+			client->clear();
 	}
 }
 

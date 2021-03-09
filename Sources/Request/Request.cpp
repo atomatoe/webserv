@@ -1,19 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Request.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/16 18:11:47 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/03 15:51:57 by atomatoe         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Request.hpp"
 
 
-std::string _headers[18] = {
+std::string _headers[19] = {
 		"Accept-Charsets",
 		"Accept-Language",
 		"Allow",
@@ -31,13 +19,14 @@ std::string _headers[18] = {
 		"Server",
 		"Transfer-Encoding",
 		"User-Agent",
-		"WWW-Authenticate"
+		"WWW-Authenticate",
+		"Connection"
 };
 
 void Request::fillMap(){
 	int i = 0;
 	std::map<std::string, std::string>::iterator iter = _info.begin();
-	while (i < 18){
+	while (i < 19){
 		iter = _info.insert(iter, std::pair<std::string, std::string>(std::string(_headers[i]), ""));
 		i++;
 	}
@@ -68,8 +57,9 @@ Request::Request(char *reqString){
 
 	tmp = strstr(reqString, "\r\n\r\n");
 	len = tmp - reqString + 4;
-	_reqBody.addData(reqString + len, strlen(reqString) - len);
-	_reqString = ft_substr(reqString, 0, len);
+	if (len != strlen(reqString))
+		_reqBody.addData(reqString + len, strlen(reqString) - len);
+	_reqString = std::string(reqString, len);
 	_parsedHeaders = false;
 	fillMap();
 	parsRequest(reqString);
@@ -80,17 +70,15 @@ Request::Request(char *reqString){
 
 bool Request::isHeadersParsed() { return _parsedHeaders; };
 
-Request::~Request(){
-	free(_reqString);
-}
+Request::~Request(){}
 
 
 int Request::parsHeaders(char **strings){
-	for (int i = 0; i < 18; i++) {
+	for (int i = 0; i < 19; i++) {
 		_info[_headers[i]] = "";
 		for (int j = 0; strings[j]; j++){
 			if (strnstr(strings[j], _headers[i].c_str(), strlen(strings[j])) != NULL){
-				_info[_headers[i]] = strings[j] + _headers[i].length() + 3; //todo leak
+				_info[_headers[i]] = strings[j] + _headers[i].length() + 3;
 			}
 		}
 	}
@@ -137,7 +125,7 @@ int Request::parsRequest(char *reqString) {
 
 	copy = strdup(reqString);
 	t = copy;
-//    _headValid.valid(reqString); // todo try-catch exception
+	// _headValid.valid(reqString); // todo try-catch exception
 	parsFirstLine(&copy);
 	if ((strings = ft_splitTim(copy, '\r')) == NULL)
 		return -1;
@@ -171,5 +159,7 @@ int Request::parsFirstLine(char **copy){
 std::string &Request::getPathToCgi(){ return _pathToCgi; }
 
 void Request::setPathToCgi(const std::string &pathToCgi) { _pathToCgi = pathToCgi; }
+
+std::string & Request::getConnection() {return _info["Connection"];}
 
 std::string &Request::getQueryString() { return _queryString; }
