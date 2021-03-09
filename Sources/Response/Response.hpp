@@ -28,6 +28,7 @@ private:
 	Bytes					_bodyOfResponse;
 	size_t 					_lenOfResponse;
 	int         			_location_id;
+	std::string				_connection;
 	static const size_t 	bufSize = 256000;
 
 public:

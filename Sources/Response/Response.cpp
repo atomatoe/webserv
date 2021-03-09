@@ -280,6 +280,7 @@ char* Response::editResponse(Request *request) {
 	char *		tmp1;
 	char *		ret;
 	size_t 		size;
+	std::string tmp;
 
 	if (request->getMetod() == "POST") {
 		tmp1 = _bodyOfResponse.toPointer();
@@ -293,7 +294,11 @@ char* Response::editResponse(Request *request) {
 		free(tmp1);
 	}
 	size = _bodyOfResponse.getDataSize();
-	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(size) + "\r\n" +  _versionOfWebServer + doubleCRLF;
+	if (request->getConnection() == "close")
+		tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(size) + "\r\n" +  _versionOfWebServer + "\r\n" +
+			  _connection + request->getConnection() + doubleCRLF;
+	else
+		tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(size) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
 	tmp1 = _bodyOfResponse.toPointer();
 	ret = ft_memjoin((char *)tmp.c_str(), tmp1, tmp.length(), _bodyOfResponse.getDataSize());

@@ -52,6 +52,7 @@ void closingConnections(std::list<Client *> & clients) {
 		if ((*it)->getPhase() == closing) {
 			std::cout << LBLUE << "Connection with client with fd " << (*it)->getClientFd() << " successfully closed ( •⌄• ू )✧" << DEFAULT << std::endl;
 			close((*it)->getClientFd());
+			(*it)->clear();
 			delete *it;
 			it = clients.erase(it);
 		}

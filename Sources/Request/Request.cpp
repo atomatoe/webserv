@@ -65,6 +65,8 @@ Request::Request(char *reqString){
     parsRequest(reqString);
     len = _info["uri"].find( '?', 0);
     _queryString = len != std::string::npos ? _info["uri"].c_str() + len + 1 : "";
+    if (_queryString != "")
+    	_info["uri"] = _info["uri"].substr(0, len);
     checkEndOfBody();
 }
 
