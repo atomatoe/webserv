@@ -91,7 +91,7 @@ int Response::uriSearching(WebServer & server, char *uri) {
     return(-1);
 }
 
-void Response::methodPut(Request & request, WebServer & server, Page_html & page) {
+void Response::methodPut(Request & request, WebServer & server) {
     char *t;
 	this->_location_id = uriSearching(server, (char *) request.getURI().c_str());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
@@ -121,7 +121,7 @@ void Response::methodPut(Request & request, WebServer & server, Page_html & page
     }
 }
 
-void Response::methodPost(Request & request, WebServer & server, Page_html & page) {
+void Response::methodPost(Request & request, WebServer & server) {
 	this->_location_id = uriSearching(server, (char *) request.getURI().c_str());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     struct stat sb;
@@ -131,7 +131,7 @@ void Response::methodPost(Request & request, WebServer & server, Page_html & pag
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
         putErrorToBody((char *)"401", (char *)"Unauthorized", server);
     else {
-    	if (request.getReqBody().getDataSize() > server.getLocations()[this->_location_id].getLimitBody()) {
+    	if (request.getReqBody().getDataSize() > (size_t)server.getLocations()[this->_location_id].getLimitBody()) {
     		putErrorToBody((char *)"413", (char *)"Payload Too Large", server);
     		return;
     	}
@@ -139,7 +139,7 @@ void Response::methodPost(Request & request, WebServer & server, Page_html & pag
             putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
         else {
             // std::cout << server.getLocations()[_location_id].getCgiPath() << std::endl;
-            request.setPathToCgi(std::string("/Users/welease/webserv/TestingCGI/cgi-bin/cgi_tester"));
+            request.setPathToCgi(std::string("/Users/qtamaril/Desktop/qtamaril/webserv/TestingCGI/cgi-bin/cgi_tester"));
             try {
 				toCGI(*this, request, server);
 			}
@@ -204,9 +204,9 @@ char* Response::responseGenerating(Request & request, WebServer & server) {
         }
     }
     else if(request.getMetod() == "POST")
-        methodPost(request, server, page);
+        methodPost(request, server);
     else if(request.getMetod() == "PUT")
-        methodPut(request, server, page);
+        methodPut(request, server);
     else
         this->_httpVersion = "HTTP/1.1 400 Bad Request\r\n";
     return (editResponse(&request));

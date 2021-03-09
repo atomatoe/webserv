@@ -13,9 +13,7 @@ SRCS =	Sources/main.cpp \
         Sources/ServersProcessing.cpp \
         Sources/CGI/CGI.cpp \
         Sources/PageHtmlGeneration/PageHtml.cpp \
-        GetNextLine/get_next_line.cpp \
-        GetNextLine/get_next_line_utils.cpp \
-        Includes/includes.cpp \
+        Includes/Includes.cpp \
         Sources/Response/Response.cpp \
         Sources/WebServer/WebServ.cpp \
         Sources/Request/Request.cpp \
@@ -24,6 +22,7 @@ SRCS =	Sources/main.cpp \
 		Sources/Client/Client.cpp \
 		Sources/Bytes/Bytes.cpp \
 		Sources/ParseConfig/ParseConfig.cpp \
+		Sources/ValidationOfRequest/HeaderValidation.cpp \
 		AuthClients/base64.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
@@ -50,7 +49,7 @@ $(NAME): $(LABEL) $(OBJS)
 	@echo "${GREEN}WebServer is ready to work!٩(๑˃̵ᴗ˂̵)و${RESET}"
 
 %.o:%.cpp
-	@$(CC) -o $@ -c $<
+	@$(CC) $(FLAGS_W) -o $@ -c $<
 
 clean:
 	@make -C $(DIR_GNL) clean

@@ -14,7 +14,7 @@ class Bytes
 private:
 	std::list< std::pair<size_t, char *> >*_data;
 	size_t _dataSize;
-	char *_charData;
+//	char *_charData;
 public:
 	Bytes();
 	~Bytes();

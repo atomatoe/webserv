@@ -46,7 +46,7 @@ private:
 	Bytes                       _reqBody;
 	Bytes                       _chunkedReqBody;
 	std::map<std::string,std::string> _info;
-    HeaderValidation            _headValid;
+//    HeaderValidation            _headValid;
     std::string					_pathToCgi;
     std::string					_queryString;
     bool 						_parsedHeaders;

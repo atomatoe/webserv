@@ -221,7 +221,7 @@ bool    ParseConfig::checkAllowMethods(char *line, Location &location) {
         char *trimmedLine = ft_strtrim(line, " \t");
         char *trimmedValue = ft_strtrim(trimmedLine + ft_strlen("allow_methods"), " \t");
         std::string trimmedValueStr(trimmedValue);
-        for (int i = 0; i <= allowMethods->size(); i++) {
+        for (size_t i = 0; i <= allowMethods->size(); i++) {
             if (!trimmedValueStr.compare(allowMethods[i])) {
                 location.changeAllowMethod(allowMethods[i], true);
                 free(trimmedLine);

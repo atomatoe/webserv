@@ -55,7 +55,7 @@ void Request::checkEndOfBody() {
 		ChunkedBodyProcessing();
 		_parsedHeaders = true;
 	}
-	if (getTransferEncoding() != "chunked" && _reqBody.getDataSize() > atoi(getContentLength().c_str()) && getContentLength() != "") {
+	if (getTransferEncoding() != "chunked" && _reqBody.getDataSize() > (size_t)atoi(getContentLength().c_str()) && getContentLength() != "") {
 		Bytes tmp = _reqBody.cutData(stoi(getContentLength()));
 		tmp.clear();
 		_parsedHeaders = true;
@@ -137,9 +137,8 @@ int Request::parsRequest(char *reqString) {
 
 	copy = strdup(reqString);
 	t = copy;
-   // _headValid.valid(reqString); // todo try-catch exception
+//    _headValid.valid(reqString); // todo try-catch exception
 	parsFirstLine(&copy);
-	std::map<std::string, std::string>::iterator iter = _info.begin();
 	if ((strings = ft_splitTim(copy, '\r')) == NULL)
 		return -1;
 	parsHeaders(strings);

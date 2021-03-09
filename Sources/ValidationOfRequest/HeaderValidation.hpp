@@ -8,7 +8,7 @@
 class HeaderValidation {
 
 private:
-    size_t  headerCountLines;
+    int     headerCountLines;
 
     void    isValidLine_First(std::string);
     void    isValidLine_Second(std::string);

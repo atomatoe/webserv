@@ -39,8 +39,8 @@ public:
 	void 			putErrorToBody(char *error, char *type, WebServer server);
 
 	void 			methodGetHead(Request & request, WebServer & server, Page_html & page);
-	void 			methodPost(Request & request, WebServer & server, Page_html & page);
-	void 			methodPut(Request & request, WebServer & server, Page_html & page);
+	void 			methodPost(Request & request, WebServer & server);
+	void 			methodPut(Request & request, WebServer & server);
 	void 			checkFileOrDir(Request & request, WebServer & server);
 	std::string 	indexSearching(std::string index);
 	Bytes & 		getBodyOfResponse();

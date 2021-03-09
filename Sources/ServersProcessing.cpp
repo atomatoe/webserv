@@ -84,7 +84,7 @@ void parsingBody(Client * & client, char *buf, ssize_t & ret) {
 	client->getRequest()->getReqBody().addData(buf, ret);
 
 	if (client->getRequest()->getTransferEncoding() != "chunked" &&
-		client->getRequest()->getReqBody().getDataSize() >= ft_atoi(client->getRequest()->getContentLength().c_str())) {
+		client->getRequest()->getReqBody().getDataSize() >= (size_t)ft_atoi(client->getRequest()->getContentLength().c_str())) {
 		client->getRequest()->getReqBody().cutData(atoi(client->getRequest()->getContentLength().c_str()));
 		client->setPhase(responseGenerate);
 	}
@@ -122,7 +122,7 @@ void responseGenerating(Client * & client) {
 	free(tmp);
 }
 
-void requestProcessing(std::vector<WebServer> & servers, std::list<Client *> & clients, fd_set & readSet, fd_set & writeSet) {
+void requestProcessing(std::list<Client *> & clients, fd_set & readSet, fd_set & writeSet) {
 	char 				buf[BUFSIZE + 1];
 	ssize_t				ret;
 
@@ -167,7 +167,7 @@ void start_servers(std::vector<WebServer> & servers) {
 
 		checkNewClients(servers, readSet, clients);
 
-		requestProcessing(servers, clients, readSet, writeSet);
+		requestProcessing(clients, readSet, writeSet);
 
 		closingConnections(clients);
 	}

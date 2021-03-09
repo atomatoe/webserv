@@ -4,7 +4,7 @@
 
 #include "Bytes.hpp"
 
-Bytes::Bytes() : _dataSize(0), _data(new std::list< std::pair<size_t, char *> >()){}
+Bytes::Bytes() : _data(new std::list< std::pair<size_t, char *> >()), _dataSize(0) { }
 
 Bytes::~Bytes() {
     clear();

@@ -53,6 +53,7 @@ void                                        Location::addAuthClient(const std::s
     int         fd;
     char        *line;
 
+    fd = 0;
     if (!isFileRead(file) || (fd = open(file.c_str(), O_RDONLY)) < 0)
         exitError("Smth wrong with auth_clients: \"" + file + "\"");
     while (get_next_line(fd, &line)) {
