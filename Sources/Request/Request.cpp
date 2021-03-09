@@ -36,7 +36,7 @@ size_t hexToDec(const std::string &s) { return strtoul(s.c_str(), NULL, 16); }
 
 void Request::checkEndOfBody() {
     size_t 	len;
-    if (getMetod() == "GET" || getMetod() == "HEAD")
+    if (getMetod() == "GET" || getMetod() == "HEAD" || getContentLength() == "0")
         _parsedHeaders = true;
     if (getTransferEncoding() == "chunked" && _reqBody.findMemoryFragment("0\r\n\r\n", 5) != (size_t)-1) {
         len = _reqBody.findMemoryFragment("0\r\n\r\n", 5);

@@ -108,7 +108,7 @@ void Response::methodPut(Request & request, WebServer & server) {
             t = request.getReqBody().toPointer();
             std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
             int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
-            if(fd_final < 0)
+            if (fd_final < 0)
                 putErrorToBody((char *)"007", (char *)"File is not created!", server);
             write(fd_final, t, request.getReqBody().getDataSize());
             free(t);
@@ -149,11 +149,8 @@ void Response::methodPost(Request & request, WebServer & server) {
             putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
         else {
             std::string extension = extensionSearching(request.getURI());
-            if(!extension.empty())
-            {
-                std::cout << "extension = " << extension << std::endl;
-                if(!server.getLocations()[_location_id].getCgiPath().find(extension)->second.empty())
-                {
+            if (!extension.empty()) {
+                if(!server.getLocations()[_location_id].getCgiPath().find(extension)->second.empty()) {
                     request.setPathToCgi(std::string(server.getLocations()[_location_id].getCgiPath().find(extension)->second));
                     std::string file = server.getLocations()[_location_id].getRoot() + indexSearching(request.getURI());
                     try {
@@ -161,12 +158,11 @@ void Response::methodPost(Request & request, WebServer & server) {
                     catch (std::exception & ex) {
                         putErrorToBody((char *)"500", (char *)"Bad GateAway", server); }
                 }
-                else
-                {
+                else {
                     char *t = request.getReqBody().toPointer();
                     std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
                     int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
-                    if(fd_final < 0)
+                    if (fd_final < 0)
                         putErrorToBody((char *)"007", (char *)"File is not created!", server);
                     write(fd_final, t, request.getReqBody().getDataSize());
                     free(t);

@@ -22,15 +22,20 @@ int Client::getClientFd() const { return _clientFd; }
 
 size_t Client::getSendBytes() const { return _sendBytes; }
 
+time_t Client::getTime() const { return _time; }
+
 /*constructor*/
 
 Client::Client(WebServer & webServer, int & clientFd) {
-	_webServer = webServer; //todo remove server from client
+	struct timeval tv;
+	gettimeofday(&tv, 0);
+	_webServer = webServer;
 	_clientFd = clientFd;
 	_serverFd = webServer.get_server_fd();
 	_receivedData = new Bytes();
 	_toSendData = new Bytes();
 	_phase = start;
+	_time = tv.tv_sec;
 	_sendBytes = 0;
 	_request = nullptr;
 	_response = nullptr;

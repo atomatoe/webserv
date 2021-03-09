@@ -20,6 +20,7 @@ private:
 	int 		_clientFd;
 	WebServer	_webServer;
 	size_t		_sendBytes;
+	time_t 		_time;
 
 public:
 	Client(WebServer & webServer, int & clientFd);
@@ -35,6 +36,7 @@ public:
 	int			getClientFd() const;
 	WebServer & getWebServer();
 	size_t		getSendBytes() const;
+	time_t 		getTime() const;
 
 	/* set */
 	void 		setRequest(Request * request);

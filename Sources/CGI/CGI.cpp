@@ -16,13 +16,13 @@ int getEnv(char **env, Request & request, WebServer & server){
 	env[8] = ft_strjoin("SCRIPT_NAME=", strrchr(request.getPathToCgi().c_str(), '/'));
 	env[9] = ft_strjoin("QUERY_STRING=", request.getQueryString().c_str());
 	env[10] = ft_strjoin("REMOTE_HOST=", request.getURI().c_str());
-	env[11] = ft_strdup("REMOTE_ADDR=");
+	env[11] = ft_strjoin("REMOTE_ADDR=", server.getIp().c_str());
 	env[12] = ft_strdup("AUTH_TYPE=basic");
 	env[13] = ft_strdup("REMOTE_USER=");
 	env[14] = ft_strdup("REMOTE_IDENT");
 	env[15] = ft_strjoin("CONTENT_TYPE=", request.getContentType().c_str());
 	env[16] = ft_strjoin("CONTENT_LENGTH=", request.getQueryString() == "" ? request.getContentLength().c_str() : std::to_string(request.getQueryString().length()).c_str());
-	env[17] = ft_strjoin("REQUEST_URI=http://" ,  (server.getIp() + ":" + std::to_string(server.getPort()) + request.getURI()).c_str());
+	env[17] = ft_strjoin("REQUEST_URI=" , (std::string(strrchr(request.getPathToCgi().c_str(), '/')) + "?" + request.getQueryString()).c_str());
 	env[18] = ft_strdup("HTTP_X_SECRET_HEADER_FOR_TEST=1");
 	env[19] = NULL;
 	return 0;

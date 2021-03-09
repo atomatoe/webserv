@@ -1,10 +1,7 @@
 #include "WebServer/WebServ.hpp"
-#include "../Includes/Includes.hpp"
-#include "ParseConfig/ParseConfig.hpp"
 #include "Request/Request.hpp"
 #include "Response/Response.hpp"
 #include "signal.h"
-# define RED  "\e[31m"
 # define YELLOW "\e[1;33m"
 # define LMAGENTA "\e[1;35m"
 # define LBLUE "\e[1;34m"
@@ -103,8 +100,10 @@ void sendResponse(Client * & client, ssize_t & ret) {
 	char *			tmp;
 	tmp = client->getToSendData()->toPointer();
 	ret = write(client->getClientFd(), tmp + client->getSendBytes(), client->getToSendData()->getDataSize() - client->getSendBytes());
-	if (ret < 0 || errno == EPIPE)
-		exit(errno);
+	if (ret <= 0) {
+		client->setPhase(closing);
+		return;
+	}
 	client->setSendBytes(client->getSendBytes() + ret);
 	free(tmp);
 	if (client->getSendBytes() == client->getToSendData()->getDataSize()) {
@@ -129,23 +128,29 @@ void responseGenerating(Client * & client) {
 void requestProcessing(std::list<Client *> & clients, fd_set & readSet, fd_set & writeSet) {
 	char 				buf[BUFSIZE + 1];
 	ssize_t				ret;
-
+	struct timeval		tv;
 	for (std::list<Client*>::iterator i = clients.begin(); i != clients.end();) {
-		if (FD_ISSET((*i)->getClientFd(), &readSet)) {
-			ret = recv((*i)->getClientFd(), buf, BUFSIZE, 0);
-			if (ret <= 0)
-				(*i)->setPhase(closing);
-			else if ((*i)->getPhase() < parsHeaders)
-				(*i)->setPhase(parsHeaders);
-			if ((*i)->getPhase() == parsHeaders)
-				parsingHeaders(*i, buf, g_count, ret);
-			else if ((*i)->getPhase() == parsBody)
-				parsingBody(*i, buf, ret);
-			if ((*i)->getPhase() == responseGenerate)
-				responseGenerating(*i);
+		gettimeofday(&tv, 0);
+		if (tv.tv_sec - (*i)->getTime() > 300)
+			(*i)->setPhase(closing);
+		else {
+			if (FD_ISSET((*i)->getClientFd(), &readSet))
+			{
+				ret = recv((*i)->getClientFd(), buf, BUFSIZE, 0);
+				if (ret <= 0)
+					(*i)->setPhase(closing);
+				else if ((*i)->getPhase() < parsHeaders)
+					(*i)->setPhase(parsHeaders);
+				if ((*i)->getPhase() == parsHeaders)
+					parsingHeaders(*i, buf, g_count, ret);
+				else if ((*i)->getPhase() == parsBody)
+					parsingBody(*i, buf, ret);
+				if ((*i)->getPhase() == responseGenerate)
+					responseGenerating(*i);
+			}
+			if (FD_ISSET((*i)->getClientFd(), &writeSet) && (*i)->getPhase() == sendingResponse)
+				sendResponse(*i, ret);
 		}
-		if (FD_ISSET((*i)->getClientFd(), &writeSet) && (*i)->getPhase() == sendingResponse)
-			sendResponse(*i, ret);
 		++i;
 	}
 }
