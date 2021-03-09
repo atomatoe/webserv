@@ -51,11 +51,11 @@ void getBodyFromCGI(Request & request, Response &response, int &fd_final, int *t
 	free(buf);
 }
 
-void toCGI(Response &response, Request & request, WebServer & server){
+void toCGI(Response &response, Request & request, WebServer & server, std::string & dir){
 	char *	env[envSize];
 	char *	argv[argvSize];
 	int 	trumpet_fd[2];
-	int 	fd_final = open("final", O_CREAT | O_RDWR | O_TRUNC, 0666);
+	int 	fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
 
 	pipe(trumpet_fd);
 	getEnv(env, request, server);

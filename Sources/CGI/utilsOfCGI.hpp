@@ -13,6 +13,6 @@ class Response;
 const int envSize = 20;
 const int argvSize = 3;
 const size_t bufSize = 100000200;
-void toCGI(Response &response, Request & request, WebServer & server);
+void toCGI(Response &response, Request & request, WebServer & server, std::string & dir);
 
 #endif

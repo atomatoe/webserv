@@ -9,6 +9,8 @@ server
 		root                /Users/atomatoe/Desktop/webserv/configs/test_config
 		index               index.html
         allow_methods       GET
+        allow_methods       POST
+        cgi_pass            .bla /Users/atomatoe/Desktop/webserv/TestingCGI/cgi-bin/cgi_tester
 
 server
     port                8081
