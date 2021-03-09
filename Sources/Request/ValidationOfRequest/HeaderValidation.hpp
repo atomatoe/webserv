@@ -3,16 +3,16 @@
 
 #include <vector>
 #include <iostream>
-#include "../../Libft/libft.h"
+#include "../../../Libft/libft.h"
 
 class HeaderValidation {
 
 private:
     int     headerCountLines;
 
-    void    isValidLine_First(std::string);
-    void    isValidLine_Second(std::string);
-    void    isValidLine_KeyValue(std::string line, bool & hasHost);
+    void    isValidLine_First(std::string, char *);
+//    void    isValidLine_Second(std::string);
+    void    isValidLine_KeyValue(std::string, char *, bool &);
 
 public:
     void    valid(char *);
@@ -22,8 +22,9 @@ public:
     private:
         std::string		_message;
     public:
-        HeaderValidationException(std::string const &message) :
+        HeaderValidationException(std::string const &message, char *subStr) :
             _message("Incorrect line \"" + message + "\" in request head") {
+            free(subStr);
         }
         virtual ~HeaderValidationException() throw() { }
         virtual const char*		what() const throw() { return (_message.c_str()); }

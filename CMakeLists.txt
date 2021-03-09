@@ -62,8 +62,8 @@ add_executable(webserv
         Sources/ParseConfig/ParseConfig.hpp
         Sources/Bytes/Bytes.cpp
         Sources/Bytes/Bytes.hpp
-        Sources/ValidationOfRequest/HeaderValidation.cpp
-        Sources/ValidationOfRequest/HeaderValidation.hpp
+        Sources/Request/ValidationOfRequest/HeaderValidation.cpp
+        Sources/Request/ValidationOfRequest/HeaderValidation.hpp
         Sources/Request/Request.cpp
         Sources/Request/Request.hpp
         Sources/Response/Response.cpp

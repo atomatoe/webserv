@@ -22,7 +22,7 @@ SRCS =	Sources/main.cpp \
 		Sources/Client/Client.cpp \
 		Sources/Bytes/Bytes.cpp \
 		Sources/ParseConfig/ParseConfig.cpp \
-		Sources/ValidationOfRequest/HeaderValidation.cpp \
+		Sources/Request/ValidationOfRequest/HeaderValidation.cpp \
 		AuthClients/base64.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)

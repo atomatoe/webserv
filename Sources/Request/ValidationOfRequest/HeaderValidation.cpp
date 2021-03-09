@@ -13,49 +13,40 @@ size_t getNumberOccurrences(std::string where, std::string find) {
 }
 
 void    HeaderValidation::valid(char *header) {
-    int i = -1;
     headerCountLines = 0;
-    std::vector<int> endIndexes;
-    while (header[++i]) {
-        if (!strncmp(&header[i], (const char *)"\r\n", 2)) {
-            headerCountLines++;
-            header[i] = '\0';
-            endIndexes.push_back(i);
-        }
-    }
-    char *line = header;
-    headerCountLines--;
-    i = 1;
+    char 	*tmp = strstr(header, "\r\n\r\n");
+    size_t len = tmp - header;
+    char *subStr = ft_substr(header, 0, len);
+    std::vector<std::string> spliited = ft_splitString(subStr, "\r\n");
     bool hasHost = false;
-    for (std::vector<int>::const_iterator it = endIndexes.begin(); it != endIndexes.end(); ++it) {
-        if (i != headerCountLines + 1) {
-            switch (i++) {
-                case 1 : isValidLine_First(line); break;
-                default: isValidLine_KeyValue(line, hasHost); break;
-            }
-            line = &header[*it] + 2;
-        }
+    for (std::vector<std::string>::const_iterator it = spliited.begin(); it != spliited.end(); ++it) {
+        if (it == spliited.begin())
+            isValidLine_First(*it, subStr);
+        else
+            isValidLine_KeyValue(*it, subStr, hasHost);
     }
-    if (!hasHost)
+    free(subStr);
+    if (!hasHost) {
         throw NoHostInHeaderException();
+    }
 }
 
-void    HeaderValidation::isValidLine_First(std::string line) {
+void    HeaderValidation::isValidLine_First(std::string line, char *subStr) {
    if (getNumberOccurrences(line, " ") != 2 ||
             !ft_isalnum(line[0]) || !ft_isalnum(line[line.size() - 1]))
-        throw HeaderValidationException(line);
+        throw HeaderValidationException(line, subStr);
     std::vector<std::string> splitted = ft_splitString(line, " ");
     if (splitted.size() != 3 || (splitted[0].compare("GET") && splitted[0].compare("POST")
         && splitted[0].compare("PUT") && splitted[0].compare("HEAD") ))
-        throw HeaderValidationException(line);
+        throw HeaderValidationException(line, subStr);
 }
 
-void    HeaderValidation::isValidLine_KeyValue(std::string line, bool & hasHost) {
+void    HeaderValidation::isValidLine_KeyValue(std::string line, char *subStr, bool & hasHost) {
     if (!ft_isalnum(line[0]))
-        throw HeaderValidationException(line);
+        throw HeaderValidationException(line, subStr);
     std::vector<std::string> spliited = ft_splitString(line, ": ");
     if (spliited.size() != 2)
-        throw HeaderValidationException(line);
+        throw HeaderValidationException(line, subStr);
     if (!spliited[0].compare("Host"))
         hasHost = true;
 }
