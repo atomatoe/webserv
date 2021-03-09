@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/09 16:33:20 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/09 18:20:06 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,22 +106,18 @@ void Response::methodPut(Request & request, WebServer & server) {
             putErrorToBody((char *)"404", (char *)"Запрос PUT не может идти на папку !!!!!", server);
         else {
             t = request.getReqBody().toPointer();
-            std::string tmp = t;
-            free(t);
-            std::string str = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-            std::ofstream filename(str);
-			if(!filename)
+            std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
+            int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
+            if(fd_final < 0)
                 putErrorToBody((char *)"007", (char *)"File is not created!", server);
-            filename << tmp;
-            filename.close();
-            if (request.getReqBody().getDataSize() == 0) {
-            	_httpVersion = "HTTP/1.1 204 No Content\r\n";
-            }
+            write(fd_final, t, request.getReqBody().getDataSize());
+            free(t);
+            close(fd_final);
         }
     }
 }
 
-std::string extensionSearching(std::string uri) {
+std::string Response::extensionSearching(std::string uri) {
     std::string extension;
     std::string buf;
 
@@ -138,42 +134,47 @@ std::string extensionSearching(std::string uri) {
 void Response::methodPost(Request & request, WebServer & server) {
 	this->_location_id = uriSearching(server, (char *) request.getURI().c_str());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
+    struct stat sb;
     
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
         putErrorToBody((char *)"401", (char *)"Unauthorized", server);
     else {
+    	if (request.getReqBody().getDataSize() > (size_t)server.getLocations()[this->_location_id].getLimitBody()) {
+    		putErrorToBody((char *)"413", (char *)"Payload Too Large", server);
+    		return;
+    	}
+        if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
+            putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
+        else {
             std::string extension = extensionSearching(request.getURI());
             if(!extension.empty())
             {
+                std::cout << "extension = " << extension << std::endl;
                 if(!server.getLocations()[_location_id].getCgiPath().find(extension)->second.empty())
                 {
                     request.setPathToCgi(std::string(server.getLocations()[_location_id].getCgiPath().find(extension)->second));
+                    std::string file = server.getLocations()[_location_id].getRoot() + indexSearching(request.getURI());
                     try {
-                        std::string str = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-                        toCGI(*this, request, server, str);
-                    }
+                        toCGI(*this, request, server, file); }
                     catch (std::exception & ex) {
-                        putErrorToBody((char *)"500", (char *)"Bad GateAway", server);
-                    }
+                        putErrorToBody((char *)"500", (char *)"Bad GateAway", server); }
                 }
                 else
-                    putErrorToBody((char *)"404", (char *)"CGI path in config file is not extension!", server);
-            }
-            else {
-                char *t;
-                t = request.getReqBody().toPointer();
-                std::string tmp = t;
-                free(t);
-                std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-                int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
-                if(fd_final < 0)
-                    putErrorToBody((char *)"007", (char *)"File is not created!", server);
-                write(fd_final, tmp.c_str(), tmp.size());
-                close(fd_final);
+                {
+                    char *t = request.getReqBody().toPointer();
+                    std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
+                    int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
+                    if(fd_final < 0)
+                        putErrorToBody((char *)"007", (char *)"File is not created!", server);
+                    write(fd_final, t, request.getReqBody().getDataSize());
+                    free(t);
+                    close(fd_final);
+                }
             }
         }
+    }
 }
 
 void Response::methodGetHead(Request & request, WebServer & server, Page_html & page) {
