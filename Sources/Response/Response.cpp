@@ -140,7 +140,7 @@ void Response::methodPost(Request & request, WebServer & server) {
             putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
         else {
             request.setInterPath(std::string(""));
-            request.setPathToCgi(std::string("/Users/qtamaril/Desktop/qtamaril/webserv/TestingCGI/cgi-bin/cgi_tester"));
+            request.setPathToCgi(std::string("/Users/welease/webserv/TestingCGI/cgi-bin/cgi_tester"));
             try {
 				toCGI(*this, request, server);
 				tmp1 = _bodyOfResponse.toPointer();
