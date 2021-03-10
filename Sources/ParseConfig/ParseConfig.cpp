@@ -180,15 +180,24 @@ bool    ParseConfig::checkCgiPass(char *line, Location &location) {
             exitError("Invalid number of spaces or tabs");
         char *trimmed = ft_strtrim(line, " \t");
         char **splitted = ft_splitTim(trimmed, ' ');
-        if (ft_strstrlen(splitted) != 4)
+        if (ft_strstrlen(splitted) != 4 && ft_strstrlen(splitted) != 3)
             exitError("Incorrect value of cgi_pass");
-        char *trimmedKey = ft_strtrim(splitted[1], " \t");
-        char *trimmedInterpreter = ft_strtrim(splitted[2], " \t");
-        char *trimmedValue = ft_strtrim(splitted[3], " \t");
-        location.addCgiPath(trimmedKey, trimmedInterpreter, trimmedValue);
-        free(trimmedValue);
-        free(trimmedInterpreter);
-        free(trimmedKey);
+        if (ft_strstrlen(splitted) == 4) {
+            char *trimmedKey = ft_strtrim(splitted[1], " \t");
+            char *trimmedInterpreter = ft_strtrim(splitted[2], " \t");
+            char *trimmedValue = ft_strtrim(splitted[3], " \t");
+            location.addCgiPath(trimmedKey, trimmedInterpreter, trimmedValue);
+            free(trimmedValue);
+            free(trimmedInterpreter);
+            free(trimmedKey);
+        }
+        else {
+            char *trimmedKey = ft_strtrim(splitted[1], " \t");
+            char *trimmedValue = ft_strtrim(splitted[2], " \t");
+            location.addCgiPath(trimmedKey, "", trimmedValue);
+            free(trimmedValue);
+            free(trimmedKey);
+        }
         ft_free_strstr(splitted);
         free(trimmed);
         return (true);
@@ -429,8 +438,8 @@ void                        ParseConfig::printWebservers() {
             }
 
             std::vector<std::string> auth_clients = (*it3).getAuthClients();
-            for (std::vector<std::string>::iterator it = auth_clients.begin(); it != auth_clients.end(); it++) {
-                std::cout << "\tauth_clients: " + *it << std::endl;
+            for (std::vector<std::string>::iterator it4 = auth_clients.begin(); it4 != auth_clients.end(); it4++) {
+                std::cout << "\tauth_clients: " + *it4 << std::endl;
             }
 
             it3++;

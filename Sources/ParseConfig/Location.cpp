@@ -43,9 +43,12 @@ void                                        Location::addCgiPath(std::string ext
         exitError("Smth wrong with cgi_pass value: \"" + extension + "\"");
     if (!isFileExec(path))
         exitError("Smth wrong with cgi_pass: \"" + path + "\"");
-    if (!isFileExec(pathInterpreter))
-        exitError("Smth wrong with cgi_pass: \"" + pathInterpreter + "\"");
-    _cgiPath.insert(std::pair<std::string, std::pair<std::string,std::string> >(extension, std::pair<std::string, std::string>(pathInterpreter, path)));
+    if (pathInterpreter != "") {
+        if (!isFileExec(pathInterpreter))
+            exitError("Smth wrong with cgi_pass: \"" + pathInterpreter + "\"");
+        _cgiPath.insert(std::pair<std::string, std::pair<std::string,std::string> >(extension, std::pair<std::string, std::string>(pathInterpreter, path)));
+    }
+    _cgiPath.insert(std::pair<std::string, std::pair<std::string,std::string> >(extension, std::pair<std::string, std::string>("", path)));
 }
 void                                        Location::changeAllowMethod(std::string key, bool value) {
     _allowMethods[key] = value;
