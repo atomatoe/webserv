@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/10 15:28:59 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/10 16:07:37 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,9 @@ void Response::methodPut(Request & request, WebServer & server) {
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     struct stat sb;
 
-	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
+    if(this->_location_id == -1)
+        putErrorToBody((char *)"404", (char *)"Not found", server);
+	else if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
         putErrorToBody((char *)"401", (char *)"Unauthorized", server);
@@ -140,7 +142,9 @@ void Response::methodPost(Request & request, WebServer & server) {
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     struct stat sb;
 
-	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
+    if(this->_location_id == -1)
+        putErrorToBody((char *)"404", (char *)"Not found", server);
+	else if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
         putErrorToBody((char *)"401", (char *)"Unauthorized", server);
@@ -158,10 +162,7 @@ void Response::methodPost(Request & request, WebServer & server) {
                 if(server.getLocations()[_location_id].getCgiPath().find(extension)->second.first.empty())
                     request.setInterPath(std::string(""));
                 else
-                {
-                    request.setInterPath(std::string(""));
-                    // request.setInterPath(server.getLocations()[_location_id].getCgiPath().find(extension)->second.first);
-                }
+                    request.setInterPath(server.getLocations()[_location_id].getCgiPath().find(extension)->second.first);
                 request.setPathToCgi(server.getLocations()[_location_id].getCgiPath().find(extension)->second.second);
                 try {
                     toCGI(*this, request, server);
@@ -184,7 +185,6 @@ void Response::methodPost(Request & request, WebServer & server) {
             {
                 char *t = request.getReqBody().toPointer();
                 std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-                std::cout << "dir = " << dir << std::endl;
                 int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
                 if(fd_final < 0)
                     putErrorToBody((char *)"200", (char *)"File is not created!", server);
@@ -226,7 +226,9 @@ void Response::methodGetHead(Request & request, WebServer & server, Page_html & 
 	}
     else {
 		this->_location_id = uriSearching(server, (char *) request.getURI().c_str());
-		if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
+        if(this->_location_id == -1)
+            putErrorToBody((char *)"404", (char *)"Not found", server);
+		else if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 			putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
         else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
             putErrorToBody((char *)"401", (char *)"Unauthorized", server);
