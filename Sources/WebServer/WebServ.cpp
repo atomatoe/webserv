@@ -137,3 +137,10 @@ void            WebServer::addLocation(Location location) {
 
 bool  WebServer::getAutoIndex() const { return _autoIndex; }
 void  WebServer::setAutoIndex(bool autoIndex) { _autoIndex = autoIndex; }
+
+
+bool					operator==(const WebServer& server1, const WebServer& server2) {
+    if (server1.getPort() == server2.getPort() && server1.getIp() == server2.getIp())
+        return (true);
+    return (false);
+}

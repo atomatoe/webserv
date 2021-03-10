@@ -180,12 +180,14 @@ bool    ParseConfig::checkCgiPass(char *line, Location &location) {
             exitError("Invalid number of spaces or tabs");
         char *trimmed = ft_strtrim(line, " \t");
         char **splitted = ft_splitTim(trimmed, ' ');
-        if (ft_strstrlen(splitted) != 3)
+        if (ft_strstrlen(splitted) != 4)
             exitError("Incorrect value of cgi_pass");
         char *trimmedKey = ft_strtrim(splitted[1], " \t");
-        char *trimmedValue = ft_strtrim(splitted[2], " \t");
-        location.addCgiPath(trimmedKey, trimmedValue);
+        char *trimmedInterpreter = ft_strtrim(splitted[2], " \t");
+        char *trimmedValue = ft_strtrim(splitted[3], " \t");
+        location.addCgiPath(trimmedKey, trimmedInterpreter, trimmedValue);
         free(trimmedValue);
+        free(trimmedInterpreter);
         free(trimmedKey);
         ft_free_strstr(splitted);
         free(trimmed);
@@ -345,6 +347,10 @@ void            ParseConfig::parseServer(char *line) {
         exitError("Server cannot be without port");
     if (webServer.getIp().empty())
         exitError("Server cannot be without ip");
+    for (std::vector<WebServer>::iterator it = _resultVector.begin(); it != _resultVector.end(); it++) {
+        if (webServer == *it)
+            exitError("Servers are equal");
+    }
     _resultVector.push_back(webServer);
 }
 
@@ -403,11 +409,11 @@ void                        ParseConfig::printWebservers() {
             std::cout << "\troot: " + (*it3).getRoot() << std::endl;
             std::cout << "\tindex: " + (*it3).getIndex() << std::endl;
 
-            std::map<std::string, std::string> cgis = (*it3).getCgiPath();
-            std::map<std::string, std::string>::iterator it4= cgis.begin();
-            std::map<std::string, std::string>::iterator ite4 = cgis.end();
+            std::map<std::string, std::pair<std::string,std::string> > cgis = (*it3).getCgiPath();
+            std::map<std::string, std::pair<std::string,std::string> >::iterator it4= cgis.begin();
+            std::map<std::string, std::pair<std::string,std::string> >::iterator ite4 = cgis.end();
             while (it4 != ite4) {
-                std::cout << "\tcgi_pass: " + it4->first + " " + it4->second<< std::endl;
+                std::cout << "\tcgi_pass: " + it4->first + " " + it4->second.first + " " + it4->second.second<< std::endl;
                 it4++;
             }
 

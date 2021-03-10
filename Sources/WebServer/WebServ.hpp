@@ -69,4 +69,6 @@ public:
     void    addLocation(Location location);
 };
 
+bool					operator==(const WebServer& server1, const WebServer& server2);
+
 #endif
