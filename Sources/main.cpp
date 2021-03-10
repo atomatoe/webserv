@@ -26,7 +26,7 @@ int main(int ac, char **av) {
 	signal(SIGTERM, exitSignal);
 	signal(SIGQUIT, exitSignal);
 
-	ParseConfig parseConfig((ac == 2) ? av[1] : "WebServSite/website.conf");
+	ParseConfig parseConfig((ac == 2) ? av[1] : "WebServSite/welease.conf");
 	std::vector<WebServer> servers =  parseConfig.parse();
 	size_t count_server = servers.size();
 
