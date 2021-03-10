@@ -29,13 +29,13 @@ time_t Client::getTime() const { return _time; }
 Client::Client(WebServer & webServer, int & clientFd) {
 	struct timeval tv;
 	gettimeofday(&tv, 0);
+	_time = tv.tv_sec;
 	_webServer = webServer;
 	_clientFd = clientFd;
 	_serverFd = webServer.get_server_fd();
 	_receivedData = new Bytes();
 	_toSendData = new Bytes();
 	_phase = start;
-	_time = tv.tv_sec;
 	_sendBytes = 0;
 	_request = nullptr;
 	_response = nullptr;

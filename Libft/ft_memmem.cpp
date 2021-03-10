@@ -11,7 +11,7 @@ char *ft_memmem(char *haystack, size_t hlen, char const *needle, size_t nlen) {
 		return NULL;
 	char *hlimit = haystack + hlen - nlen + 1;
 	while ((haystack = static_cast<char *>(memchr(haystack, needle[0], hlimit - haystack)))) {
-		if (!memcmp(haystack, needle, nlen)) //todo own memcmp, memchr
+		if (!memcmp(haystack, needle, nlen))
 			return haystack;
 		haystack++;
 	}

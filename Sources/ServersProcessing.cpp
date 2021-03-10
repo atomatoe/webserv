@@ -1,11 +1,14 @@
 #include "WebServer/WebServ.hpp"
+#include "../Includes/Includes.hpp"
+#include "ParseConfig/ParseConfig.hpp"
 #include "Request/Request.hpp"
 #include "Response/Response.hpp"
 #include "signal.h"
+# define RED  "\e[31m"
 # define YELLOW "\e[1;33m"
 # define LMAGENTA "\e[1;35m"
 # define LBLUE "\e[1;34m"
-# define BUFSIZE 512000
+# define BUFSIZE 1000000
 #include "Client/Client.h"
 #include <vector>
 #define NOTFOUND (size_t)-1
@@ -58,7 +61,7 @@ void closingConnections(std::list<Client *> & clients) {
 	}
 }
 
-void parsingHeaders(Client * & client, char *buf, size_t &count, ssize_t & ret) {
+int parsingHeaders(Client * & client, char *buf, size_t &count, ssize_t & ret) {
 	char *tmp;
 
 	client->getReceivedData()->addData(buf, ret);
@@ -67,13 +70,19 @@ void parsingHeaders(Client * & client, char *buf, size_t &count, ssize_t & ret) 
 		client->setPhase(parsBody);
 		client->getReceivedData()->addData((char *)"", 1);
 		tmp = client->getReceivedData()->toPointer();
-		client->setRequest(new Request(tmp));
+		try {
+			client->setRequest(new Request(tmp));
+		}
+		catch (std::exception & ex) {
+			return -1;
+		}
 		free(tmp);
 		std::cout << LMAGENTA << "Request №" << count << " received successfully (◍•ᴗ•◍)❤" << DEFAULT << std::endl;
 		count = count + 1;
 		if (client->getRequest()->isHeadersParsed())
 			client->setPhase(responseGenerate);
 	}
+	return 0;
 }
 
 void parsingBody(Client * & client, char *buf, ssize_t & ret) {
@@ -88,8 +97,8 @@ void parsingBody(Client * & client, char *buf, ssize_t & ret) {
 	}
 
 	if (client->getRequest()->getTransferEncoding() == "chunked" &&
-		client->getRequest()->getReqBody().findMemoryFragment("0\r\n\r\n", 5) != NOTFOUND) {
-		len = client->getRequest()->getReqBody().findMemoryFragment("0\r\n\r\n", 5);
+		client->getRequest()->getReqBody().findMemoryFragmentEnd("0\r\n\r\n", 5) != NOTFOUND) {
+		len = client->getRequest()->getReqBody().findMemoryFragmentEnd("0\r\n\r\n", 5);
 		client->getRequest()->getReqBody().cutData(len);
 		client->getRequest()->ChunkedBodyProcessing();
 		client->setPhase(responseGenerate);
@@ -127,30 +136,33 @@ void responseGenerating(Client * & client) {
 
 void requestProcessing(std::list<Client *> & clients, fd_set & readSet, fd_set & writeSet) {
 	char 				buf[BUFSIZE + 1];
-	ssize_t				ret;
 	struct timeval		tv;
+	ssize_t				ret;
+
+	gettimeofday(&tv, 0);
 	for (std::list<Client*>::iterator i = clients.begin(); i != clients.end();) {
-		gettimeofday(&tv, 0);
-		if (tv.tv_sec - (*i)->getTime() > 300)
+		if (tv.tv_sec - (*i)->getTime() > 360) {
 			(*i)->setPhase(closing);
-		else {
-			if (FD_ISSET((*i)->getClientFd(), &readSet))
-			{
-				ret = recv((*i)->getClientFd(), buf, BUFSIZE, 0);
-				if (ret <= 0)
-					(*i)->setPhase(closing);
-				else if ((*i)->getPhase() < parsHeaders)
-					(*i)->setPhase(parsHeaders);
-				if ((*i)->getPhase() == parsHeaders)
-					parsingHeaders(*i, buf, g_count, ret);
-				else if ((*i)->getPhase() == parsBody)
-					parsingBody(*i, buf, ret);
-				if ((*i)->getPhase() == responseGenerate)
-					responseGenerating(*i);
-			}
-			if (FD_ISSET((*i)->getClientFd(), &writeSet) && (*i)->getPhase() == sendingResponse)
-				sendResponse(*i, ret);
+			++i;
+			continue;
 		}
+		if (FD_ISSET((*i)->getClientFd(), &readSet)) {
+			ret = recv((*i)->getClientFd(), buf, BUFSIZE, 0);
+			if (ret <= 0)
+				(*i)->setPhase(closing);
+			else if ((*i)->getPhase() < parsHeaders)
+				(*i)->setPhase(parsHeaders);
+			if ((*i)->getPhase() == parsHeaders) {
+				if (parsingHeaders(*i, buf, g_count, ret) == -1)
+					(*i)->setPhase(responseGenerate);
+			}
+			else if ((*i)->getPhase() == parsBody)
+				parsingBody(*i, buf, ret);
+			if ((*i)->getPhase() == responseGenerate)
+				responseGenerating(*i);
+		}
+		if (FD_ISSET((*i)->getClientFd(), &writeSet) && (*i)->getPhase() == sendingResponse)
+			sendResponse(*i, ret);
 		++i;
 	}
 }

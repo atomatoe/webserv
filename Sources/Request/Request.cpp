@@ -50,6 +50,7 @@ void Request::checkEndOfBody() {
         _parsedHeaders = true;
     }
 }
+void Request::setInterPath(std::string path) { _interPath = path; }
 
 Request::Request(char *reqString){
     char 	*tmp;
@@ -60,14 +61,21 @@ Request::Request(char *reqString){
     if (len != strlen(reqString))
         _reqBody.addData(reqString + len, strlen(reqString) - len);
     _reqString = std::string(reqString, len);
+    _interPath = "";
     _parsedHeaders = false;
     fillMap();
-    parsRequest(reqString);
-    len = _info["uri"].find( '?', 0);
-    _queryString = len != std::string::npos ? _info["uri"].c_str() + len + 1 : "";
-    if (_queryString != "")
-    	_info["uri"] = _info["uri"].substr(0, len);
-    checkEndOfBody();
+    try {
+		parsRequest(reqString);
+		len = _info["uri"].find( '?', 0);
+		_queryString = len != std::string::npos ? _info["uri"].c_str() + len + 1 : "";
+		checkEndOfBody();
+		if (_queryString != "") {
+			_info["uri"] = _info["uri"].substr(0, _info["uri"].find('?'));
+		}
+	}
+    catch (std::exception & ex) {
+    	_info["metod"] = "error";
+    }
 }
 
 bool Request::isHeadersParsed() { return _parsedHeaders; };
@@ -127,12 +135,17 @@ int Request::parsRequest(char *reqString) {
 
     copy = strdup(reqString);
     t = copy;
-     _headValid.valid(reqString); // todo try-catch exception
-    parsFirstLine(&copy);
-    if ((strings = ft_splitTim(copy, '\r')) == NULL)
-        return -1;
-    parsHeaders(strings);
-    free(t);
+    try {
+		_headValid.valid(reqString);
+		parsFirstLine(&copy);
+		if ((strings = ft_splitTim(copy, '\r')) == NULL)
+			return -1;
+		parsHeaders(strings);
+		free(t);
+	}
+    catch (std::exception & ex) {
+    	throw std::exception();
+	}
     return -1;
 }
 

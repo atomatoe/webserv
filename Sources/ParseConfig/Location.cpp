@@ -9,13 +9,13 @@ Location::Location() {
 }
 
 /* get */
-const std::string &                         Location::getUrl() const { return _url; }
-const std::string &                         Location::getRoot() const { return _root; }
-const std::map<std::string, std::string> &  Location::getCgiPath() const { return _cgiPath; }
-int                                         Location::getLimitBody() const { return _limitBody; }
-const std::map<std::string, bool> &         Location::getAllowMethods() const { return _allowMethods; }
-const std::string &                         Location::getIndex() const { return _index; }
-std::vector<std::string>                    Location::getAuthClients() const { return _auth_client; }
+const std::string &                                                 Location::getUrl() const { return _url; }
+const std::string &                                                 Location::getRoot() const { return _root; }
+const std::map<std::string, std::pair<std::string,std::string>> &   Location::getCgiPath() const { return _cgiPath; }
+int                                                                 Location::getLimitBody() const { return _limitBody; }
+const std::map<std::string, bool> &                                 Location::getAllowMethods() const { return _allowMethods; }
+const std::string &                                                 Location::getIndex() const { return _index; }
+std::vector<std::string>                                            Location::getAuthClients() const { return _auth_client; }
 
 /* set */
 void                                        Location::setUrl(const std::string &url) {
@@ -38,12 +38,14 @@ void                                        Location::setIndex(const std::string
         exitError("Incorrect value in index \"" + index + "\"");
     _index = _root + "/" + index;
 }
-void                                        Location::addCgiPath(std::string error, std::string path) {
-    if (error[0] != '.')
-        exitError("Smth wrong with cgi_pass value: \"" + error + "\"");
+void                                        Location::addCgiPath(std::string extension, std::string pathInterpreter, std::string path) {
+    if (extension[0] != '.')
+        exitError("Smth wrong with cgi_pass value: \"" + extension + "\"");
     if (!isFileExec(path))
         exitError("Smth wrong with cgi_pass: \"" + path + "\"");
-    _cgiPath.insert(std::pair<std::string, std::string>(error, path));
+    if (!isFileExec(pathInterpreter))
+        exitError("Smth wrong with cgi_pass: \"" + pathInterpreter + "\"");
+    _cgiPath.insert(std::pair<std::string, std::pair<std::string,std::string>>(extension, std::pair<std::string, std::string>(pathInterpreter, path)));
 }
 void                                        Location::changeAllowMethod(std::string key, bool value) {
     _allowMethods[key] = value;

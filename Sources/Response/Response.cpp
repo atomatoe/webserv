@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/09 18:20:06 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/08 20:43:34 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,36 +106,27 @@ void Response::methodPut(Request & request, WebServer & server) {
             putErrorToBody((char *)"404", (char *)"Запрос PUT не может идти на папку !!!!!", server);
         else {
             t = request.getReqBody().toPointer();
-            std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-            int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
-            if (fd_final < 0)
-                putErrorToBody((char *)"007", (char *)"File is not created!", server);
-            write(fd_final, t, request.getReqBody().getDataSize());
+            std::string tmp = t;
             free(t);
-            close(fd_final);
+            std::string str = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
+            std::ofstream filename(str, std::ios::app);
+			if(!filename)
+                putErrorToBody((char *)"007", (char *)"File is not created!", server);
+            filename << tmp;
+            filename.close();
+            if (request.getReqBody().getDataSize() == 0) {
+            	_httpVersion = "HTTP/1.1 204 No Content\r\n";
+            }
         }
     }
 }
 
-std::string Response::extensionSearching(std::string uri) {
-    std::string extension;
-    std::string buf;
-
-    for(int i = uri.size() - 1; uri[i+1] != '.' && uri[i+1] != '/'; i--)
-        buf.push_back(uri[i]);
-    for(int i = buf.size() - 1; i != -1; i--)
-        extension.push_back(buf[i]);
-    if(extension[0] == '.')
-        return(extension);
-    extension.clear();
-    return(extension);
-}
-
 void Response::methodPost(Request & request, WebServer & server) {
+	char *tmp1, *t;
 	this->_location_id = uriSearching(server, (char *) request.getURI().c_str());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     struct stat sb;
-    
+
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
@@ -148,26 +139,23 @@ void Response::methodPost(Request & request, WebServer & server) {
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
         else {
-            std::string extension = extensionSearching(request.getURI());
-            if (!extension.empty()) {
-                if(!server.getLocations()[_location_id].getCgiPath().find(extension)->second.empty()) {
-                    request.setPathToCgi(std::string(server.getLocations()[_location_id].getCgiPath().find(extension)->second));
-                    std::string file = server.getLocations()[_location_id].getRoot() + indexSearching(request.getURI());
-                    try {
-                        toCGI(*this, request, server, file); }
-                    catch (std::exception & ex) {
-                        putErrorToBody((char *)"500", (char *)"Bad GateAway", server); }
-                }
-                else {
-                    char *t = request.getReqBody().toPointer();
-                    std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-                    int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
-                    if (fd_final < 0)
-                        putErrorToBody((char *)"007", (char *)"File is not created!", server);
-                    write(fd_final, t, request.getReqBody().getDataSize());
-                    free(t);
-                    close(fd_final);
-                }
+            request.setInterPath(std::string(""));
+            request.setPathToCgi(std::string("/Users/welease/webserv/TestingCGI/cgi-bin/cgi_tester"));
+            try {
+				toCGI(*this, request, server);
+				tmp1 = _bodyOfResponse.toPointer();
+				if ((t = static_cast<char *>(memmem( tmp1, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
+					Bytes body = _bodyOfResponse.cutData(t - tmp1 + 4);
+					_bodyOfResponse.clear();
+					t = body.toPointer();
+					_bodyOfResponse.addData(t, body.getDataSize());
+					free(t);
+				}
+				free(tmp1);
+
+			}
+            catch (std::exception & ex) {
+            	putErrorToBody((char *)"500", (char *)"Bad GateAway", server);
             }
         }
     }
@@ -232,7 +220,7 @@ char* Response::responseGenerating(Request & request, WebServer & server) {
         methodPut(request, server);
     else
         this->_httpVersion = "HTTP/1.1 400 Bad Request\r\n";
-    return (editResponse(&request));
+    return (editResponse());
 }
 
 void Response::putErrorToBody(char *error, char *type, WebServer server)
@@ -271,30 +259,13 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
 	_bodyOfResponse.addData(tmp, strlen(tmp));
 }
 
-char* Response::editResponse(Request *request) {
-	char *		t;
+char* Response::editResponse() {
 	char *		tmp1;
 	char *		ret;
 	size_t 		size;
-	std::string tmp;
 
-	if (request->getMetod() == "POST") {
-		tmp1 = _bodyOfResponse.toPointer();
-		if ((t = static_cast<char *>(memmem( tmp1, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
-			Bytes body = _bodyOfResponse.cutData(t - tmp1 + 4);
-			_bodyOfResponse.clear();
-			t = body.toPointer();
-			_bodyOfResponse.addData(t, body.getDataSize());
-			free(t);
-		}
-		free(tmp1);
-	}
 	size = _bodyOfResponse.getDataSize();
-	if (request->getConnection() == "close")
-		tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(size) + "\r\n" +  _versionOfWebServer + "\r\n" +
-			  _connection + request->getConnection() + doubleCRLF;
-	else
-		tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(size) + "\r\n" +  _versionOfWebServer + doubleCRLF;
+	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(size) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
 	tmp1 = _bodyOfResponse.toPointer();
 	ret = ft_memjoin((char *)tmp.c_str(), tmp1, tmp.length(), _bodyOfResponse.getDataSize());
@@ -302,12 +273,10 @@ char* Response::editResponse(Request *request) {
 	return ret;
 }
 
-int Response::check_auth(Request & request, Location & location)
-{
-    if(location.getAuthClients().empty())
-        return(0); // Не нужна авторизация для location
-    else // Нужна авторизация для location
-    {
+int Response::check_auth(Request & request, Location & location) {
+    if( location.getAuthClients().empty())
+        return(0);
+    else {
         if(request.getAuthorization() == "")
             return(-1);
         for(size_t it = 0; it != location.getAuthClients().size(); it++)

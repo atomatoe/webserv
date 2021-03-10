@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:50 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/09 17:26:09 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/08 19:48:32 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,14 @@ private:
 	Bytes					_bodyOfResponse;
 	size_t 					_lenOfResponse;
 	int         			_location_id;
-	std::string				_connection;
 	static const size_t 	bufSize = 256000;
 
 public:
 	Response();
 	~Response();
 	char* 			responseGenerating(Request & request, WebServer & server);
-	char* 			editResponse(Request *request);
+	char* 			editResponse();
 	int 			uriSearching(WebServer & server, char *uri);
-	std::string		extensionSearching(std::string uri);
-
 	void 			putErrorToBody(char *error, char *type, WebServer server);
 
 	void 			methodGetHead(Request & request, WebServer & server, Page_html & page);
