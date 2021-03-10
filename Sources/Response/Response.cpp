@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/10 14:56:28 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/10 15:28:59 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,12 @@ void Response::methodPut(Request & request, WebServer & server) {
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
         putErrorToBody((char *)"401", (char *)"Unauthorized", server);
     else {
+        if (request.getReqBody().getDataSize() > (size_t)server.getLocations()[this->_location_id].getLimitBody()) {
+    		putErrorToBody((char *)"413", (char *)"Payload Too Large", server);
+    		return;
+    	}
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
-            putErrorToBody((char *)"404", (char *)"Запрос PUT не может идти на папку !!!!!", server);
+            putErrorToBody((char *)"404", (char *)"Put request can't go to the folder", server);
         else {
             char *t = request.getReqBody().toPointer();
             std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
