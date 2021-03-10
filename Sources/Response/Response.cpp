@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/10 15:38:35 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/10 15:55:41 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,8 @@ int Response::uriSearching(WebServer & server, char *uri) {
     char *buf;
     int i = strlen(tmp);
 
-    while(i > 1) {
+    while(i != 0) {
         i = strlen(tmp);
-        std::cout << "i = " << i << std::endl;
         for (size_t it = 0; it != server.getLocations().size(); it++) {
             if ((server.getLocations()[it].getUrl()) == tmp) {
 				free(tmp);
@@ -87,6 +86,8 @@ int Response::uriSearching(WebServer & server, char *uri) {
         buf = ft_substr(tmp, 0, i);
         free(tmp);
         tmp = buf;
+        if(i == 1)
+            i--;
     }
     free(tmp);
     return(-1);
