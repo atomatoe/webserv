@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/10 15:55:41 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/10 16:07:37 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,6 @@ int Response::uriSearching(WebServer & server, char *uri) {
         buf = ft_substr(tmp, 0, i);
         free(tmp);
         tmp = buf;
-        if(i == 1)
-            i--;
     }
     free(tmp);
     return(-1);
@@ -187,7 +185,6 @@ void Response::methodPost(Request & request, WebServer & server) {
             {
                 char *t = request.getReqBody().toPointer();
                 std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-                std::cout << "dir = " << dir << std::endl;
                 int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
                 if(fd_final < 0)
                     putErrorToBody((char *)"200", (char *)"File is not created!", server);
