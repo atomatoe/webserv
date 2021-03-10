@@ -7,9 +7,11 @@ cmake-build-debug
 */*.o
 webserv
 gnl/gnl.a
+GetNextLine/gnl.a
 Libft/libft.a
 *.o
 file_should_exist_after
 final
 webserv.dSYM
 multiple_same
+tmpFileToCGI
