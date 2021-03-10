@@ -6,7 +6,7 @@
 /*   By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/17 16:10:54 by atomatoe          #+#    #+#             */
-/*   Updated: 2021/03/08 20:43:34 by atomatoe         ###   ########.fr       */
+/*   Updated: 2021/03/10 15:28:59 by atomatoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ int Response::uriSearching(WebServer & server, char *uri) {
 }
 
 void Response::methodPut(Request & request, WebServer & server) {
-    char *t;
 	this->_location_id = uriSearching(server, (char *) request.getURI().c_str());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     struct stat sb;
@@ -102,23 +101,37 @@ void Response::methodPut(Request & request, WebServer & server) {
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
         putErrorToBody((char *)"401", (char *)"Unauthorized", server);
     else {
+        if (request.getReqBody().getDataSize() > (size_t)server.getLocations()[this->_location_id].getLimitBody()) {
+    		putErrorToBody((char *)"413", (char *)"Payload Too Large", server);
+    		return;
+    	}
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
-            putErrorToBody((char *)"404", (char *)"Запрос PUT не может идти на папку !!!!!", server);
+            putErrorToBody((char *)"404", (char *)"Put request can't go to the folder", server);
         else {
-            t = request.getReqBody().toPointer();
-            std::string tmp = t;
-            free(t);
-            std::string str = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
-            std::ofstream filename(str, std::ios::app);
-			if(!filename)
+            char *t = request.getReqBody().toPointer();
+            std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
+            int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
+            if(fd_final < 0)
                 putErrorToBody((char *)"007", (char *)"File is not created!", server);
-            filename << tmp;
-            filename.close();
-            if (request.getReqBody().getDataSize() == 0) {
-            	_httpVersion = "HTTP/1.1 204 No Content\r\n";
-            }
+            write(fd_final, t, request.getReqBody().getDataSize());
+            free(t);
+            close(fd_final);
         }
     }
+}
+
+std::string Response::extensionSearching(std::string uri) {
+    std::string extension;
+    std::string buf;
+
+    for(int i = uri.size() - 1; uri[i+1] != '.' && uri[i+1] != '/'; i--)
+        buf.push_back(uri[i]);
+    for(int i = buf.size() - 1; i != -1; i--)
+        extension.push_back(buf[i]);
+    if(extension[0] == '.')
+        return(extension);
+    extension.clear();
+    return(extension);
 }
 
 void Response::methodPost(Request & request, WebServer & server) {
@@ -139,23 +152,46 @@ void Response::methodPost(Request & request, WebServer & server) {
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
         else {
-            request.setInterPath(std::string(""));
-            request.setPathToCgi(std::string("/Users/qtamaril/Desktop/qtamaril/webserv/TestingCGI/cgi-bin/cgi_tester"));
-            try {
-				toCGI(*this, request, server);
-				tmp1 = _bodyOfResponse.toPointer();
-				if ((t = static_cast<char *>(memmem( tmp1, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
-					Bytes body = _bodyOfResponse.cutData(t - tmp1 + 4);
-					_bodyOfResponse.clear();
-					t = body.toPointer();
-					_bodyOfResponse.addData(t, body.getDataSize());
-					free(t);
-				}
-				free(tmp1);
+            std::string extension = extensionSearching(request.getURI());
+            if(server.getLocations()[_location_id].getCgiPath().find(extension)->first == extension)
+            {
+                if(server.getLocations()[_location_id].getCgiPath().find(extension)->second.first.empty())
+                    request.setInterPath(std::string(""));
+                else
+                {
+                    request.setInterPath(std::string(""));
+                    // request.setInterPath(server.getLocations()[_location_id].getCgiPath().find(extension)->second.first);
+                }
+                request.setPathToCgi(server.getLocations()[_location_id].getCgiPath().find(extension)->second.second);
+                try {
+                    toCGI(*this, request, server);
+                    tmp1 = _bodyOfResponse.toPointer();
+                    if ((t = static_cast<char *>(memmem( tmp1, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
+                        Bytes body = _bodyOfResponse.cutData(t - tmp1 + 4);
+                        _bodyOfResponse.clear();
+                        t = body.toPointer();
+                        _bodyOfResponse.addData(t, body.getDataSize());
+                        free(t);
+                    }
+                    free(tmp1);
 
-			}
-            catch (std::exception & ex) {
-            	putErrorToBody((char *)"500", (char *)"Bad GateAway", server);
+                }
+                catch (std::exception & ex) {
+                    putErrorToBody((char *)"500", (char *)"Bad GateAway", server);
+                }
+            }
+            else
+            {
+                char *t = request.getReqBody().toPointer();
+                std::string dir = server.getLocations()[this->_location_id].getRoot() + indexSearching(request.getURI());
+                std::cout << "dir = " << dir << std::endl;
+                int fd_final = open(dir.c_str(), O_CREAT | O_RDWR | O_TRUNC, 0666);
+                if(fd_final < 0)
+                    putErrorToBody((char *)"200", (char *)"File is not created!", server);
+                else
+                    write(fd_final, t, request.getReqBody().getDataSize());
+                free(t);
+                close(fd_final);
             }
         }
     }

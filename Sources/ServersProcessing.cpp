@@ -110,6 +110,7 @@ void sendResponse(Client * & client, ssize_t & ret) {
 	tmp = client->getToSendData()->toPointer();
 	ret = write(client->getClientFd(), tmp + client->getSendBytes(), client->getToSendData()->getDataSize() - client->getSendBytes());
 	if (ret <= 0) {
+		std::cout << RED << "Error in write:(" << DEFAULT << std::endl;
 		client->setPhase(closing);
 		return;
 	}
@@ -136,16 +137,9 @@ void responseGenerating(Client * & client) {
 
 void requestProcessing(std::list<Client *> & clients, fd_set & readSet, fd_set & writeSet) {
 	char 				buf[BUFSIZE + 1];
-	struct timeval		tv;
 	ssize_t				ret;
 
-	gettimeofday(&tv, 0);
 	for (std::list<Client*>::iterator i = clients.begin(); i != clients.end();) {
-		if (tv.tv_sec - (*i)->getTime() > 360) {
-			(*i)->setPhase(closing);
-			++i;
-			continue;
-		}
 		if (FD_ISSET((*i)->getClientFd(), &readSet)) {
 			ret = recv((*i)->getClientFd(), buf, BUFSIZE, 0);
 			if (ret <= 0)
