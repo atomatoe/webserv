@@ -438,8 +438,8 @@ void                        ParseConfig::printWebservers() {
             }
 
             std::vector<std::string> auth_clients = (*it3).getAuthClients();
-            for (std::vector<std::string>::iterator it4 = auth_clients.begin(); it4 != auth_clients.end(); it4++) {
-                std::cout << "\tauth_clients: " + *it4 << std::endl;
+            for (std::vector<std::string>::iterator it6 = auth_clients.begin(); it6 != auth_clients.end(); it6++) {
+                std::cout << "\tauth_clients: " + *it6 << std::endl;
             }
 
             it3++;
