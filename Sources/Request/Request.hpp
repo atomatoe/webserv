@@ -4,8 +4,6 @@
 #include <iostream>
 #include "../Bytes/Bytes.hpp"
 #include <cmath>
-#include <sstream>
-#include <iomanip>
 #include "../../Includes/Includes.hpp"
 #include "../Response/Response.hpp"
 #include "ValidationOfRequest/HeaderValidation.hpp"
@@ -22,12 +20,14 @@ public:
     std::string 				getContentLength() {return _info["content-length"];}
     std::string					getTransferEncoding() {return _info["Transfer-Encoding"];}
     std::string					getAuthorization() {return _info["Authorization"];}
+    std::string					getInterPath() { return _interPath; };
     Bytes 		& 				getReqBody() {return _reqBody;}
     std::string &				getPathToCgi();
     std::string &				getQueryString();
     std::string &				getConnection();
     bool 						isHeadersParsed() ;
     void						setPathToCgi(const std::string &pathToCgi);
+    void 						setInterPath(std::string path);
     void						ChunkedBodyProcessing();
 
 private:
@@ -38,6 +38,7 @@ private:
 	HeaderValidation            _headValid;
     std::string					_pathToCgi;
     std::string					_queryString;
+    std::string					_interPath;
     bool 						_parsedHeaders;
 
     int 						parsRequest(char *reqString);

@@ -34,7 +34,7 @@ public:
 	Response();
 	~Response();
 	char* 			responseGenerating(Request & request, WebServer & server);
-	char* 			editResponse(Request *request);
+	char* 			editResponse();
 	int 			uriSearching(WebServer & server, char *uri);
 	void 			putErrorToBody(char *error, char *type, WebServer server);
 

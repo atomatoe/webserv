@@ -122,10 +122,11 @@ void Response::methodPut(Request & request, WebServer & server) {
 }
 
 void Response::methodPost(Request & request, WebServer & server) {
+	char *tmp1, *t;
 	this->_location_id = uriSearching(server, (char *) request.getURI().c_str());
     std::string directory = server.getLocations()[_location_id].getRoot() + request.getURI();
     struct stat sb;
-    
+
 	if (!(server.getLocations()[this->_location_id].getAllowMethods()).find(request.getMetod())->second)
 		putErrorToBody((char *)"405", (char *)"Method Not Allowed", server);
     else if (check_auth(request, server.getLocations()[this->_location_id]) == -1)
@@ -138,10 +139,20 @@ void Response::methodPost(Request & request, WebServer & server) {
         if (stat((server.getLocations()[this->_location_id].getRoot() + directory).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
             putErrorToBody((char *)"404", (char *)"Post request can't go to the folder", server);
         else {
-            // std::cout << server.getLocations()[_location_id].getCgiPath() << std::endl;
-            request.setPathToCgi(std::string("/Users/qtamaril/Desktop/qtamaril/webserv/TestingCGI/cgi-bin/cgi_tester"));
+            request.setInterPath(std::string(""));
+            request.setPathToCgi(std::string("/Users/welease/webserv/TestingCGI/cgi-bin/cgi_tester"));
             try {
 				toCGI(*this, request, server);
+				tmp1 = _bodyOfResponse.toPointer();
+				if ((t = static_cast<char *>(memmem( tmp1, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
+					Bytes body = _bodyOfResponse.cutData(t - tmp1 + 4);
+					_bodyOfResponse.clear();
+					t = body.toPointer();
+					_bodyOfResponse.addData(t, body.getDataSize());
+					free(t);
+				}
+				free(tmp1);
+
 			}
             catch (std::exception & ex) {
             	putErrorToBody((char *)"500", (char *)"Bad GateAway", server);
@@ -209,7 +220,7 @@ char* Response::responseGenerating(Request & request, WebServer & server) {
         methodPut(request, server);
     else
         this->_httpVersion = "HTTP/1.1 400 Bad Request\r\n";
-    return (editResponse(&request));
+    return (editResponse());
 }
 
 void Response::putErrorToBody(char *error, char *type, WebServer server)
@@ -248,23 +259,11 @@ void Response::putErrorToBody(char *error, char *type, WebServer server)
 	_bodyOfResponse.addData(tmp, strlen(tmp));
 }
 
-char* Response::editResponse(Request *request) {
-	char *		t;
+char* Response::editResponse() {
 	char *		tmp1;
 	char *		ret;
 	size_t 		size;
 
-	if (request->getMetod() == "POST") {
-		tmp1 = _bodyOfResponse.toPointer();
-		if ((t = static_cast<char *>(memmem( tmp1, _bodyOfResponse.getDataSize(), "\r\n\r\n", 4)))) {
-			Bytes body = _bodyOfResponse.cutData(t - tmp1 + 4);
-			_bodyOfResponse.clear();
-			t = body.toPointer();
-			_bodyOfResponse.addData(t, body.getDataSize());
-			free(t);
-		}
-		free(tmp1);
-	}
 	size = _bodyOfResponse.getDataSize();
 	std::string tmp = _httpVersion + _timeOfResponse + "\r\n" +  _contentLength + std::to_string(size) + "\r\n" +  _versionOfWebServer + doubleCRLF;
 	_lenOfResponse = tmp.length() + _bodyOfResponse.getDataSize();
@@ -274,12 +273,10 @@ char* Response::editResponse(Request *request) {
 	return ret;
 }
 
-int Response::check_auth(Request & request, Location & location)
-{
-    if(location.getAuthClients().empty())
-        return(0); // Не нужна авторизация для location
-    else // Нужна авторизация для location
-    {
+int Response::check_auth(Request & request, Location & location) {
+    if( location.getAuthClients().empty())
+        return(0);
+    else {
         if(request.getAuthorization() == "")
             return(-1);
         for(size_t it = 0; it != location.getAuthClients().size(); it++)

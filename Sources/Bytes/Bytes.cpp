@@ -27,6 +27,16 @@ char *Bytes::toPointer() {
     return ret;
 }
 
+size_t Bytes::findMemoryFragmentEnd(const char *toFind, size_t len) {
+	std::list< std::pair<size_t, char *> > :: iterator  i = (--_data->end());
+	if (i->first >= len) {
+		if (std::string(toFind) == std::string(i->second, i->first - len, i->first)) {
+			return _dataSize - len;
+		}
+	}
+	return findMemoryFragment(toFind, len);
+}
+
 void Bytes::clear() {
     for (std::list< std::pair<size_t,  char *> >::iterator i = _data->begin(); i != _data->end(); ++i)
         free(i->second);
@@ -54,15 +64,12 @@ Bytes Bytes::cutData(size_t len){
         return ret;
     }
     char *tmp = toPointer();
-    char *t = (char *)malloc(len);
 
-    memcpy(t, tmp, len);
     ret.addData(tmp + len, _dataSize - len);
     clear();
     _dataSize = 0;
-    addData(t, len);
+    addData(tmp, len);
     free(tmp);
-    free(t);
     return ret;
 }
 

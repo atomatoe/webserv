@@ -55,11 +55,12 @@ void toCGI(Response &response, Request & request, WebServer & server){
 	char *	env[envSize];
 	char *	argv[argvSize];
 	int 	trumpet_fd[2];
-	int 	fd_final = open("final", O_CREAT | O_RDWR | O_TRUNC, 0666);
+	int 	fd_final = open("tmpFileToCGI", O_CREAT | O_RDWR | O_TRUNC, 0666);
 
+	std::cout << "\033[5m" << "We are in CGI processing! ଘ(੭ˊ꒳ˋ)੭✧"  << DEFAULT << std::endl;
 	pipe(trumpet_fd);
 	getEnv(env, request, server);
-	argv[0] = ft_strdup(request.getPathToCgi().c_str());
+	argv[0] = ft_strdup(request.getInterPath() == "" ? request.getPathToCgi().c_str() : request.getInterPath().c_str());
 	argv[1] = ft_strdup(request.getPathToCgi().c_str());
 	argv[2] = NULL;
 	pid_t pid;
