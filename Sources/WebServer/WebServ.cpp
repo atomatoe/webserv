@@ -132,6 +132,10 @@ void            WebServer::addErrorPage(std::string error, std::string path) {
     _errorPage.insert(std::pair<std::string, std::string>(error, path));
 }
 void            WebServer::addLocation(Location location) {
+    for (std::vector<Location>::iterator it = _locations.begin(); it != _locations.end(); it++) {
+        if (location == (*it))
+            exitError("Locations should be with different url");
+    }
     this->_locations.push_back(location);
 }
 

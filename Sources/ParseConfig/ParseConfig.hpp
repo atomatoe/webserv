@@ -35,6 +35,9 @@ private:
     bool            checkLimitBody(char *line, Location &location);
     bool            checkAllowMethods(char *line, Location &location);
 
+    /* check webserv */
+    void            checkWebServer(WebServer & webServer);
+
     /* parse algorithm */
     void            parseServer(char *line);
     std::string     parseLocation(char *line, WebServer &webServer);

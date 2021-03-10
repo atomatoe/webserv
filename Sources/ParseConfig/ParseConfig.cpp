@@ -245,6 +245,27 @@ bool    ParseConfig::checkAllowMethods(char *line, Location &location) {
     return (false);
 }
 
+/* check webserv */
+void    ParseConfig::checkWebServer(WebServer & webServer) {
+    if (webServer.getPort() == -1)
+        exitError("Server cannot be without port");
+    if (webServer.getIp().empty())
+        exitError("Server cannot be without ip");
+
+    for (std::vector<WebServer>::iterator it = _resultVector.begin(); it != _resultVector.end(); it++) {
+        if (webServer == *it)
+            exitError("Servers are equal");
+    }
+
+    bool findBaseLocation = false;
+    std::vector<Location> locations = webServer.getLocations();
+    for (std::vector<Location>::iterator it2 = locations.begin(); it2 != locations.end(); it2++) {
+        if ((it2)->getUrl() == "/")
+            findBaseLocation = true;
+    }
+    if (!findBaseLocation)
+        exitError("No base location in webserver");
+}
 
 /* parse algorithm */
 std::string     ParseConfig::parseLocation(char *line, WebServer &webServer) {
@@ -352,14 +373,8 @@ void            ParseConfig::parseServer(char *line) {
         free(line);
     }
     free(line);
-    if (webServer.getPort() == -1)
-        exitError("Server cannot be without port");
-    if (webServer.getIp().empty())
-        exitError("Server cannot be without ip");
-    for (std::vector<WebServer>::iterator it = _resultVector.begin(); it != _resultVector.end(); it++) {
-        if (webServer == *it)
-            exitError("Servers are equal");
-    }
+
+    checkWebServer(webServer);
     _resultVector.push_back(webServer);
 }
 

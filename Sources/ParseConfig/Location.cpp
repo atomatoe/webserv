@@ -75,3 +75,9 @@ void                                        Location::addAuthClient(const std::s
     free(line);
     close(fd);
 }
+
+bool					operator==(const Location& location1, const Location& location2) {
+    if (location1.getUrl() == location2.getUrl())
+        return true;
+    return false;
+}

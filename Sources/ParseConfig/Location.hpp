@@ -37,4 +37,6 @@ public:
 
 };
 
+bool					operator==(const Location& location1, const Location& location2);
+
 #endif
